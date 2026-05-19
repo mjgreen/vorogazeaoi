@@ -282,4 +282,35 @@ server <- function(input, output, session) {
       screen_origin = input$screen_origin
     )
   })
+  
+  # developer pane functions ---
+  
+  output$debug_params <- renderPrint({
+    list(
+      screen_left = input$screen_left,
+      screen_right = input$screen_right,
+      screen_top = input$screen_top,
+      screen_bottom = input$screen_bottom,
+      screen_origin = input$screen_origin,
+      image_origin = input$image_origin,
+      sanity_face = input$sanity_face,
+      sanity_condition = input$sanity_condition,
+      face_centered_on_screen = input$face_centered_on_screen,
+      selected_face_file = input$selected_face_file
+    )
+  })
+  
+  output$developer_todo_preview <- renderUI({
+    HTML(markdown::markdownToHTML(
+      text = input$developer_todo_md %||% "",
+      fragment.only = TRUE
+    ))
+  })
+  
+  output$developer_docs_preview <- renderUI({
+    HTML(markdown::markdownToHTML(
+      text = input$developer_docs_md %||% "",
+      fragment.only = TRUE
+    ))
+  })
 }

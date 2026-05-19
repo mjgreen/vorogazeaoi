@@ -201,6 +201,50 @@ ui <- page_fillable(
           )
         )
       )
+    ),
+    
+    nav_panel(
+      "developer",
+      layout_columns(
+        col_widths = c(4, 4, 4),
+        
+        card(
+          card_header("debug params"),
+          card_body(
+            verbatimTextOutput("debug_params")
+          )
+        ),
+        
+        card(
+          card_header("TODO"),
+          card_body(
+            textAreaInput(
+              "developer_todo_md",
+              "Developer notes",
+              value = paste(readLines("dev/TODO.md", warn = FALSE), collapse = "\n"),
+              width = "100%",
+              height = "220px"
+            ),
+            tags$hr(),
+            uiOutput("developer_todo_preview")
+          )
+        ),
+        
+        card(
+          card_header("DOCUMENTATION"),
+          card_body(
+            textAreaInput(
+              "developer_docs_md",
+              "Draft user-facing documentation",
+              value = paste(readLines("dev/DOCUMENTATION.md", warn = FALSE), collapse = "\n"),
+              width = "100%",
+              height = "220px"
+            ),
+            tags$hr(),
+            uiOutput("developer_docs_preview")
+          )
+        )
+      )
     )
     
     

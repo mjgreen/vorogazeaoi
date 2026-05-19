@@ -39,5 +39,7 @@ server <- function(input, output, session) {
       format_table_int()
   })
   
-  
+  output$face_display <- renderPlot(
+    plot_face_image()
+  )
 }

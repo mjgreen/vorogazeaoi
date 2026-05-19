@@ -36,13 +36,17 @@
 
 /* Tighten cards containing compact UI */
 .card:has(.fixrep-upload-box) .card-body,
+.card:has(.face-upload-box) .card-body,
 .card:has(.fixrep-mapping-ui) .card-body,
+.card:has(.face-mapping-ui) .card-body,
 .card:has(.compact-table-output) .card-body {
   padding: 0.35rem !important;
 }
 
 .card:has(.fixrep-upload-box) .card-header,
+.card:has(.face-upload-box) .card-header,
 .card:has(.fixrep-mapping-ui) .card-header,
+.card:has(.face-mapping-ui) .card-header,
 .card:has(.compact-table-output) .card-header {
   padding: 0.35rem 0.5rem !important;
   font-size: 0.75rem !important;

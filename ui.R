@@ -75,41 +75,6 @@ ui <- page_fillable(
     ),
     
     nav_panel(
-      "images",
-      layout_columns(
-        col_widths = c(4, 8),
-        
-        card(
-          card_header("input"),
-          card_body(
-            # image inputs go here
-            div(
-              class = "fixrep-upload-box",
-              
-              fileInput(
-                "upload_face",
-                "Upload face",
-                width = "100%"
-              ),
-            ),
-            
-            div(
-              class = "fixrep-mapping-ui",
-              #uiOutput("fixrep_mapping_ui")
-            )
-          )
-        ),
-        
-        card(
-          card_header("view"),
-          card_body(
-            # image view outputs go here
-          )
-        )
-      )
-    ),
-    
-    nav_panel(
       "screen",
       layout_columns(
         col_widths = c(4, 8),
@@ -128,6 +93,39 @@ ui <- page_fillable(
           )
         )
       )
+    ),
+    
+    nav_panel(
+      "images",
+      layout_columns(
+        col_widths = c(4, 8),
+        
+        card(
+          card_header("input"),
+          card_body(
+            # image inputs go here
+            div(
+              class = "face-upload-box",
+              
+              fileInput(
+                "upload_face",
+                "Upload face",
+                width = "100%"
+              )
+            )
+          )
+        ),
+        
+        card(
+          card_header("view"),
+          # image view outputs go here
+          card_body(
+            plotOutput("face_display")
+          )
+        )
+      )
     )
+    
+    
   )
 )

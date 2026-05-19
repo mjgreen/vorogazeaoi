@@ -141,7 +141,7 @@ server <- function(input, output, session) {
   output$view_face <- renderPlot({
     req(input$image_origin)
     
-    if (!identical(input$image_origin, "center")) {
+    if (identical(input$image_origin, "other")) {
       plot.new()
       box()
       text(
@@ -154,7 +154,7 @@ server <- function(input, output, session) {
       text(
         x = 0.5,
         y = 0.45,
-        labels = "Choose Centre to continue.",
+        labels = "Choose Top left or Centre to continue.",
         cex = 1
       )
       return(invisible(NULL))

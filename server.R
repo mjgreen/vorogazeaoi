@@ -248,7 +248,7 @@ server <- function(input, output, session) {
   })
   
   output$view_sanity <- renderPlot({
-    req(input$screen_origin)
+    req(input$screen_origin, input$image_origin)
     
     if (identical(input$screen_origin, "other")) {
       plot.new()
@@ -257,6 +257,25 @@ server <- function(input, output, session) {
         x = 0.5,
         y = 0.55,
         labels = "Other screen origins are not supported yet.",
+        cex = 1.2,
+        font = 2
+      )
+      text(
+        x = 0.5,
+        y = 0.45,
+        labels = "Choose Top left or Centre to continue.",
+        cex = 1
+      )
+      return(invisible(NULL))
+    }
+    
+    if (identical(input$image_origin, "other")) {
+      plot.new()
+      box()
+      text(
+        x = 0.5,
+        y = 0.55,
+        labels = "Other image origins are not supported yet.",
         cex = 1.2,
         font = 2
       )
@@ -287,7 +306,8 @@ server <- function(input, output, session) {
       screen_right = screen$right,
       screen_top = screen$top,
       screen_bottom = screen$bottom,
-      screen_origin = input$screen_origin
+      screen_origin = input$screen_origin,
+      image_origin = input$image_origin
     )
   })
   

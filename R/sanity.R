@@ -15,12 +15,14 @@ plot_sanity <- function(
     screen_top = 0,
     screen_bottom = 900,
     screen_origin = c("top_left", "center"),
+    image_origin = c("center", "top_left"),
     tick_by = 100,
     fixation_pad = 50,
     placeholder_width = 600,
     placeholder_height = 800
 ) {
   screen_origin <- match.arg(screen_origin)
+  image_origin <- match.arg(image_origin)
   
   old_par <- par(no.readonly = TRUE)
   on.exit(par(old_par))
@@ -97,10 +99,10 @@ plot_sanity <- function(
       return(invisible(NULL))
     }
     
-    image_centre_x <- unique(stats::na.omit(fixrep[[img_x]]))
-    image_centre_y <- unique(stats::na.omit(fixrep[[img_y]]))
+    image_x_value <- unique(stats::na.omit(fixrep[[img_x]]))
+    image_y_value <- unique(stats::na.omit(fixrep[[img_y]]))
     
-    if (length(image_centre_x) != 1 || length(image_centre_y) != 1) {
+    if (length(image_x_value) != 1 || length(image_y_value) != 1) {
       plot.new()
       box()
       text(
@@ -117,6 +119,14 @@ plot_sanity <- function(
         cex = 1
       )
       return(invisible(NULL))
+    }
+    
+    if (identical(image_origin, "top_left")) {
+      image_centre_x <- image_x_value + image_width / 2
+      image_centre_y <- image_y_value + image_height / 2
+    } else {
+      image_centre_x <- image_x_value
+      image_centre_y <- image_y_value
     }
   }
   

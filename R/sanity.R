@@ -1,9 +1,15 @@
 plot_sanity <- function(
     fixrep = NULL,
     face_image_path = NULL,
+    selected_face = NULL,
+    selected_condition = NULL,
     face_centered_on_screen = TRUE,
     fix_x = "FIX_X",
     fix_y = "FIX_Y",
+    img_x = "IMG_X",
+    img_y = "IMG_Y",
+    face_col = "FACE",
+    condition_col = "CONDITION",
     screen_left = 0,
     screen_right = 1600,
     screen_top = 900,
@@ -19,25 +25,6 @@ plot_sanity <- function(
   old_par <- par(no.readonly = TRUE)
   on.exit(par(old_par))
   
-  if (!isTRUE(face_centered_on_screen)) {
-    plot.new()
-    box()
-    text(
-      x = 0.5,
-      y = 0.55,
-      labels = "Non-centred face placement is not supported yet.",
-      cex = 1.2,
-      font = 2
-    )
-    text(
-      x = 0.5,
-      y = 0.45,
-      labels = "In future this will use IMG_X and IMG_Y from the fixation report.",
-      cex = 1
-    )
-    return(invisible(NULL))
-  }
-  
   screen_width <- screen_right - screen_left
   screen_height <- screen_top - screen_bottom
   
@@ -49,6 +36,16 @@ plot_sanity <- function(
   }
   
   if (!is.null(fixrep)) {
+    if (!is.null(selected_face) && face_col %in% names(fixrep)) {
+      fixrep <- fixrep[fixrep[[face_col]] == selected_face, , drop = FALSE]
+    }
+    
+    if (!is.null(selected_condition) && condition_col %in% names(fixrep)) {
+      fixrep <- fixrep[fixrep[[condition_col]] == selected_condition, , drop = FALSE]
+    }
+  }
+  
+  if (!is.null(fixrep) && nrow(fixrep) > 0) {
     fix_x_values <- fixrep[[fix_x]]
     fix_y_values <- fixrep[[fix_y]]
     
@@ -73,10 +70,60 @@ plot_sanity <- function(
   screen_centre_x <- mean(c(screen_left, screen_right))
   screen_centre_y <- mean(c(screen_bottom, screen_top))
   
-  image_left <- screen_centre_x - image_width / 2
-  image_right <- screen_centre_x + image_width / 2
-  image_top <- screen_centre_y - image_height / 2
-  image_bottom <- screen_centre_y + image_height / 2
+  if (isTRUE(face_centered_on_screen)) {
+    image_centre_x <- screen_centre_x
+    image_centre_y <- screen_centre_y
+  } else {
+    if (
+      is.null(fixrep) ||
+      nrow(fixrep) == 0 ||
+      !all(c(img_x, img_y) %in% names(fixrep))
+    ) {
+      plot.new()
+      box()
+      text(
+        x = 0.5,
+        y = 0.55,
+        labels = "Non-centred face placement needs IMG_X and IMG_Y.",
+        cex = 1.1,
+        font = 2
+      )
+      text(
+        x = 0.5,
+        y = 0.45,
+        labels = "Select a face and condition with valid image-position columns.",
+        cex = 1
+      )
+      return(invisible(NULL))
+    }
+    
+    image_centre_x <- unique(stats::na.omit(fixrep[[img_x]]))
+    image_centre_y <- unique(stats::na.omit(fixrep[[img_y]]))
+    
+    if (length(image_centre_x) != 1 || length(image_centre_y) != 1) {
+      plot.new()
+      box()
+      text(
+        x = 0.5,
+        y = 0.55,
+        labels = "Selected data does not have one unique IMG_X and IMG_Y.",
+        cex = 1.1,
+        font = 2
+      )
+      text(
+        x = 0.5,
+        y = 0.45,
+        labels = "Check FACE, CONDITION, IMG_X, and IMG_Y.",
+        cex = 1
+      )
+      return(invisible(NULL))
+    }
+  }
+  
+  image_left <- image_centre_x - image_width / 2
+  image_right <- image_centre_x + image_width / 2
+  image_top <- image_centre_y - image_height / 2
+  image_bottom <- image_centre_y + image_height / 2
   
   if (length(fix_x_values) > 0) {
     fix_min_x <- min(fix_x_values, na.rm = TRUE)
@@ -148,18 +195,8 @@ plot_sanity <- function(
     ann = FALSE
   )
   
-  axis(
-    side = 3,
-    pos = plot_bottom,
-    at = x_ticks
-  )
-  
-  axis(
-    side = 2,
-    pos = plot_left,
-    at = y_ticks,
-    las = 1
-  )
+  axis(side = 3, pos = plot_bottom, at = x_ticks)
+  axis(side = 2, pos = plot_left, at = y_ticks, las = 1)
   
   rect(
     xleft = screen_left,
@@ -181,8 +218,8 @@ plot_sanity <- function(
     )
     
     text(
-      x = screen_centre_x,
-      y = screen_centre_y,
+      x = image_centre_x,
+      y = image_centre_y,
       labels = "?",
       cex = 8,
       font = 2

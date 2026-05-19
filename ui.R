@@ -183,6 +183,8 @@ ui <- page_fillable(
         card(
           card_header("verify params"),
           card_body(
+            uiOutput("sanity_filter_ui"),
+            
             checkboxInput(
               "face_centered_on_screen",
               "Face was presented in center of screen",

@@ -129,6 +129,28 @@ server <- function(input, output, session) {
   
   # Sanity view functions ----
   
+  output$sanity_filter_ui <- renderUI({
+    req(fixrep())
+    
+    dat <- fixrep()
+    
+    tagList(
+      selectInput(
+        "sanity_face",
+        "Face",
+        choices = sort(unique(dat$FACE)),
+        selected = sort(unique(dat$FACE))[1]
+      ),
+      
+      selectInput(
+        "sanity_condition",
+        "Condition",
+        choices = sort(unique(dat$CONDITION)),
+        selected = sort(unique(dat$CONDITION))[1]
+      )
+    )
+  })
+  
   output$view_sanity <- renderPlot({
     req(input$screen_origin)
     
@@ -156,9 +178,15 @@ server <- function(input, output, session) {
     plot_sanity(
       fixrep = fixrep(),
       face_image_path = face_image_path(),
+      selected_face = input$sanity_face,
+      selected_condition = input$sanity_condition,
       face_centered_on_screen = input$face_centered_on_screen,
       fix_x = "FIX_X",
       fix_y = "FIX_Y",
+      img_x = "IMG_X",
+      img_y = "IMG_Y",
+      face_col = "FACE",
+      condition_col = "CONDITION",
       screen_left = screen$left,
       screen_right = screen$right,
       screen_top = screen$top,

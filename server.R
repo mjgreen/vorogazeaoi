@@ -18,6 +18,17 @@ server <- function(input, output, session) {
     read_fixrep(input$upload_fixrep$datapath)
   })
   
+  fixrep_read_mode <- reactive({
+    if (is.null(input$upload_fixrep)) {
+      return(NULL)
+    }
+    
+    tryCatch(
+      attr(fixrep_raw(), "read_mode", exact = TRUE),
+      error = function(e) NULL
+    )
+  })
+  
   fixrep_map <- reactive({
     req_fixrep_map(input)
   })
@@ -280,6 +291,7 @@ server <- function(input, output, session) {
       screen_bottom = input$screen_bottom,
       screen_origin = input$screen_origin,
       image_origin = input$image_origin,
+      fixrep_read_mode = fixrep_read_mode(),
       sanity_face = input$sanity_face,
       sanity_condition = input$sanity_condition,
       face_centered_on_screen = input$face_centered_on_screen,

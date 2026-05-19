@@ -16,13 +16,13 @@ plot_screen <- function(
   on.exit(par(old_par))
   
   screen_width <- screen_right - screen_left
-  screen_height <- screen_top - screen_bottom
+  screen_height <- abs(screen_bottom - screen_top)
   
   if (identical(screen_origin, "center")) {
     screen_left <- -screen_width / 2
     screen_right <- screen_width / 2
-    screen_bottom <- -screen_height / 2
-    screen_top <- screen_height / 2
+    screen_top <- -screen_height / 2
+    screen_bottom <- screen_height / 2
   }
   
   if (!is.null(fixrep)) {
@@ -61,16 +61,16 @@ plot_screen <- function(
     screen_right
   }
   
-  plot_bottom <- if (fix_min_y < screen_bottom) {
+  plot_top <- if (fix_min_y < screen_top) {
     fix_min_y - fixation_pad
   } else {
-    screen_bottom
+    screen_top
   }
   
-  plot_top <- if (fix_max_y > screen_top) {
+  plot_bottom <- if (fix_max_y > screen_bottom) {
     fix_max_y + fixation_pad
   } else {
-    screen_top
+    screen_bottom
   }
   
   x_ticks <- seq(
@@ -80,9 +80,9 @@ plot_screen <- function(
   )
   
   y_ticks <- seq(
-    ceiling(plot_top / tick_by) * tick_by,
-    floor(plot_bottom / tick_by) * tick_by,
-    by = -tick_by
+    floor(plot_top / tick_by) * tick_by,
+    ceiling(plot_bottom / tick_by) * tick_by,
+    by = tick_by
   )
   
   par(
@@ -96,7 +96,7 @@ plot_screen <- function(
     NA,
     type = "n",
     xlim = c(plot_left, plot_right),
-    ylim = c(plot_top, plot_bottom),
+    ylim = c(plot_bottom, plot_top),
     asp = 1,
     axes = FALSE,
     ann = FALSE
@@ -104,7 +104,7 @@ plot_screen <- function(
   
   axis(
     side = 3,
-    pos = plot_bottom,
+    pos = plot_top,
     at = x_ticks
   )
   

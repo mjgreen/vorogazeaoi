@@ -110,14 +110,14 @@ ui <- page_fillable(
             numericInput(
               "screen_top",
               "Screen top",
-              value = 900,
+              value = 0,
               step = 1
             ),
             
             numericInput(
               "screen_bottom",
               "Screen bottom",
-              value = 0,
+              value = 900,
               step = 1
             )
           )

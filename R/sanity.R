@@ -26,13 +26,13 @@ plot_sanity <- function(
   on.exit(par(old_par))
   
   screen_width <- screen_right - screen_left
-  screen_height <- screen_top - screen_bottom
+  screen_height <- abs(screen_bottom - screen_top)
   
   if (identical(screen_origin, "center")) {
     screen_left <- -screen_width / 2
     screen_right <- screen_width / 2
-    screen_bottom <- -screen_height / 2
-    screen_top <- screen_height / 2
+    screen_top <- -screen_height / 2
+    screen_bottom <- screen_height / 2
   }
   
   if (!is.null(fixrep)) {
@@ -139,8 +139,8 @@ plot_sanity <- function(
   
   base_left <- min(screen_left, image_left)
   base_right <- max(screen_right, image_right)
-  base_bottom <- min(screen_bottom, image_top)
-  base_top <- max(screen_top, image_bottom)
+  base_top <- min(screen_top, image_top)
+  base_bottom <- max(screen_bottom, image_bottom)
   
   plot_left <- if (fix_min_x < base_left) {
     fix_min_x - fixation_pad
@@ -154,16 +154,16 @@ plot_sanity <- function(
     base_right
   }
   
-  plot_bottom <- if (fix_min_y < base_bottom) {
+  plot_top <- if (fix_min_y < base_top) {
     fix_min_y - fixation_pad
   } else {
-    base_bottom
+    base_top
   }
   
-  plot_top <- if (fix_max_y > base_top) {
+  plot_bottom <- if (fix_max_y > base_bottom) {
     fix_max_y + fixation_pad
   } else {
-    base_top
+    base_bottom
   }
   
   x_ticks <- seq(
@@ -173,9 +173,9 @@ plot_sanity <- function(
   )
   
   y_ticks <- seq(
-    ceiling(plot_top / tick_by) * tick_by,
-    floor(plot_bottom / tick_by) * tick_by,
-    by = -tick_by
+    floor(plot_top / tick_by) * tick_by,
+    ceiling(plot_bottom / tick_by) * tick_by,
+    by = tick_by
   )
   
   par(
@@ -189,13 +189,13 @@ plot_sanity <- function(
     NA,
     type = "n",
     xlim = c(plot_left, plot_right),
-    ylim = c(plot_top, plot_bottom),
+    ylim = c(plot_bottom, plot_top),
     asp = 1,
     axes = FALSE,
     ann = FALSE
   )
   
-  axis(side = 3, pos = plot_bottom, at = x_ticks)
+  axis(side = 3, pos = plot_top, at = x_ticks)
   axis(side = 2, pos = plot_left, at = y_ticks, las = 1)
   
   rect(

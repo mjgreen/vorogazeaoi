@@ -8,16 +8,6 @@ to_num <- function(x) {
   suppressWarnings(as.numeric(x))
 }
 
-to_num_if_possible <- function(x) {
-  x_num <- suppressWarnings(as.numeric(x))
-  
-  if (all(!is.na(x_num) | is.na(x))) {
-    x_num
-  } else {
-    x
-  }
-}
-
 to_int_if_possible <- function(x) {
   x_num <- suppressWarnings(as.numeric(x))
   

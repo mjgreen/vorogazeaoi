@@ -1,0 +1,67 @@
+/* Tight column-mapping controls */
+
+.fixrep-mapping-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+
+.fixrep-mapping-ui,
+.fixrep-mapping-ui *,
+.fixrep-mapping-ui .selectize-dropdown,
+.fixrep-mapping-ui .selectize-dropdown * {
+  font-size: 0.84rem !important;
+}
+
+.fixrep-mapping-ui .shiny-input-container,
+.fixrep-mapping-ui .form-group {
+  margin-bottom: 0.12rem !important;
+}
+
+.fixrep-mapping-ui .selectize-control,
+.fixrep-mapping-ui label {
+  margin-bottom: 0 !important;
+}
+
+.fixrep-mapping-ui label,
+.fixrep-mapping-ui .selectize-input,
+.fixrep-mapping-ui .selectize-input > input {
+  line-height: 1.2rem !important;
+}
+
+.fixrep-mapping-ui .selectize-input {
+  min-height: 1.62rem !important;
+  padding: 0.06rem 0.3rem !important;
+}
+
+/* Tighten cards containing compact UI */
+.card:has(.fixrep-upload-box) .card-body,
+.card:has(.fixrep-mapping-ui) .card-body,
+.card:has(.compact-table-output) .card-body {
+  padding: 0.35rem !important;
+}
+
+.card:has(.fixrep-upload-box) .card-header,
+.card:has(.fixrep-mapping-ui) .card-header,
+.card:has(.compact-table-output) .card-header {
+  padding: 0.35rem 0.5rem !important;
+  font-size: 0.75rem !important;
+}
+
+/* Compact table previews */
+.compact-table-output {
+  font-size: 0.75rem;
+  line-height: 1.1;
+  max-height: 220px;
+  overflow: auto;
+}
+
+.compact-table-output table {
+  margin-bottom: 0;
+}
+
+.compact-table-output th,
+.compact-table-output td {
+  padding: 0.15rem 0.3rem;
+  white-space: nowrap;
+}

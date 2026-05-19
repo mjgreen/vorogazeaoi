@@ -90,15 +90,34 @@ plot_sanity <- function(
     fix_max_y <- screen_top
   }
   
-  plot_left <- min(screen_left, image_left, fix_min_x) - fixation_pad
-  plot_right <- max(screen_right, image_right, fix_max_x) + fixation_pad
-  plot_bottom <- min(screen_bottom, image_top, fix_min_y) - fixation_pad
-  plot_top <- max(screen_top, image_bottom, fix_max_y) + fixation_pad
+  base_left <- min(screen_left, image_left)
+  base_right <- max(screen_right, image_right)
+  base_bottom <- min(screen_bottom, image_top)
+  base_top <- max(screen_top, image_bottom)
   
-  plot_left <- min(plot_left, screen_left)
-  plot_right <- max(plot_right, screen_right)
-  plot_bottom <- min(plot_bottom, screen_bottom)
-  plot_top <- max(plot_top, screen_top)
+  plot_left <- if (fix_min_x < base_left) {
+    fix_min_x - fixation_pad
+  } else {
+    base_left
+  }
+  
+  plot_right <- if (fix_max_x > base_right) {
+    fix_max_x + fixation_pad
+  } else {
+    base_right
+  }
+  
+  plot_bottom <- if (fix_min_y < base_bottom) {
+    fix_min_y - fixation_pad
+  } else {
+    base_bottom
+  }
+  
+  plot_top <- if (fix_max_y > base_top) {
+    fix_max_y + fixation_pad
+  } else {
+    base_top
+  }
   
   x_ticks <- seq(
     floor(plot_left / tick_by) * tick_by,
@@ -129,8 +148,18 @@ plot_sanity <- function(
     ann = FALSE
   )
   
-  axis(side = 3, pos = plot_bottom, at = x_ticks)
-  axis(side = 2, pos = plot_left, at = y_ticks, las = 1)
+  axis(
+    side = 3,
+    pos = plot_bottom,
+    at = x_ticks
+  )
+  
+  axis(
+    side = 2,
+    pos = plot_left,
+    at = y_ticks,
+    las = 1
+  )
   
   rect(
     xleft = screen_left,

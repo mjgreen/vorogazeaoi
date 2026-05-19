@@ -213,8 +213,10 @@ read_fixrep <- function(path) {
   nm <- stringr::str_trim(nm)
   names(raw) <- nm
   
-  if ("location_b1" %in% names(raw)) {
-    loc <- raw$location_b1 |>
+  location_col <- intersect(c("location_b1", "face_location"), names(raw))[1]
+  
+  if (!is.na(location_col)) {
+    loc <- raw[[location_col]] |>
       as.character() |>
       stringr::str_remove_all("[()]") |>
       stringr::str_split_fixed(",", 2)

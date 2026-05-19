@@ -287,6 +287,12 @@ server <- function(input, output, session) {
   })
   
   sanity_image_position_info <- reactive({
+    if (is.null(input$upload_fixrep)) {
+      return(list(status = "missing", x = NA_real_, y = NA_real_))
+    }
+    
+    req(input$sanity_face, input$sanity_condition)
+    
     image_position_values(
       fixrep = sanity_fixrep(),
       img_x = "IMG_X",
@@ -314,7 +320,17 @@ server <- function(input, output, session) {
     }
     
     screen <- screen_params()
-    image_position_info <- sanity_image_position_info()
+    has_fixrep <- !is.null(input$upload_fixrep)
+    
+    if (isTRUE(has_fixrep)) {
+      req(input$sanity_face, input$sanity_condition)
+    }
+    
+    image_position_info <- if (isTRUE(has_fixrep)) {
+      sanity_image_position_info()
+    } else {
+      list(status = "missing", x = NA_real_, y = NA_real_)
+    }
     
     if (
       identical(image_position_info$status, "invalid") &&
@@ -350,6 +366,7 @@ server <- function(input, output, session) {
       fixrep = sanity_fixrep(),
       face_image_path = sanity_face_image_path(),
       image_position = if (isTRUE(invalid_image_position_use_center())) "screen_center" else "auto",
+      show_image = isTRUE(has_fixrep),
       fix_x = "FIX_X",
       fix_y = "FIX_Y",
       img_x = "IMG_X",

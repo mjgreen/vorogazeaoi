@@ -40,6 +40,7 @@ plot_sanity <- function(
     screen_origin = c("top_left", "center"),
     image_origin = c("center", "top_left"),
     image_position = c("auto", "screen_center"),
+    show_image = TRUE,
     tick_by = 100,
     fixation_pad = 50,
     placeholder_width = 600,
@@ -121,10 +122,17 @@ plot_sanity <- function(
   image_top <- image_centre_y - image_height / 2
   image_bottom <- image_centre_y + image_height / 2
   
-  base_left <- min(screen_left, image_left)
-  base_right <- max(screen_right, image_right)
-  base_top <- min(screen_top, image_top)
-  base_bottom <- max(screen_bottom, image_bottom)
+  if (isTRUE(show_image)) {
+    base_left <- min(screen_left, image_left)
+    base_right <- max(screen_right, image_right)
+    base_top <- min(screen_top, image_top)
+    base_bottom <- max(screen_bottom, image_bottom)
+  } else {
+    base_left <- screen_left
+    base_right <- screen_right
+    base_top <- screen_top
+    base_bottom <- screen_bottom
+  }
   
   plot_bounds <- expand_plot_bounds(
     left = base_left,
@@ -182,7 +190,9 @@ plot_sanity <- function(
     lwd = 2
   )
   
-  if (is.null(face_image)) {
+  if (!isTRUE(show_image)) {
+    # Draw only the screen and fixation overlay.
+  } else if (is.null(face_image)) {
     rect(
       xleft = image_left,
       ybottom = image_bottom,

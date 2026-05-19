@@ -50,8 +50,9 @@ plot_sanity <- function(
   image_origin <- match.arg(image_origin)
   image_position <- match.arg(image_position)
   
-  old_par <- par(no.readonly = TRUE)
-  on.exit(par(old_par))
+  # dont use
+  # old_par <- par(no.readonly = TRUE)
+  # on.exit(par(old_par))
   
   screen_width <- screen_right - screen_left
   screen_height <- abs(screen_bottom - screen_top)

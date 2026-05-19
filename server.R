@@ -412,6 +412,28 @@ server <- function(input, output, session) {
     )
   })
   
+  output$view_sanity_hover_label <- renderUI({
+    hover <- input$view_sanity_hover
+    req(hover)
+    
+    div(
+      style = paste0(
+        "position: absolute;",
+        "left: ", hover$coords_css$x + 12, "px;",
+        "top: ", hover$coords_css$y + 12, "px;",
+        "z-index: 1000;",
+        "pointer-events: none;",
+        "background: rgba(255, 255, 255, 0.9);",
+        "border: 1px solid #ccc;",
+        "border-radius: 4px;",
+        "padding: 2px 6px;",
+        "font-size: 12px;",
+        "font-family: monospace;"
+      ),
+      sprintf("x = %.0f, y = %.0f", hover$x, hover$y)
+    )
+  })
+  
   # developer pane functions ---
   
   output$debug_params <- renderPrint({

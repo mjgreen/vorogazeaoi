@@ -206,7 +206,32 @@ ui <- page_fillable(
         card(
           card_header("view everything"),
           card_body(
-            plotOutput("view_sanity", width = "100%", height = "600px")
+            div(
+              style = "position: relative; width: 100%; padding: 0; margin: 0;",
+              
+              plotOutput(
+                "view_sanity",
+                hover = hoverOpts(
+                  id = "view_sanity_hover",
+                  delay = 0,
+                  delayType = "throttle",
+                  clip = TRUE
+                )
+              ),
+              
+              uiOutput(
+                "view_sanity_hover_label",
+                style = paste(
+                  "position: absolute;",
+                  "left: 0;",
+                  "top: 0;",
+                  "width: 0;",
+                  "height: 0;",
+                  "overflow: visible;",
+                  "pointer-events: none;"
+                )
+              )
+            )
           )
         )
       )

@@ -140,17 +140,19 @@ ui <- page_fillable(
         card(
           card_header("input"),
           card_body(
-            checkboxInput(
-              "use_bundled_face",
-              "Use bundled face",
-              value = FALSE
+            shinyFiles::shinyDirButton(
+              id = "face_dir",
+              label = "Browse face directory",
+              title = "Choose the directory containing face images"
             ),
             
-            fileInput(
-              "upload_face",
-              "Upload face image",
-              accept = c(".png", ".jpg", ".jpeg")
+            div(
+              class = "loaded-file-box",
+              span(class = "loaded-file-label", "Face directory:"),
+              textOutput("face_dir_display", inline = TRUE)
             ),
+            
+            uiOutput("face_file_ui"),
             
             radioButtons(
               "image_origin",
@@ -167,7 +169,6 @@ ui <- page_fillable(
         
         card(
           card_header("view"),
-          # image view outputs go here
           card_body(
             plotOutput("view_face")
           )

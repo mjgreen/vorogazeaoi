@@ -2,6 +2,31 @@
 
 # requirenamespace imagemagick
 
+find_face_file <- function(face, files) {
+  if (is.null(face) || length(face) == 0 || length(files) == 0) {
+    return(NULL)
+  }
+  
+  face <- as.character(face)[1]
+  
+  file_base <- basename(files)
+  file_stem <- tools::file_path_sans_ext(file_base)
+  face_stem <- tools::file_path_sans_ext(basename(face))
+  
+  match_idx <- which(
+    file_base == face |
+      file_stem == face |
+      file_stem == face_stem
+  )
+  
+  if (length(match_idx) == 0) {
+    return(NULL)
+  }
+  
+  files[match_idx[1]]
+}
+
+
 read_face_image <- function(path) {
   img <- magick::image_read(path) |> magick::image_orient()
   if (length(img) > 1) img <- img[1]
@@ -105,3 +130,4 @@ plot_face_image <- function(
   
   invisible(NULL)
 }
+

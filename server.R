@@ -74,18 +74,26 @@ server <- function(input, output, session) {
   
   # Face directory and image functions -----
   
+  default_face_dir <- normalizePath(
+    file.path(getwd(), "faces", "faces_300x350"),
+    winslash = "/",
+    mustWork = FALSE
+  )
+  
   face_dir_path <- reactive({
-    if (is.null(input$face_dir)) {
-      return(NULL)
+    if (!is.null(input$face_dir)) {
+      path <- shinyFiles::parseDirPath(volumes, input$face_dir)
+      
+      if (length(path) > 0) {
+        return(path)
+      }
     }
     
-    path <- shinyFiles::parseDirPath(volumes, input$face_dir)
-    
-    if (length(path) == 0) {
-      return(NULL)
+    if (dir.exists(default_face_dir)) {
+      return(default_face_dir)
     }
     
-    path
+    NULL
   })
   
   output$face_dir_display <- renderText({

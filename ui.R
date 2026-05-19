@@ -90,6 +90,7 @@ ui <- page_fillable(
           card_header("view"),
           card_body(
             # screen view outputs go here
+            plotOutput("view_screen")
           )
         )
       )

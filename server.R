@@ -221,16 +221,11 @@ server <- function(input, output, session) {
   })
   
   output$view_screen_click_coords <- renderText({
-    screen <- screen_params()
-    
-    format_plot_click(
-      click = input$view_screen_click,
-      screen_left = screen$left,
-      screen_right = screen$right,
-      screen_top = screen$top,
-      screen_bottom = screen$bottom,
-      screen_origin = input$screen_origin
-    )
+    format_plot_click(input$view_screen_click, prefix = "click")
+  })
+  
+  output$view_screen_hover_coords <- renderText({
+    format_plot_click(input$view_screen_hover, prefix = "hover")
   })
   
   # Sanity view functions ----
@@ -404,16 +399,11 @@ server <- function(input, output, session) {
   })
   
   output$view_sanity_click_coords <- renderText({
-    screen <- screen_params()
-    
-    format_plot_click(
-      click = input$view_sanity_click,
-      screen_left = screen$left,
-      screen_right = screen$right,
-      screen_top = screen$top,
-      screen_bottom = screen$bottom,
-      screen_origin = input$screen_origin
-    )
+    format_plot_click(input$view_sanity_click, prefix = "click")
+  })
+  
+  output$view_sanity_hover_coords <- renderText({
+    format_plot_click(input$view_sanity_hover, prefix = "hover")
   })
   
   # developer pane functions ---

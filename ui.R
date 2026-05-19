@@ -128,11 +128,16 @@ ui <- page_fillable(
           card_body(
             plotOutput(
               "view_screen",
-              click = "view_screen_click"
+              click = "view_screen_click",
+              hover = hoverOpts("view_screen_hover", delay = 0, delayType = "debounce")
             ),
             div(
               class = "plot-click-coordinates",
               textOutput("view_screen_click_coords")
+            ),
+            div(
+              class = "plot-click-coordinates",
+              textOutput("view_screen_hover_coords")
             )
           )
         )
@@ -202,11 +207,16 @@ ui <- page_fillable(
               "view_sanity",
               width = "100%",
               height = "600px",
-              click = "view_sanity_click"
+              click = "view_sanity_click",
+              hover = hoverOpts("view_sanity_hover", delay = 0, delayType = "debounce")
             ),
             div(
               class = "plot-click-coordinates",
               textOutput("view_sanity_click_coords")
+            ),
+            div(
+              class = "plot-click-coordinates",
+              textOutput("view_sanity_hover_coords")
             )
           )
         )

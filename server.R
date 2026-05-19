@@ -105,4 +105,38 @@ server <- function(input, output, session) {
     )
   })
   
+  # Sanity view functions ----
+  
+  output$view_sanity <- renderPlot({
+    req(input$screen_origin)
+    
+    if (identical(input$screen_origin, "other")) {
+      plot.new()
+      box()
+      text(
+        x = 0.5,
+        y = 0.55,
+        labels = "Other screen origins are not supported yet.",
+        cex = 1.2,
+        font = 2
+      )
+      text(
+        x = 0.5,
+        y = 0.45,
+        labels = "Choose Top left or Centre to continue.",
+        cex = 1
+      )
+      return(invisible(NULL))
+    }
+    
+    plot_sanity(
+      fixrep = fixrep(),
+      face_image_path = face_image_path(),
+      face_centered_on_screen = input$face_centered_on_screen,
+      fix_x = "FIX_X",
+      fix_y = "FIX_Y",
+      screen_origin = input$screen_origin
+    )
+  })
+  
 }

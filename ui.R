@@ -171,8 +171,10 @@ ui <- page_fillable(
         ),
         
         card(
-          card_header("view eveything"),
-          card_body()
+          card_header("view everything"),
+          card_body(
+            plotOutput("view_sanity", width = "100%", height = "600px")
+          )
         )
       )
     )

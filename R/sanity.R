@@ -1,9 +1,32 @@
+image_position_values <- function(fixrep, img_x = "IMG_X", img_y = "IMG_Y") {
+  if (
+    is.null(fixrep) ||
+    nrow(fixrep) == 0 ||
+    !all(c(img_x, img_y) %in% names(fixrep))
+  ) {
+    return(list(status = "missing", x = NA_real_, y = NA_real_))
+  }
+  
+  image_x_value <- unique(stats::na.omit(fixrep[[img_x]]))
+  image_y_value <- unique(stats::na.omit(fixrep[[img_y]]))
+  
+  if (
+    length(image_x_value) != 1 ||
+    length(image_y_value) != 1 ||
+    !is.finite(image_x_value) ||
+    !is.finite(image_y_value)
+  ) {
+    return(list(status = "invalid", x = NA_real_, y = NA_real_))
+  }
+  
+  list(status = "valid", x = image_x_value, y = image_y_value)
+}
+
 plot_sanity <- function(
     fixrep = NULL,
     face_image_path = NULL,
     selected_face = NULL,
     selected_condition = NULL,
-    face_centered_on_screen = TRUE,
     fix_x = "FIX_X",
     fix_y = "FIX_Y",
     img_x = "IMG_X",
@@ -16,6 +39,7 @@ plot_sanity <- function(
     screen_bottom = 900,
     screen_origin = c("top_left", "center"),
     image_origin = c("center", "top_left"),
+    image_position = c("auto", "screen_center"),
     tick_by = 100,
     fixation_pad = 50,
     placeholder_width = 600,
@@ -23,6 +47,7 @@ plot_sanity <- function(
 ) {
   screen_origin <- match.arg(screen_origin)
   image_origin <- match.arg(image_origin)
+  image_position <- match.arg(image_position)
   
   old_par <- par(no.readonly = TRUE)
   on.exit(par(old_par))
@@ -64,41 +89,30 @@ plot_sanity <- function(
   screen_centre_x <- mean(c(screen_left, screen_right))
   screen_centre_y <- mean(c(screen_bottom, screen_top))
   
-  if (isTRUE(face_centered_on_screen)) {
+  if (identical(image_position, "screen_center")) {
     image_centre_x <- screen_centre_x
     image_centre_y <- screen_centre_y
   } else {
-    if (
-      is.null(fixrep) ||
-      nrow(fixrep) == 0 ||
-      !all(c(img_x, img_y) %in% names(fixrep))
-    ) {
-      plot_message(
-        title = "Non-centred face placement needs IMG_X and IMG_Y.",
-        subtitle = "Select a face and condition with valid image-position columns.",
-        title_cex = 1.1
-      )
-      return(invisible(NULL))
-    }
+    image_position_info <- image_position_values(fixrep, img_x, img_y)
     
-    image_x_value <- unique(stats::na.omit(fixrep[[img_x]]))
-    image_y_value <- unique(stats::na.omit(fixrep[[img_y]]))
-    
-    if (length(image_x_value) != 1 || length(image_y_value) != 1) {
+    if (identical(image_position_info$status, "missing")) {
+      image_centre_x <- screen_centre_x
+      image_centre_y <- screen_centre_y
+    } else if (identical(image_position_info$status, "invalid")) {
       plot_message(
         title = "Selected data does not have one unique IMG_X and IMG_Y.",
         subtitle = "Check FACE, CONDITION, IMG_X, and IMG_Y.",
         title_cex = 1.1
       )
       return(invisible(NULL))
-    }
-    
-    if (identical(image_origin, "top_left")) {
-      image_centre_x <- image_x_value + image_width / 2
-      image_centre_y <- image_y_value + image_height / 2
     } else {
-      image_centre_x <- image_x_value
-      image_centre_y <- image_y_value
+      if (identical(image_origin, "top_left")) {
+        image_centre_x <- image_position_info$x + image_width / 2
+        image_centre_y <- image_position_info$y + image_height / 2
+      } else {
+        image_centre_x <- image_position_info$x
+        image_centre_y <- image_position_info$y
+      }
     }
   }
   

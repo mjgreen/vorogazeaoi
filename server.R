@@ -239,6 +239,61 @@ server <- function(input, output, session) {
     )
   })
   
+  sanity_fixrep <- reactive({
+    if (is.null(input$upload_fixrep)) {
+      return(NULL)
+    }
+    
+    dat <- tryCatch(
+      fixrep(),
+      error = function(e) NULL
+    )
+    
+    if (is.null(dat)) {
+      return(NULL)
+    }
+    
+    if (!is.null(input$sanity_face) && "FACE" %in% names(dat)) {
+      dat <- dat[dat$FACE == input$sanity_face, , drop = FALSE]
+    }
+    
+    if (!is.null(input$sanity_condition) && "CONDITION" %in% names(dat)) {
+      dat <- dat[dat$CONDITION == input$sanity_condition, , drop = FALSE]
+    }
+    
+    dat
+  })
+  
+  invalid_image_position_use_center <- reactiveVal(FALSE)
+  invalid_image_position_dismissed <- reactiveVal(FALSE)
+  
+  observeEvent(
+    list(input$upload_fixrep, input$sanity_face, input$sanity_condition, input$image_origin),
+    {
+      invalid_image_position_use_center(FALSE)
+      invalid_image_position_dismissed(FALSE)
+    },
+    ignoreInit = TRUE
+  )
+  
+  observeEvent(input$dismiss_invalid_image_position, {
+    invalid_image_position_dismissed(TRUE)
+    removeModal()
+  })
+  
+  observeEvent(input$use_center_for_invalid_image_position, {
+    invalid_image_position_use_center(TRUE)
+    removeModal()
+  })
+  
+  sanity_image_position_info <- reactive({
+    image_position_values(
+      fixrep = sanity_fixrep(),
+      img_x = "IMG_X",
+      img_y = "IMG_Y"
+    )
+  })
+  
   output$view_sanity <- renderPlot({
     req(input$screen_origin, input$image_origin)
     
@@ -259,13 +314,42 @@ server <- function(input, output, session) {
     }
     
     screen <- screen_params()
+    image_position_info <- sanity_image_position_info()
+    
+    if (
+      identical(image_position_info$status, "invalid") &&
+      !isTRUE(invalid_image_position_use_center())
+    ) {
+      if (!isTRUE(invalid_image_position_dismissed())) {
+        showModal(modalDialog(
+          title = "Image placement is ambiguous",
+          "The selected face and condition have IMG_X and IMG_Y columns, but they do not resolve to one valid image position.",
+          footer = tagList(
+            actionButton(
+              inputId = "dismiss_invalid_image_position",
+              label = "Keep checking data"
+            ),
+            actionButton(
+              inputId = "use_center_for_invalid_image_position",
+              label = "Use screen centre"
+            )
+          ),
+          easyClose = TRUE
+        ))
+      }
+      
+      plot_message(
+        title = "Image placement is ambiguous.",
+        subtitle = "Choose how to place the image in the warning dialog.",
+        title_cex = 1.1
+      )
+      return(invisible(NULL))
+    }
     
     plot_sanity(
-      fixrep = fixrep(),
+      fixrep = sanity_fixrep(),
       face_image_path = sanity_face_image_path(),
-      selected_face = input$sanity_face,
-      selected_condition = input$sanity_condition,
-      face_centered_on_screen = input$face_centered_on_screen,
+      image_position = if (isTRUE(invalid_image_position_use_center())) "screen_center" else "auto",
       fix_x = "FIX_X",
       fix_y = "FIX_Y",
       img_x = "IMG_X",
@@ -294,7 +378,8 @@ server <- function(input, output, session) {
       fixrep_read_mode = fixrep_read_mode(),
       sanity_face = input$sanity_face,
       sanity_condition = input$sanity_condition,
-      face_centered_on_screen = input$face_centered_on_screen,
+      invalid_image_position_use_center = invalid_image_position_use_center(),
+      invalid_image_position_dismissed = invalid_image_position_dismissed(),
       selected_face_file = input$selected_face_file
     )
   })

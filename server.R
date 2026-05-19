@@ -41,9 +41,24 @@ server <- function(input, output, session) {
   
   # Face view functions -----
   
-  output$face_display <- renderPlot(
-    plot_face_image()
-  )
+  face_image_path <- reactive({
+    if (isTRUE(input$use_bundled_face)) {
+      return("B_F 01.jpg")
+    }
+    
+    if (is.null(input$upload_face)) {
+      return(NULL)
+    }
+    
+    input$upload_face$datapath
+  })
+  
+  output$face_display <- renderPlot({
+    plot_face_image(
+      face_image_path = face_image_path(),
+      face_centered_on_screen = input$face_centered_on_screen
+    )
+  })
   
   # Screen view functions -----
   

@@ -47,17 +47,9 @@ plot_sanity <- function(
     }
   }
   
-  if (!is.null(fixrep) && nrow(fixrep) > 0) {
-    fix_x_values <- fixrep[[fix_x]]
-    fix_y_values <- fixrep[[fix_y]]
-    
-    keep <- is.finite(fix_x_values) & is.finite(fix_y_values)
-    fix_x_values <- fix_x_values[keep]
-    fix_y_values <- fix_y_values[keep]
-  } else {
-    fix_x_values <- numeric(0)
-    fix_y_values <- numeric(0)
-  }
+  fixations <- fixation_values(fixrep, fix_x, fix_y)
+  fix_x_values <- fixations$x
+  fix_y_values <- fixations$y
   
   if (is.null(face_image_path)) {
     face_image <- NULL
@@ -115,46 +107,25 @@ plot_sanity <- function(
   image_top <- image_centre_y - image_height / 2
   image_bottom <- image_centre_y + image_height / 2
   
-  if (length(fix_x_values) > 0) {
-    fix_min_x <- min(fix_x_values, na.rm = TRUE)
-    fix_max_x <- max(fix_x_values, na.rm = TRUE)
-    fix_min_y <- min(fix_y_values, na.rm = TRUE)
-    fix_max_y <- max(fix_y_values, na.rm = TRUE)
-  } else {
-    fix_min_x <- screen_left
-    fix_max_x <- screen_right
-    fix_min_y <- screen_top
-    fix_max_y <- screen_bottom
-  }
-  
   base_left <- min(screen_left, image_left)
   base_right <- max(screen_right, image_right)
   base_top <- min(screen_top, image_top)
   base_bottom <- max(screen_bottom, image_bottom)
   
-  plot_left <- if (fix_min_x < base_left) {
-    fix_min_x - fixation_pad
-  } else {
-    base_left
-  }
+  plot_bounds <- expand_plot_bounds(
+    left = base_left,
+    right = base_right,
+    top = base_top,
+    bottom = base_bottom,
+    fix_x_values = fix_x_values,
+    fix_y_values = fix_y_values,
+    fixation_pad = fixation_pad
+  )
   
-  plot_right <- if (fix_max_x > base_right) {
-    fix_max_x + fixation_pad
-  } else {
-    base_right
-  }
-  
-  plot_top <- if (fix_min_y < base_top) {
-    fix_min_y - fixation_pad
-  } else {
-    base_top
-  }
-  
-  plot_bottom <- if (fix_max_y > base_bottom) {
-    fix_max_y + fixation_pad
-  } else {
-    base_bottom
-  }
+  plot_left <- plot_bounds$left
+  plot_right <- plot_bounds$right
+  plot_top <- plot_bounds$top
+  plot_bottom <- plot_bounds$bottom
   
   x_ticks <- seq(
     floor(plot_left / tick_by) * tick_by,

@@ -1,3 +1,49 @@
+fixation_values <- function(fixrep, fix_x = "FIX_X", fix_y = "FIX_Y") {
+  if (is.null(fixrep) || nrow(fixrep) == 0) {
+    return(list(x = numeric(0), y = numeric(0)))
+  }
+  
+  x_values <- fixrep[[fix_x]]
+  y_values <- fixrep[[fix_y]]
+  
+  if (is.null(x_values) || is.null(y_values)) {
+    return(list(x = numeric(0), y = numeric(0)))
+  }
+  
+  keep <- is.finite(x_values) & is.finite(y_values)
+  
+  list(
+    x = x_values[keep],
+    y = y_values[keep]
+  )
+}
+
+expand_plot_bounds <- function(
+    left,
+    right,
+    top,
+    bottom,
+    fix_x_values,
+    fix_y_values,
+    fixation_pad = 50
+) {
+  if (length(fix_x_values) == 0) {
+    return(list(left = left, right = right, top = top, bottom = bottom))
+  }
+  
+  fix_min_x <- min(fix_x_values, na.rm = TRUE)
+  fix_max_x <- max(fix_x_values, na.rm = TRUE)
+  fix_min_y <- min(fix_y_values, na.rm = TRUE)
+  fix_max_y <- max(fix_y_values, na.rm = TRUE)
+  
+  list(
+    left = if (fix_min_x < left) fix_min_x - fixation_pad else left,
+    right = if (fix_max_x > right) fix_max_x + fixation_pad else right,
+    top = if (fix_min_y < top) fix_min_y - fixation_pad else top,
+    bottom = if (fix_max_y > bottom) fix_max_y + fixation_pad else bottom
+  )
+}
+
 plot_screen <- function(
     fixrep = NULL,
     fix_x = "FIX_X",
@@ -25,53 +71,24 @@ plot_screen <- function(
     screen_bottom <- screen_height / 2
   }
   
-  if (!is.null(fixrep)) {
-    fix_x_values <- fixrep[[fix_x]]
-    fix_y_values <- fixrep[[fix_y]]
-    
-    keep <- is.finite(fix_x_values) & is.finite(fix_y_values)
-    fix_x_values <- fix_x_values[keep]
-    fix_y_values <- fix_y_values[keep]
-  } else {
-    fix_x_values <- numeric(0)
-    fix_y_values <- numeric(0)
-  }
+  fixations <- fixation_values(fixrep, fix_x, fix_y)
+  fix_x_values <- fixations$x
+  fix_y_values <- fixations$y
   
-  if (length(fix_x_values) > 0) {
-    fix_min_x <- min(fix_x_values, na.rm = TRUE)
-    fix_max_x <- max(fix_x_values, na.rm = TRUE)
-    fix_min_y <- min(fix_y_values, na.rm = TRUE)
-    fix_max_y <- max(fix_y_values, na.rm = TRUE)
-  } else {
-    fix_min_x <- screen_left
-    fix_max_x <- screen_right
-    fix_min_y <- screen_top
-    fix_max_y <- screen_bottom
-  }
+  plot_bounds <- expand_plot_bounds(
+    left = screen_left,
+    right = screen_right,
+    top = screen_top,
+    bottom = screen_bottom,
+    fix_x_values = fix_x_values,
+    fix_y_values = fix_y_values,
+    fixation_pad = fixation_pad
+  )
   
-  plot_left <- if (fix_min_x < screen_left) {
-    fix_min_x - fixation_pad
-  } else {
-    screen_left
-  }
-  
-  plot_right <- if (fix_max_x > screen_right) {
-    fix_max_x + fixation_pad
-  } else {
-    screen_right
-  }
-  
-  plot_top <- if (fix_min_y < screen_top) {
-    fix_min_y - fixation_pad
-  } else {
-    screen_top
-  }
-  
-  plot_bottom <- if (fix_max_y > screen_bottom) {
-    fix_max_y + fixation_pad
-  } else {
-    screen_bottom
-  }
+  plot_left <- plot_bounds$left
+  plot_right <- plot_bounds$right
+  plot_top <- plot_bounds$top
+  plot_bottom <- plot_bounds$bottom
   
   x_ticks <- seq(
     floor(plot_left / tick_by) * tick_by,

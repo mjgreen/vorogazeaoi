@@ -81,8 +81,13 @@ ui <- page_fillable(
         
         card(
           card_header("input"),
+          # screen inputs go here
           card_body(
-            # screen inputs go here
+            div(
+              class = "dev-note",
+              strong("Note to self: "),
+              "define and process the origin"
+            )
           )
         ),
         
@@ -104,15 +109,22 @@ ui <- page_fillable(
         card(
           card_header("input"),
           card_body(
-            # image inputs go here
-            div(
-              class = "face-upload-box",
-              
-              fileInput(
-                "upload_face",
-                "Upload face",
-                width = "100%"
-              )
+            checkboxInput(
+              "use_bundled_face",
+              "Use bundled face",
+              value = TRUE
+            ),
+            
+            fileInput(
+              "upload_face",
+              "Upload face image",
+              accept = c(".png", ".jpg", ".jpeg")
+            ),
+            
+            checkboxInput(
+              "face_centered_on_screen",
+              "Face was presented in center of screen",
+              value = TRUE
             )
           )
         ),

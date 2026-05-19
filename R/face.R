@@ -19,29 +19,68 @@ read_face_image <- function(path) {
   )
 }
 
-plot_face_image <- function() {
+plot_face_image <- function(
+    face_image_path = NULL,
+    face_centered_on_screen = TRUE,
+    image_width = 600,
+    image_height = 800
+) {
+  my_xlim <- c(0, image_width)
+  my_ylim <- c(image_height, 0)
   
-  face_image = read_face_image("B_F 01.jpg")
-  
-  my_xlim = c(0, 600)
-  my_ylim = c(800, 0)
-  
-  my_xleft = 0
-  my_xright = 600
-  my_ytop = 0
-  my_ybottom = 800
+  my_xleft <- 0
+  my_xright <- image_width
+  my_ytop <- 0
+  my_ybottom <- image_height
   
   plot(
-    x = 0, y = 0, 
-    #type = "n",
-    xlim = my_xlim, ylim = my_ylim,
-    xaxs = "i", yaxs = "i",
-    #axes = FALSE, xlab = NA, ylab = NA,
-    asp = 1
+    x = 0,
+    y = 0,
+    type = "n",
+    xlim = my_xlim,
+    ylim = my_ylim,
+    xaxs = "i",
+    yaxs = "i",
+    asp = 1,
+    axes = TRUE,
+    xlab = "x image coordinate",
+    ylab = "y image coordinate"
   )
   
-  rasterImage(face_image$rast, xleft = my_xleft, ybottom = my_ybottom, xright = my_xright, ytop = my_ytop)
+  if (is.null(face_image_path)) {
+    text(
+      x = image_width / 2,
+      y = image_height / 2,
+      labels = "?",
+      cex = 8,
+      font = 2
+    )
+    
+    return(invisible(NULL))
+  }
   
+  face_image <- read_face_image(face_image_path)
+  
+  rasterImage(
+    image = face_image$rast,
+    xleft = my_xleft,
+    ybottom = my_ybottom,
+    xright = my_xright,
+    ytop = my_ytop
+  )
+  
+  if (isTRUE(face_centered_on_screen)) {
+    points(
+      x = image_width / 2,
+      y = image_height / 2,
+      pch = 4,
+      cex = 1.5,
+      lwd = 2,
+      col = "#FF0000"
+    )
+  }
+  
+  invisible(NULL)
 }
 
 

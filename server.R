@@ -206,17 +206,39 @@ server <- function(input, output, session) {
       return(invisible(NULL))
     }
     
-    screen <- screen_params()
-    
     plot_screen(
       fixrep = screen_fixrep(),
       fix_x = "FIX_X",
       fix_y = "FIX_Y",
-      screen_left = screen$left,
-      screen_right = screen$right,
-      screen_top = screen$top,
-      screen_bottom = screen$bottom,
-      screen_origin = input$screen_origin
+      screen_left = input$screen_left,
+      screen_right = input$screen_right,
+      screen_top = input$screen_top,
+      screen_bottom = input$screen_bottom,
+      screen_origin = input$screen_origin,
+      tick_by = 100,
+      fixation_pad = 50
+    )
+  })
+  
+  output$view_screen_hover_label <- renderUI({
+    hover <- input$view_screen_hover
+    req(hover)
+    
+    div(
+      style = paste0(
+        "position: absolute;",
+        "left: ", hover$coords_css$x + 12, "px;",
+        "top: ", hover$coords_css$y + 12, "px;",
+        "z-index: 1000;",
+        "pointer-events: none;",
+        "background: rgba(255, 255, 255, 0.9);",
+        "border: 1px solid #ccc;",
+        "border-radius: 4px;",
+        "padding: 2px 6px;",
+        "font-size: 12px;",
+        "font-family: monospace;"
+      ),
+      sprintf("x = %.0f, y = %.0f", hover$x, hover$y)
     )
   })
   

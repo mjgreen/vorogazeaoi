@@ -126,7 +126,22 @@ ui <- page_fillable(
         card(
           card_header("view"),
           card_body(
-            plotOutput("view_screen")
+            div(
+              style = "position: relative; width: 100%;",
+              
+              plotOutput(
+                "view_screen",
+                hover = hoverOpts(
+                  id = "view_screen_hover",
+                  delay = 0,
+                  delayType = "throttle",
+                  clip = TRUE
+                )
+              ),
+              
+              uiOutput("view_screen_hover_label")
+            )
+            
           )
         )
       )

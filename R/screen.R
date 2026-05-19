@@ -58,8 +58,9 @@ plot_screen <- function(
 ) {
   screen_origin <- match.arg(screen_origin)
   
-  old_par <- par(no.readonly = TRUE)
-  on.exit(par(old_par))
+  # dont use
+  # old_par <- par(no.readonly = TRUE)
+  # on.exit(par(old_par))
   
   screen_width <- screen_right - screen_left
   screen_height <- abs(screen_bottom - screen_top)
@@ -113,7 +114,9 @@ plot_screen <- function(
     NA,
     type = "n",
     xlim = c(plot_left, plot_right),
-    ylim = c(plot_bottom, plot_top),
+    ylim = c(plot_bottom, plot_top), # reversed y-axis: y increases downward
+    xaxs = "i",
+    yaxs = "i",
     asp = 1,
     axes = FALSE,
     ann = FALSE

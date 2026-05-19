@@ -4,8 +4,8 @@ plot_screen <- function(
     fix_y = "FIX_Y",
     screen_left = 0,
     screen_right = 1600,
-    screen_top = 900,
-    screen_bottom = 0,
+    screen_top = 0,
+    screen_bottom = 900,
     screen_origin = c("top_left", "center"),
     tick_by = 100,
     fixation_pad = 50
@@ -45,8 +45,8 @@ plot_screen <- function(
   } else {
     fix_min_x <- screen_left
     fix_max_x <- screen_right
-    fix_min_y <- screen_bottom
-    fix_max_y <- screen_top
+    fix_min_y <- screen_top
+    fix_max_y <- screen_bottom
   }
   
   plot_left <- if (fix_min_x < screen_left) {

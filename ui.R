@@ -162,7 +162,7 @@ ui <- page_fillable(
                 "Centre" = "center",
                 "Other" = "other"
               ),
-              selected = "top_left"
+              selected = "center"
             )
           )
         ),
@@ -189,7 +189,7 @@ ui <- page_fillable(
             checkboxInput(
               "face_centered_on_screen",
               "Face was presented in center of screen",
-              value = TRUE
+              value = FALSE
             )
           )
         ),

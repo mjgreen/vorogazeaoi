@@ -34,7 +34,10 @@ server <- function(input, output, session) {
       return(NULL)
     }
     
-    fixrep()
+    tryCatch(
+      fixrep(),
+      error = function(e) NULL
+    )
   })
   
   output$fixrep_mapping_ui <- renderUI({
@@ -142,20 +145,9 @@ server <- function(input, output, session) {
     req(input$image_origin)
     
     if (identical(input$image_origin, "other")) {
-      plot.new()
-      box()
-      text(
-        x = 0.5,
-        y = 0.55,
-        labels = "This image origin is not supported yet.",
-        cex = 1.2,
-        font = 2
-      )
-      text(
-        x = 0.5,
-        y = 0.45,
-        labels = "Choose Top left or Centre to continue.",
-        cex = 1
+      plot_message(
+        title = "This image origin is not supported yet.",
+        subtitle = "Choose Top left or Centre to continue."
       )
       return(invisible(NULL))
     }
@@ -188,20 +180,9 @@ server <- function(input, output, session) {
     req(input$screen_origin)
     
     if (identical(input$screen_origin, "other")) {
-      plot.new()
-      box()
-      text(
-        x = 0.5,
-        y = 0.55,
-        labels = "Other screen origins are not supported yet.",
-        cex = 1.2,
-        font = 2
-      )
-      text(
-        x = 0.5,
-        y = 0.45,
-        labels = "Choose Top left or Centre to continue.",
-        cex = 1
+      plot_message(
+        title = "Other screen origins are not supported yet.",
+        subtitle = "Choose Top left or Centre to continue."
       )
       return(invisible(NULL))
     }
@@ -251,39 +232,17 @@ server <- function(input, output, session) {
     req(input$screen_origin, input$image_origin)
     
     if (identical(input$screen_origin, "other")) {
-      plot.new()
-      box()
-      text(
-        x = 0.5,
-        y = 0.55,
-        labels = "Other screen origins are not supported yet.",
-        cex = 1.2,
-        font = 2
-      )
-      text(
-        x = 0.5,
-        y = 0.45,
-        labels = "Choose Top left or Centre to continue.",
-        cex = 1
+      plot_message(
+        title = "Other screen origins are not supported yet.",
+        subtitle = "Choose Top left or Centre to continue."
       )
       return(invisible(NULL))
     }
     
     if (identical(input$image_origin, "other")) {
-      plot.new()
-      box()
-      text(
-        x = 0.5,
-        y = 0.55,
-        labels = "Other image origins are not supported yet.",
-        cex = 1.2,
-        font = 2
-      )
-      text(
-        x = 0.5,
-        y = 0.45,
-        labels = "Choose Top left or Centre to continue.",
-        cex = 1
+      plot_message(
+        title = "Other image origins are not supported yet.",
+        subtitle = "Choose Top left or Centre to continue."
       )
       return(invisible(NULL))
     }

@@ -81,20 +81,10 @@ plot_sanity <- function(
       nrow(fixrep) == 0 ||
       !all(c(img_x, img_y) %in% names(fixrep))
     ) {
-      plot.new()
-      box()
-      text(
-        x = 0.5,
-        y = 0.55,
-        labels = "Non-centred face placement needs IMG_X and IMG_Y.",
-        cex = 1.1,
-        font = 2
-      )
-      text(
-        x = 0.5,
-        y = 0.45,
-        labels = "Select a face and condition with valid image-position columns.",
-        cex = 1
+      plot_message(
+        title = "Non-centred face placement needs IMG_X and IMG_Y.",
+        subtitle = "Select a face and condition with valid image-position columns.",
+        title_cex = 1.1
       )
       return(invisible(NULL))
     }
@@ -103,20 +93,10 @@ plot_sanity <- function(
     image_y_value <- unique(stats::na.omit(fixrep[[img_y]]))
     
     if (length(image_x_value) != 1 || length(image_y_value) != 1) {
-      plot.new()
-      box()
-      text(
-        x = 0.5,
-        y = 0.55,
-        labels = "Selected data does not have one unique IMG_X and IMG_Y.",
-        cex = 1.1,
-        font = 2
-      )
-      text(
-        x = 0.5,
-        y = 0.45,
-        labels = "Check FACE, CONDITION, IMG_X, and IMG_Y.",
-        cex = 1
+      plot_message(
+        title = "Selected data does not have one unique IMG_X and IMG_Y.",
+        subtitle = "Check FACE, CONDITION, IMG_X, and IMG_Y.",
+        title_cex = 1.1
       )
       return(invisible(NULL))
     }

@@ -6,13 +6,25 @@ plot_screen <- function(
     screen_right = 1600,
     screen_top = 900,
     screen_bottom = 0,
+    screen_origin = c("top_left", "center"),
     tick_by = 100,
     fixation_pad = 50
 ) {
+  screen_origin <- match.arg(screen_origin)
+  
   old_par <- par(no.readonly = TRUE)
   on.exit(par(old_par))
   
-  # Read fixation report, if supplied
+  screen_width <- screen_right - screen_left
+  screen_height <- screen_top - screen_bottom
+  
+  if (identical(screen_origin, "center")) {
+    screen_left <- -screen_width / 2
+    screen_right <- screen_width / 2
+    screen_bottom <- -screen_height / 2
+    screen_top <- screen_height / 2
+  }
+  
   if (!is.null(fixrep)) {
     fix_x_values <- fixrep[[fix_x]]
     fix_y_values <- fixrep[[fix_y]]
@@ -25,12 +37,17 @@ plot_screen <- function(
     fix_y_values <- numeric(0)
   }
   
-  # Plotting region must include both screen and all valid fixations,
-  # plus a small pad around the most extreme fixations
-  fix_min_x <- min(fix_x_values, na.rm = TRUE)
-  fix_max_x <- max(fix_x_values, na.rm = TRUE)
-  fix_min_y <- min(fix_y_values, na.rm = TRUE)
-  fix_max_y <- max(fix_y_values, na.rm = TRUE)
+  if (length(fix_x_values) > 0) {
+    fix_min_x <- min(fix_x_values, na.rm = TRUE)
+    fix_max_x <- max(fix_x_values, na.rm = TRUE)
+    fix_min_y <- min(fix_y_values, na.rm = TRUE)
+    fix_max_y <- max(fix_y_values, na.rm = TRUE)
+  } else {
+    fix_min_x <- screen_left
+    fix_max_x <- screen_right
+    fix_min_y <- screen_bottom
+    fix_max_y <- screen_top
+  }
   
   plot_left <- if (fix_min_x < screen_left) {
     fix_min_x - fixation_pad
@@ -85,14 +102,12 @@ plot_screen <- function(
     ann = FALSE
   )
   
-  # X-axis fixed to the visual top of the full fixation plotting region
   axis(
     side = 3,
     pos = plot_bottom,
     at = x_ticks
   )
   
-  # Y-axis fixed to the visual left of the full fixation plotting region
   axis(
     side = 2,
     pos = plot_left,
@@ -113,9 +128,11 @@ plot_screen <- function(
       x = fix_x_values,
       y = fix_y_values,
       pch = 4,
-      cex = 1,
-      lwd = 4,
+      cex = 0.9,
+      lwd = 2,
       col = "#FF0000"
     )
   }
+  
+  invisible(NULL)
 }

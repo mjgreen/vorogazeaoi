@@ -53,20 +53,56 @@ server <- function(input, output, session) {
     input$upload_face$datapath
   })
   
-  output$face_display <- renderPlot({
+  output$view_face <- renderPlot({
+    req(input$image_origin)
+    
+    if (identical(input$image_origin, "other")) {
+      plot.new()
+      text(
+        x = 0.5,
+        y = 0.5,
+        labels = "Other image origins are not supported yet.",
+        cex = 1.2
+      )
+      return(invisible(NULL))
+    }
+    
     plot_face_image(
       face_image_path = face_image_path(),
-      face_centered_on_screen = input$face_centered_on_screen
+      image_origin = input$image_origin
     )
   })
   
   # Screen view functions -----
   
   output$view_screen <- renderPlot({
+    req(input$screen_origin)
+    
+    if (identical(input$screen_origin, "other")) {
+      plot.new()
+      box()
+      text(
+        x = 0.5,
+        y = 0.55,
+        labels = "Other screen origins are not supported yet.",
+        cex = 1.2,
+        font = 2
+      )
+      text(
+        x = 0.5,
+        y = 0.45,
+        labels = "Choose Top left or Centre to continue.",
+        cex = 1
+      )
+      return(invisible(NULL))
+    }
+    
     plot_screen(
       fixrep = fixrep(),
       fix_x = "FIX_X",
-      fix_y = "FIX_Y"
+      fix_y = "FIX_Y",
+      screen_origin = input$screen_origin
     )
   })
+  
 }

@@ -81,8 +81,18 @@ ui <- page_fillable(
         
         card(
           card_header("input"),
-          # screen inputs go here
           card_body(
+            radioButtons(
+              "screen_origin",
+              "Screen origin",
+              choices = c(
+                "Top left" = "top_left",
+                "Centre" = "center",
+                "Other" = "other"
+              ),
+              selected = "top_left"
+            ),
+            
             div(
               class = "dev-note",
               strong("Note to self: "),
@@ -112,7 +122,7 @@ ui <- page_fillable(
             checkboxInput(
               "use_bundled_face",
               "Use bundled face",
-              value = TRUE
+              value = FALSE
             ),
             
             fileInput(
@@ -121,6 +131,37 @@ ui <- page_fillable(
               accept = c(".png", ".jpg", ".jpeg")
             ),
             
+            radioButtons(
+              "image_origin",
+              "Image origin",
+              choices = c(
+                "Top left" = "top_left",
+                "Centre" = "center",
+                "Other" = "other"
+              ),
+              selected = "top_left"
+            )
+          )
+        ),
+        
+        card(
+          card_header("view"),
+          # image view outputs go here
+          card_body(
+            plotOutput("view_face")
+          )
+        )
+      )
+    ),
+    
+    nav_panel(
+      "sanity",
+      layout_columns(
+        col_widths = c(4, 8),
+        
+        card(
+          card_header("verify params"),
+          card_body(
             checkboxInput(
               "face_centered_on_screen",
               "Face was presented in center of screen",
@@ -130,11 +171,8 @@ ui <- page_fillable(
         ),
         
         card(
-          card_header("view"),
-          # image view outputs go here
-          card_body(
-            plotOutput("face_display")
-          )
+          card_header("view eveything"),
+          card_body()
         )
       )
     )

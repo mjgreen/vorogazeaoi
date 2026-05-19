@@ -29,6 +29,14 @@ server <- function(input, output, session) {
     )
   })
   
+  screen_fixrep <- reactive({
+    if (is.null(input$upload_fixrep)) {
+      return(NULL)
+    }
+    
+    fixrep()
+  })
+  
   output$fixrep_mapping_ui <- renderUI({
     cols <- tryCatch(
       names(fixrep_raw()),
@@ -201,7 +209,7 @@ server <- function(input, output, session) {
     screen <- screen_params()
     
     plot_screen(
-      fixrep = fixrep(),
+      fixrep = screen_fixrep(),
       fix_x = "FIX_X",
       fix_y = "FIX_Y",
       screen_left = screen$left,

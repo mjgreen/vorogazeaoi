@@ -47,11 +47,11 @@ server <- function(input, output, session) {
   
   # Screen view functions -----
   
-  output$view_screen <- renderPlot(
+  output$view_screen <- renderPlot({
     plot_screen(
-      fixrep_path = "fixrep_alex1_offset_faces_nice_names.csv",
-      fix_x = "CURRENT_FIX_X",
-      fix_y = "CURRENT_FIX_Y"
+      fixrep = fixrep(),
+      fix_x = "FIX_X",
+      fix_y = "FIX_Y"
     )
-  )
+  })
 }

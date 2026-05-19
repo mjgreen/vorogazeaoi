@@ -1,5 +1,5 @@
 plot_screen <- function(
-    fixrep_path = NULL,
+    fixrep = NULL,
     fix_x = "FIX_X",
     fix_y = "FIX_Y",
     screen_left = 0,
@@ -13,9 +13,7 @@ plot_screen <- function(
   on.exit(par(old_par))
   
   # Read fixation report, if supplied
-  if (!is.null(fixrep_path)) {
-    fixrep <- readr::read_csv(fixrep_path, show_col_types = FALSE)
-    
+  if (!is.null(fixrep)) {
     fix_x_values <- fixrep[[fix_x]]
     fix_y_values <- fixrep[[fix_y]]
     
@@ -29,16 +27,34 @@ plot_screen <- function(
   
   # Plotting region must include both screen and all valid fixations,
   # plus a small pad around the most extreme fixations
-  plot_left <- min(c(screen_left, fix_x_values), na.rm = TRUE) - fixation_pad
-  plot_right <- max(c(screen_right, fix_x_values), na.rm = TRUE) + fixation_pad
-  plot_top <- max(c(screen_top, fix_y_values), na.rm = TRUE) + fixation_pad
-  plot_bottom <- min(c(screen_bottom, fix_y_values), na.rm = TRUE) - fixation_pad
+  fix_min_x <- min(fix_x_values, na.rm = TRUE)
+  fix_max_x <- max(fix_x_values, na.rm = TRUE)
+  fix_min_y <- min(fix_y_values, na.rm = TRUE)
+  fix_max_y <- max(fix_y_values, na.rm = TRUE)
   
-  # But never let padding shrink or distort the screen reference
-  plot_left <- min(plot_left, screen_left)
-  plot_right <- max(plot_right, screen_right)
-  plot_top <- max(plot_top, screen_top)
-  plot_bottom <- min(plot_bottom, screen_bottom)
+  plot_left <- if (fix_min_x < screen_left) {
+    fix_min_x - fixation_pad
+  } else {
+    screen_left
+  }
+  
+  plot_right <- if (fix_max_x > screen_right) {
+    fix_max_x + fixation_pad
+  } else {
+    screen_right
+  }
+  
+  plot_bottom <- if (fix_min_y < screen_bottom) {
+    fix_min_y - fixation_pad
+  } else {
+    screen_bottom
+  }
+  
+  plot_top <- if (fix_max_y > screen_top) {
+    fix_max_y + fixation_pad
+  } else {
+    screen_top
+  }
   
   x_ticks <- seq(
     floor(plot_left / tick_by) * tick_by,
@@ -96,8 +112,10 @@ plot_screen <- function(
     points(
       x = fix_x_values,
       y = fix_y_values,
-      pch = 19,
-      cex = 0.6
+      pch = 4,
+      cex = 1,
+      lwd = 4,
+      col = "#FF0000"
     )
   }
 }

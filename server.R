@@ -220,6 +220,10 @@ server <- function(input, output, session) {
     )
   })
   
+  output$view_screen_click_coords <- renderText({
+    format_plot_click(input$view_screen_click)
+  })
+  
   # Sanity view functions ----
   
   output$sanity_filter_ui <- renderUI({
@@ -388,6 +392,10 @@ server <- function(input, output, session) {
       screen_origin = input$screen_origin,
       image_origin = input$image_origin
     )
+  })
+  
+  output$view_sanity_click_coords <- renderText({
+    format_plot_click(input$view_sanity_click)
   })
   
   # developer pane functions ---

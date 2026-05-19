@@ -126,7 +126,14 @@ ui <- page_fillable(
         card(
           card_header("view"),
           card_body(
-            plotOutput("view_screen")
+            plotOutput(
+              "view_screen",
+              click = "view_screen_click"
+            ),
+            div(
+              class = "plot-click-coordinates",
+              textOutput("view_screen_click_coords")
+            )
           )
         )
       )
@@ -191,7 +198,16 @@ ui <- page_fillable(
         card(
           card_header("view everything"),
           card_body(
-            plotOutput("view_sanity", width = "100%", height = "600px")
+            plotOutput(
+              "view_sanity",
+              width = "100%",
+              height = "600px",
+              click = "view_sanity_click"
+            ),
+            div(
+              class = "plot-click-coordinates",
+              textOutput("view_sanity_click_coords")
+            )
           )
         )
       )

@@ -26,3 +26,11 @@ plot_message <- function(title, subtitle = NULL, title_cex = 1.2) {
   
   invisible(NULL)
 }
+
+format_plot_click <- function(click) {
+  if (is.null(click)) {
+    return("Click plot to show coordinates")
+  }
+  
+  sprintf("x: %.1f, y: %.1f", click$x, click$y)
+}

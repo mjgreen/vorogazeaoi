@@ -93,10 +93,32 @@ ui <- page_fillable(
               selected = "top_left"
             ),
             
-            div(
-              class = "dev-note",
-              strong("Note to self: "),
-              "define and process the origin"
+            numericInput(
+              "screen_left",
+              "Screen left",
+              value = 0,
+              step = 1
+            ),
+            
+            numericInput(
+              "screen_right",
+              "Screen right",
+              value = 1600,
+              step = 1
+            ),
+            
+            numericInput(
+              "screen_top",
+              "Screen top",
+              value = 900,
+              step = 1
+            ),
+            
+            numericInput(
+              "screen_bottom",
+              "Screen bottom",
+              value = 0,
+              step = 1
             )
           )
         ),
@@ -104,7 +126,6 @@ ui <- page_fillable(
         card(
           card_header("view"),
           card_body(
-            # screen view outputs go here
             plotOutput("view_screen")
           )
         )

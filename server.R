@@ -75,6 +75,22 @@ server <- function(input, output, session) {
   
   # Screen view functions -----
   
+  screen_params <- reactive({
+    req(
+      input$screen_left,
+      input$screen_right,
+      input$screen_top,
+      input$screen_bottom
+    )
+    
+    list(
+      left = input$screen_left,
+      right = input$screen_right,
+      top = input$screen_top,
+      bottom = input$screen_bottom
+    )
+  })
+  
   output$view_screen <- renderPlot({
     req(input$screen_origin)
     
@@ -97,10 +113,16 @@ server <- function(input, output, session) {
       return(invisible(NULL))
     }
     
+    screen <- screen_params()
+    
     plot_screen(
       fixrep = fixrep(),
       fix_x = "FIX_X",
       fix_y = "FIX_Y",
+      screen_left = screen$left,
+      screen_right = screen$right,
+      screen_top = screen$top,
+      screen_bottom = screen$bottom,
       screen_origin = input$screen_origin
     )
   })
@@ -129,12 +151,18 @@ server <- function(input, output, session) {
       return(invisible(NULL))
     }
     
+    screen <- screen_params()
+    
     plot_sanity(
       fixrep = fixrep(),
       face_image_path = face_image_path(),
       face_centered_on_screen = input$face_centered_on_screen,
       fix_x = "FIX_X",
       fix_y = "FIX_Y",
+      screen_left = screen$left,
+      screen_right = screen$right,
+      screen_top = screen$top,
+      screen_bottom = screen$bottom,
       screen_origin = input$screen_origin
     )
   })

@@ -121,6 +121,19 @@ label,
   white-space: nowrap;
 }
 
+.dt-table-output table.dataTable thead input,
+.dt-table-output table.dataTable thead select {
+  font-size: var(--vz-control-value-font-size) !important;
+  line-height: 1.1rem !important;
+  min-height: 1.25rem;
+  padding: 1px 4px !important;
+  width: 100% !important;
+}
+
+.dt-table-output .dataTables_scrollBody thead div:has(.noUi-target) {
+  display: none !important;
+}
+
 .dt-table-output .dataTables_info,
 .dt-table-output .dataTables_paginate,
 .dt-table-output .dt-info,

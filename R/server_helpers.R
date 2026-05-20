@@ -1,14 +1,26 @@
 # Server helper functions ----
 
-# Returns the bundled face directory path if it exists, otherwise NULL.
-default_face_dir_path <- function() {
-  path <- normalizePath(
-    file.path(getwd(), "faces", "faces_300x350"),
-    winslash = "/",
-    mustWork = FALSE
+# Returns the first existing app file path for installed and source-tree runs.
+app_file_path <- function(...) {
+  candidates <- c(
+    system.file("app", ..., package = "vorogazeaoi3", mustWork = FALSE),
+    file.path(getwd(), "inst", "app", ...),
+    file.path(getwd(), ...)
   )
   
-  if (dir.exists(path)) path else NULL
+  candidates <- candidates[nzchar(candidates)]
+  matches <- candidates[file.exists(candidates)]
+  
+  if (length(matches) == 0) {
+    return(NULL)
+  }
+  
+  normalizePath(matches[1], winslash = "/", mustWork = FALSE)
+}
+
+# Returns the bundled face directory path if it exists, otherwise NULL.
+default_face_dir_path <- function() {
+  app_file_path("faces", "faces_300x350")
 }
 
 # Resolves the chosen shinyFiles directory, falling back to the bundled faces.

@@ -22,6 +22,17 @@ app_head <- function() {
   )
 }
 
+# Reads a bundled app text file, returning an empty string if it is unavailable.
+read_app_text <- function(...) {
+  path <- app_file_path(...)
+  
+  if (is.null(path)) {
+    return("")
+  }
+  
+  paste(readLines(path, warn = FALSE), collapse = "\n")
+}
+
 # Wraps a plot and hover label in the positioned container Shiny needs.
 hover_plot_box <- function(plot_id, hover_id, label_id, style = NULL, label_style = NULL) {
   shiny::div(
@@ -209,7 +220,7 @@ developer_markdown_card <- function(title, input_id, output_id, file_path, label
       shiny::textAreaInput(
         input_id,
         label,
-        value = paste(readLines(file_path, warn = FALSE), collapse = "\n"),
+        value = read_app_text(file_path),
         width = "100%",
         height = "220px"
       ),

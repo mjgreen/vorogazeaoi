@@ -1,0 +1,22 @@
+Package: vorogazeaoi3
+Title: Vorogaze Shiny App
+Version: 0.0.0.9000
+Authors@R: person("Matt", "Green", email = "mjgreen@users.noreply.github.com", role = c("aut", "cre"))
+Description: A Shiny app for inspecting fixation reports, screen coordinates,
+    face images, and combined sanity-check views.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Imports:
+    bslib,
+    dplyr,
+    magick,
+    markdown,
+    png,
+    readr,
+    readxl,
+    shiny,
+    shinyFiles,
+    stringr,
+    tibble

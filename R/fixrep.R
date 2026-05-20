@@ -1,7 +1,5 @@
 # Fixation report helpers -----
 
-library(tibble)
-
 ## mini-helpers ----
 
 # Converts text-like numeric columns to numbers while quietly keeping NAs.
@@ -48,21 +46,21 @@ format_table_int <- function(df) {
 # Reads the mapping select inputs and requires each one before standardising.
 req_fixrep_map <- function(input) {
   list(
-    participant = req(input$map_participant),
-    face        = req(input$map_face),
-    trial       = req(input$map_trial),
-    condition   = req(input$map_condition),
-    fix_x       = req(input$map_fix_x),
-    fix_y       = req(input$map_fix_y),
-    fix_dur     = req(input$map_fix_dur),
-    img_x       = req(input$map_img_x),
-    img_y       = req(input$map_img_y)
+    participant = shiny::req(input$map_participant),
+    face        = shiny::req(input$map_face),
+    trial       = shiny::req(input$map_trial),
+    condition   = shiny::req(input$map_condition),
+    fix_x       = shiny::req(input$map_fix_x),
+    fix_y       = shiny::req(input$map_fix_y),
+    fix_dur     = shiny::req(input$map_fix_dur),
+    img_x       = shiny::req(input$map_img_x),
+    img_y       = shiny::req(input$map_img_y)
   )
 }
 
 # Renames and coerces the uploaded fixation report into the app's standard columns.
 standardise_fixrep <- function(raw, map) {
-  tibble(
+  tibble::tibble(
     SUBJECT   = as.character(raw[[map$participant]]),
     FACE      = as.character(raw[[map$face]]),
     TRIAL_ID  = to_int_if_possible(raw[[map$trial]]),

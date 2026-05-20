@@ -1,4 +1,4 @@
-library(markdown)
+# General app helpers ----
 
 # Returns the fallback value when the first value is NULL.
 `%||%` <- function(x, y) {

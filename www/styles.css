@@ -85,14 +85,16 @@ label,
 .card:has(.fixrep-upload-box) .card-body,
 .card:has(.fixrep-mapping-ui) .card-body,
 .card:has(.compact-table-output) .card-body,
-.card:has(.dt-table-output) .card-body {
+.card:has(.dt-table-output) .card-body,
+.card:has(.fixrep-summary-output) .card-body {
   padding: var(--vz-card-padding) !important;
 }
 
 .card:has(.fixrep-upload-box) .card-header,
 .card:has(.fixrep-mapping-ui) .card-header,
 .card:has(.compact-table-output) .card-header,
-.card:has(.dt-table-output) .card-header {
+.card:has(.dt-table-output) .card-header,
+.card:has(.fixrep-summary-output) .card-header {
   padding: 0.35rem 0.5rem !important;
   font-size: var(--vz-ui-font-size) !important;
 }

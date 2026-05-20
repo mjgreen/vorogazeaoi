@@ -151,12 +151,33 @@ make_fixrep_mapping_ui <- function(cols) {
 
 ## low-level helpers ----
 
-# Reads a fixation report from text or Excel and performs light column cleanup.
+# Adds derived columns used for mapping without changing the imported raw data.
+prepare_fixrep_for_standardisation <- function(raw) {
+  requireNamespace("stringr", quietly = TRUE)
+  requireNamespace("tibble", quietly = TRUE)
+  
+  out <- tibble::as_tibble(raw)
+  location_col <- intersect(c("location_b1", "face_location"), names(out))[1]
+  
+  if (!is.na(location_col)) {
+    loc <- out[[location_col]] |>
+      as.character() |>
+      stringr::str_remove_all("[()]") |>
+      stringr::str_split_fixed(",", 2)
+    
+    out$image_location_x <- suppressWarnings(as.numeric(stringr::str_trim(loc[, 1])))
+    out$image_location_y <- suppressWarnings(as.numeric(stringr::str_trim(loc[, 2])))
+  }
+  
+  attr(out, "read_mode") <- attr(raw, "read_mode", exact = TRUE)
+  out
+}
+
+# Reads a fixation report from text or Excel while preserving imported columns.
 read_fixrep <- function(path) {
   stopifnot(length(path) == 1, is.character(path), file.exists(path))
   
   requireNamespace("readr", quietly = TRUE)
-  requireNamespace("dplyr", quietly = TRUE)
   requireNamespace("stringr", quietly = TRUE)
   requireNamespace("tibble", quietly = TRUE)
   requireNamespace("readxl", quietly = TRUE)
@@ -222,46 +243,8 @@ read_fixrep <- function(path) {
   nm <- stringr::str_replace_all(nm, "\uFEFF", "")
   nm <- stringr::str_trim(nm)
   names(raw) <- nm
-  
-  location_col <- intersect(c("location_b1", "face_location"), names(raw))[1]
-  
-  if (!is.na(location_col)) {
-    loc <- raw[[location_col]] |>
-      as.character() |>
-      stringr::str_remove_all("[()]") |>
-      stringr::str_split_fixed(",", 2)
-    
-    raw$image_location_x <- suppressWarnings(as.numeric(stringr::str_trim(loc[, 1])))
-    raw$image_location_y <- suppressWarnings(as.numeric(stringr::str_trim(loc[, 2])))
-  }
-  
-  out <- raw
-  
-  if ("RECORDING_SESSION_LABEL" %in% names(out)) {
-    out <- dplyr::mutate(out, RECORDING_SESSION_LABEL = suppressWarnings(as.integer(.data$RECORDING_SESSION_LABEL)))
-  }
-  if ("TRIAL_INDEX" %in% names(out)) {
-    out <- dplyr::mutate(out, TRIAL_INDEX = suppressWarnings(as.integer(.data$TRIAL_INDEX)))
-  }
-  if ("CURRENT_FIX_INDEX" %in% names(out)) {
-    out <- dplyr::mutate(out, CURRENT_FIX_INDEX = suppressWarnings(as.integer(.data$CURRENT_FIX_INDEX)))
-  }
-  if ("CURRENT_FIX_X" %in% names(out)) {
-    out <- dplyr::mutate(out, CURRENT_FIX_X = suppressWarnings(as.numeric(.data$CURRENT_FIX_X)))
-  }
-  if ("CURRENT_FIX_Y" %in% names(out)) {
-    out <- dplyr::mutate(out, CURRENT_FIX_Y = suppressWarnings(as.numeric(.data$CURRENT_FIX_Y)))
-  }
-  if ("CURRENT_FIX_DURATION" %in% names(out)) {
-    out <- dplyr::mutate(out, CURRENT_FIX_DURATION = suppressWarnings(as.numeric(.data$CURRENT_FIX_DURATION)))
-  }
-  if (all(c("CURRENT_FIX_X", "CURRENT_FIX_Y") %in% names(out))) {
-    out <- dplyr::mutate(out, FIX_X = .data$CURRENT_FIX_X, FIX_Y = .data$CURRENT_FIX_Y)
-  }
-  if ("CURRENT_FIX_DURATION" %in% names(out)) {
-    out <- dplyr::mutate(out, FIX_DUR = .data$CURRENT_FIX_DURATION)
-  }
-  out <- tibble::as_tibble(out)
-  attr(out, "read_mode") <- res$mode
-  out
+
+  raw <- tibble::as_tibble(raw)
+  attr(raw, "read_mode") <- res$mode
+  raw
 }

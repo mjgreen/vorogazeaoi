@@ -1,3 +1,4 @@
+# Extracts complete, finite fixation x/y pairs from a standardised fixation report.
 fixation_values <- function(fixrep, fix_x = "FIX_X", fix_y = "FIX_Y") {
   if (is.null(fixrep) || nrow(fixrep) == 0) {
     return(list(x = numeric(0), y = numeric(0)))
@@ -18,6 +19,7 @@ fixation_values <- function(fixrep, fix_x = "FIX_X", fix_y = "FIX_Y") {
   )
 }
 
+# Expands plot limits when fixations fall outside the screen or image area.
 expand_plot_bounds <- function(
     left,
     right,
@@ -44,6 +46,7 @@ expand_plot_bounds <- function(
   )
 }
 
+# Draws the screen coordinate system and overlays any available fixation points.
 plot_screen <- function(
     fixrep = NULL,
     fix_x = "FIX_X",
@@ -57,10 +60,6 @@ plot_screen <- function(
     fixation_pad = 50
 ) {
   screen_origin <- match.arg(screen_origin)
-  
-  # dont use
-  # old_par <- par(no.readonly = TRUE)
-  # on.exit(par(old_par))
   
   screen_width <- screen_right - screen_left
   screen_height <- abs(screen_bottom - screen_top)

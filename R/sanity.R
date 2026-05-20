@@ -1,3 +1,4 @@
+# Checks whether the current data has one usable IMG_X/IMG_Y placement.
 image_position_values <- function(fixrep, img_x = "IMG_X", img_y = "IMG_Y") {
   if (
     is.null(fixrep) ||
@@ -22,6 +23,7 @@ image_position_values <- function(fixrep, img_x = "IMG_X", img_y = "IMG_Y") {
   list(status = "valid", x = image_x_value, y = image_y_value)
 }
 
+# Draws the combined screen, face image, and fixation sanity-check plot.
 plot_sanity <- function(
     fixrep = NULL,
     face_image_path = NULL,
@@ -49,10 +51,6 @@ plot_sanity <- function(
   screen_origin <- match.arg(screen_origin)
   image_origin <- match.arg(image_origin)
   image_position <- match.arg(image_position)
-  
-  # dont use
-  # old_par <- par(no.readonly = TRUE)
-  # on.exit(par(old_par))
   
   screen_width <- screen_right - screen_left
   screen_height <- abs(screen_bottom - screen_top)

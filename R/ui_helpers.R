@@ -74,6 +74,27 @@ fixrep_preview_card <- function(title, output_id) {
   )
 }
 
+standardised_fixrep_tabs <- function() {
+  bslib::navset_card_tab(
+    full_screen = TRUE,
+    title = "Standardised fixation report",
+    bslib::nav_panel(
+      "Table",
+      shiny::div(
+        class = "dt-table-output",
+        DT::DTOutput("fixrep_preview")
+      )
+    ),
+    bslib::nav_panel(
+      "Summary",
+      shiny::div(
+        class = "dt-table-output fixrep-summary-output",
+        DT::DTOutput("fixrep_summary")
+      )
+    )
+  )
+}
+
 # Assembles the fixation report upload and preview tab.
 fixations_panel <- function() {
   bslib::nav_panel(
@@ -86,7 +107,7 @@ fixations_panel <- function() {
         col_widths = 12,
         height = "100%",
         fixrep_preview_card("Raw view of the uploaded fixation report", "fixrep_raw_preview"),
-        fixrep_preview_card("Standardised version of the fixation report", "fixrep_preview")
+        standardised_fixrep_tabs()
       )
     )
   )

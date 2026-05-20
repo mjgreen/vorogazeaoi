@@ -12,7 +12,7 @@ to_num <- function(x) {
 # Converts a column to integer only when every non-missing value is whole.
 to_int_if_possible <- function(x) {
   x_num <- suppressWarnings(as.numeric(x))
-  
+
   if (all(!is.na(x_num) | is.na(x)) && all(x_num == floor(x_num), na.rm = TRUE)) {
     as.integer(x_num)
   } else {
@@ -31,9 +31,9 @@ choose_col <- function(cols, candidates) {
 # Formats all-whole numeric columns as integers for cleaner preview tables.
 format_table_int <- function(df) {
   if (is.null(df)) return(df)
-  
+
   df <- tibble::as_tibble(df)
-  
+
   df |>
     dplyr::mutate(
       dplyr::across(
@@ -41,6 +41,65 @@ format_table_int <- function(df) {
         as.integer
       )
     )
+}
+
+# Coerces categorical-looking character columns for a more useful summary().
+format_fixrep_for_summary <- function(df, max_levels = 50, max_unique_fraction = 0.25) {
+  if (is.null(df)) return(df)
+
+  df <- tibble::as_tibble(df)
+
+  df[] <- lapply(df, function(x) {
+    if (!is.character(x)) return(x)
+
+    non_missing <- x[!is.na(x)]
+    n_non_missing <- length(non_missing)
+
+    if (n_non_missing == 0) {
+      return(factor(x))
+    }
+
+    n_unique <- length(unique(non_missing))
+
+    if (n_unique <= max_levels || n_unique / n_non_missing <= max_unique_fraction) {
+      factor(x)
+    } else {
+      x
+    }
+  })
+
+  df
+}
+
+fixrep_summary_table <- function(df) {
+  if (is.null(df)) return(tibble::tibble())
+
+  df <- format_fixrep_for_summary(df)
+  summary_lines <- lapply(df, fixrep_column_summary_lines)
+  n_rows <- max(lengths(summary_lines), 0)
+
+  if (n_rows == 0) return(tibble::tibble())
+
+  summary_lines <- lapply(summary_lines, \(x) c(x, rep("", n_rows - length(x))))
+  tibble::as_tibble(summary_lines, .name_repair = "minimal")
+}
+
+fixrep_column_summary_lines <- function(x, maxsum = 7L) {
+  summary_x <- summary(x, maxsum = maxsum)
+  labels <- names(summary_x)
+
+  if (is.null(labels)) {
+    return(capture.output(summary_x))
+  }
+
+  values <- unname(summary_x)
+  label_width <- max(nchar(labels), na.rm = TRUE)
+
+  paste0(
+    format(labels, width = label_width, justify = "left"),
+    ": ",
+    format(values, trim = TRUE)
+  )
 }
 
 ## constructor helpers ----
@@ -78,7 +137,7 @@ standardise_fixrep <- function(raw, map) {
 
 # Builds the column-mapping controls after a fixation report has been uploaded.
 make_fixrep_mapping_ui <- function(cols) {
-  
+
   shiny::tagList(
     div(
       class = "fixrep-mapping-title",
@@ -90,56 +149,56 @@ make_fixrep_mapping_ui <- function(cols) {
       choices = cols,
       selected = choose_col(cols, c("RECORDING_SESSION_LABEL"))
     ),
-    
+
     shiny::selectInput(
       "map_face",
       "FACE",
       choices = cols,
       selected = choose_col(cols, c("face", "file", "which_face", "file_b1", "FACE"))
     ),
-    
+
     shiny::selectInput(
       "map_trial",
       "TRIAL",
       choices = cols,
       selected = choose_col(cols, c("TRIAL_INDEX"))
     ),
-    
+
     shiny::selectInput(
       "map_condition",
       "CONDITION",
       choices = cols,
       selected = choose_col(cols, c("condition", "position"))
     ),
-    
+
     shiny::selectInput(
       "map_fix_x",
       "FIXATION X",
       choices = cols,
       selected = choose_col(cols, c("CURRENT_FIX_X"))
     ),
-    
+
     shiny::selectInput(
       "map_fix_y",
       "FIXATION Y",
       choices = cols,
       selected = choose_col(cols, c("CURRENT_FIX_Y"))
     ),
-    
+
     shiny::selectInput(
       "map_fix_dur",
       "FIXATION DURATION",
       choices = cols,
       selected = choose_col(cols, c("CURRENT_FIX_DURATION"))
     ),
-    
+
     shiny::selectInput(
       "map_img_x",
       "IMAGE X",
       choices = cols,
       selected = choose_col(cols, c("image_location_x", "image_x"))
     ),
-    
+
     shiny::selectInput(
       "map_img_y",
       "IMAGE Y",
@@ -155,20 +214,20 @@ make_fixrep_mapping_ui <- function(cols) {
 prepare_fixrep_for_standardisation <- function(raw) {
   requireNamespace("stringr", quietly = TRUE)
   requireNamespace("tibble", quietly = TRUE)
-  
+
   out <- tibble::as_tibble(raw)
   location_col <- intersect(c("location_b1", "face_location"), names(out))[1]
-  
+
   if (!is.na(location_col)) {
     loc <- out[[location_col]] |>
       as.character() |>
       stringr::str_remove_all("[()]") |>
       stringr::str_split_fixed(",", 2)
-    
+
     out$image_location_x <- suppressWarnings(as.numeric(stringr::str_trim(loc[, 1])))
     out$image_location_y <- suppressWarnings(as.numeric(stringr::str_trim(loc[, 2])))
   }
-  
+
   attr(out, "read_mode") <- attr(raw, "read_mode", exact = TRUE)
   out
 }
@@ -176,27 +235,27 @@ prepare_fixrep_for_standardisation <- function(raw) {
 # Reads a fixation report from text or Excel while preserving imported columns.
 read_fixrep <- function(path) {
   stopifnot(length(path) == 1, is.character(path), file.exists(path))
-  
+
   requireNamespace("readr", quietly = TRUE)
   requireNamespace("stringr", quietly = TRUE)
   requireNamespace("tibble", quietly = TRUE)
   requireNamespace("readxl", quietly = TRUE)
-  
+
   ext <- tolower(tools::file_ext(path))
-  
+
   # Reads CSV/TSV-like files after guessing whether tabs or commas are dominant.
   read_as_text <- function(path) {
     first_line <- readLines(path, n = 1, warn = FALSE)
-    
+
     if (length(first_line) == 0) {
       stop("Fixation report appears to be empty.")
     }
-    
+
     n_tabs <- stringr::str_count(first_line, "\t")
     n_commas <- stringr::str_count(first_line, ",")
-    
+
     delim <- if (n_tabs >= n_commas) "\t" else ","
-    
+
     raw <- readr::read_delim(
       file = path,
       delim = delim,
@@ -205,10 +264,10 @@ read_fixrep <- function(path) {
       progress = FALSE,
       show_col_types = FALSE
     )
-    
+
     list(data = raw, mode = sprintf("delimited text (%s)", if (delim == "\t") "tab" else "comma"))
   }
-  
+
   # Reads the first worksheet from Excel files while preserving columns as text.
   read_as_excel <- function(path) {
     raw <- readxl::read_excel(
@@ -218,12 +277,12 @@ read_fixrep <- function(path) {
       .name_repair = "unique"
     ) |>
       tibble::as_tibble()
-    
+
     list(data = raw, mode = "Excel workbook")
   }
-  
+
   res <- NULL
-  
+
   if (ext %in% c("xls", "xlsx")) {
     res <- tryCatch(
       read_as_excel(path),
@@ -236,9 +295,9 @@ read_fixrep <- function(path) {
   } else {
     res <- read_as_text(path)
   }
-  
+
   raw <- res$data
-  
+
   nm <- names(raw)
   nm <- stringr::str_replace_all(nm, "\uFEFF", "")
   nm <- stringr::str_trim(nm)

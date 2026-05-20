@@ -1,6 +1,6 @@
 server <- function(input, output, session) {
-  
-  # Directory browser setup -----
+
+  # Directory browser setup ----
   
   volumes <- shinyFiles::getVolumes()()
   
@@ -11,7 +11,7 @@ server <- function(input, output, session) {
     session = session
   )
   
-  # Fixation report functions -----
+  # Fixation report tab ----
   
   fixrep_raw <- reactive({
     req(input$upload_fixrep)
@@ -72,81 +72,32 @@ server <- function(input, output, session) {
       format_table_int()
   })
   
-  # Face directory and image functions -----
+  # Face directory and image tab ----
   
-  default_face_dir <- normalizePath(
-    file.path(getwd(), "faces", "faces_300x350"),
-    winslash = "/",
-    mustWork = FALSE
-  )
+  default_face_dir <- default_face_dir_path()
   
   face_dir_path <- reactive({
-    if (!is.null(input$face_dir)) {
-      path <- shinyFiles::parseDirPath(volumes, input$face_dir)
-      
-      if (length(path) > 0) {
-        return(path)
-      }
-    }
-    
-    if (dir.exists(default_face_dir)) {
-      return(default_face_dir)
-    }
-    
-    NULL
+    selected_face_dir_path(
+      input = input,
+      volumes = volumes,
+      default_dir = default_face_dir
+    )
   })
   
   output$face_dir_display <- renderText({
-    path <- face_dir_path()
-    
-    if (is.null(path)) {
-      return("None")
-    }
-    
-    path
+    face_dir_path() %||% "None"
   })
   
   face_files <- reactive({
-    dir <- face_dir_path()
-    
-    if (is.null(dir) || !dir.exists(dir)) {
-      return(character(0))
-    }
-    
-    list.files(
-      path = dir,
-      pattern = "\\.(png|jpg|jpeg)$",
-      full.names = TRUE,
-      ignore.case = TRUE
-    )
+    list_face_image_files(face_dir_path())
   })
   
   output$face_file_ui <- renderUI({
-    files <- face_files()
-    
-    if (length(files) == 0) {
-      return(
-        div(
-          class = "dev-note",
-          "No .png, .jpg, or .jpeg files found in this directory."
-        )
-      )
-    }
-    
-    selectInput(
-      "selected_face_file",
-      "Face image",
-      choices = stats::setNames(files, basename(files)),
-      selected = files[1]
-    )
+    make_face_file_ui(face_files())
   })
   
   face_image_path <- reactive({
-    if (is.null(input$selected_face_file)) {
-      return(NULL)
-    }
-    
-    input$selected_face_file
+    input$selected_face_file %||% NULL
   })
   
   sanity_face_image_path <- reactive({
@@ -177,22 +128,10 @@ server <- function(input, output, session) {
     )
   })
   
-  # Screen view functions -----
+  # Screen tab ----
   
   screen_params <- reactive({
-    req(
-      input$screen_left,
-      input$screen_right,
-      input$screen_top,
-      input$screen_bottom
-    )
-    
-    list(
-      left = input$screen_left,
-      right = input$screen_right,
-      top = input$screen_top,
-      bottom = input$screen_bottom
-    )
+    screen_params_from_input(input)
   })
   
   output$view_screen <- renderPlot({
@@ -221,52 +160,14 @@ server <- function(input, output, session) {
   })
   
   output$view_screen_hover_label <- renderUI({
-    hover <- input$view_screen_hover
-    req(hover)
-    
-    div(
-      style = paste0(
-        "position: absolute;",
-        "left: ", hover$coords_css$x + 12, "px;",
-        "top: ", hover$coords_css$y + 12, "px;",
-        "z-index: 1000;",
-        "pointer-events: none;",
-        "background: rgba(255, 255, 255, 0.9);",
-        "border: 1px solid #ccc;",
-        "border-radius: 4px;",
-        "padding: 2px 6px;",
-        "font-size: 12px;",
-        "font-family: monospace;"
-      ),
-      sprintf("x = %.0f, y = %.0f", hover$x, hover$y)
-    )
+    hover_coordinate_label(input$view_screen_hover)
   })
   
-  # Sanity view functions ----
+  # Sanity tab ----
   
   output$sanity_filter_ui <- renderUI({
     req(fixrep())
-    
-    dat <- fixrep()
-    
-    faces <- sort(unique(dat$FACE))
-    conditions <- sort(unique(dat$CONDITION))
-    
-    tagList(
-      selectInput(
-        "sanity_face",
-        "Face",
-        choices = faces,
-        selected = faces[1]
-      ),
-      
-      selectInput(
-        "sanity_condition",
-        "Condition",
-        choices = conditions,
-        selected = conditions[1]
-      )
-    )
+    make_sanity_filter_ui(fixrep())
   })
   
   sanity_fixrep <- reactive({
@@ -279,19 +180,11 @@ server <- function(input, output, session) {
       error = function(e) NULL
     )
     
-    if (is.null(dat)) {
-      return(NULL)
-    }
-    
-    if (!is.null(input$sanity_face) && "FACE" %in% names(dat)) {
-      dat <- dat[dat$FACE == input$sanity_face, , drop = FALSE]
-    }
-    
-    if (!is.null(input$sanity_condition) && "CONDITION" %in% names(dat)) {
-      dat <- dat[dat$CONDITION == input$sanity_condition, , drop = FALSE]
-    }
-    
-    dat
+    filter_sanity_fixrep(
+      dat = dat,
+      face = input$sanity_face,
+      condition = input$sanity_condition
+    )
   })
   
   invalid_image_position_use_center <- reactiveVal(FALSE)
@@ -318,7 +211,7 @@ server <- function(input, output, session) {
   
   sanity_image_position_info <- reactive({
     if (is.null(input$upload_fixrep)) {
-      return(list(status = "missing", x = NA_real_, y = NA_real_))
+      return(missing_image_position_info())
     }
     
     req(input$sanity_face, input$sanity_condition)
@@ -359,7 +252,7 @@ server <- function(input, output, session) {
     image_position_info <- if (isTRUE(has_fixrep)) {
       sanity_image_position_info()
     } else {
-      list(status = "missing", x = NA_real_, y = NA_real_)
+      missing_image_position_info()
     }
     
     if (
@@ -367,21 +260,7 @@ server <- function(input, output, session) {
       !isTRUE(invalid_image_position_use_center())
     ) {
       if (!isTRUE(invalid_image_position_dismissed())) {
-        showModal(modalDialog(
-          title = "Image placement is ambiguous",
-          "The selected face and condition have IMG_X and IMG_Y columns, but they do not resolve to one valid image position.",
-          footer = tagList(
-            actionButton(
-              inputId = "dismiss_invalid_image_position",
-              label = "Keep checking data"
-            ),
-            actionButton(
-              inputId = "use_center_for_invalid_image_position",
-              label = "Use screen centre"
-            )
-          ),
-          easyClose = TRUE
-        ))
+        show_invalid_image_position_modal()
       }
       
       plot_message(
@@ -413,57 +292,25 @@ server <- function(input, output, session) {
   })
   
   output$view_sanity_hover_label <- renderUI({
-    hover <- input$view_sanity_hover
-    req(hover)
-    
-    div(
-      style = paste0(
-        "position: absolute;",
-        "left: ", hover$coords_css$x + 12, "px;",
-        "top: ", hover$coords_css$y + 12, "px;",
-        "z-index: 1000;",
-        "pointer-events: none;",
-        "background: rgba(255, 255, 255, 0.9);",
-        "border: 1px solid #ccc;",
-        "border-radius: 4px;",
-        "padding: 2px 6px;",
-        "font-size: 12px;",
-        "font-family: monospace;"
-      ),
-      sprintf("x = %.0f, y = %.0f", hover$x, hover$y)
-    )
+    hover_coordinate_label(input$view_sanity_hover)
   })
   
-  # developer pane functions ---
+  # Developer tab ----
   
   output$debug_params <- renderPrint({
-    list(
-      screen_left = input$screen_left,
-      screen_right = input$screen_right,
-      screen_top = input$screen_top,
-      screen_bottom = input$screen_bottom,
-      screen_origin = input$screen_origin,
-      image_origin = input$image_origin,
+    debug_params_list(
+      input = input,
       fixrep_read_mode = fixrep_read_mode(),
-      sanity_face = input$sanity_face,
-      sanity_condition = input$sanity_condition,
       invalid_image_position_use_center = invalid_image_position_use_center(),
-      invalid_image_position_dismissed = invalid_image_position_dismissed(),
-      selected_face_file = input$selected_face_file
+      invalid_image_position_dismissed = invalid_image_position_dismissed()
     )
   })
   
   output$developer_todo_preview <- renderUI({
-    HTML(markdown::markdownToHTML(
-      text = input$developer_todo_md %||% "",
-      fragment.only = TRUE
-    ))
+    markdown_preview_html(input$developer_todo_md)
   })
   
   output$developer_docs_preview <- renderUI({
-    HTML(markdown::markdownToHTML(
-      text = input$developer_docs_md %||% "",
-      fragment.only = TRUE
-    ))
+    markdown_preview_html(input$developer_docs_md)
   })
 }

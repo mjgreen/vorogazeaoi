@@ -4,10 +4,12 @@ library(tibble)
 
 ## mini-helpers ----
 
+# Converts text-like numeric columns to numbers while quietly keeping NAs.
 to_num <- function(x) {
   suppressWarnings(as.numeric(x))
 }
 
+# Converts a column to integer only when every non-missing value is whole.
 to_int_if_possible <- function(x) {
   x_num <- suppressWarnings(as.numeric(x))
   
@@ -18,6 +20,7 @@ to_int_if_possible <- function(x) {
   }
 }
 
+# Picks the first preferred column name that exists, otherwise falls back to the first column.
 choose_col <- function(cols, candidates) {
   hit <- candidates[candidates %in% cols]
   if (length(hit) > 0) hit[1] else cols[1]
@@ -25,6 +28,7 @@ choose_col <- function(cols, candidates) {
 
 ## format helpers ----
 
+# Formats all-whole numeric columns as integers for cleaner preview tables.
 format_table_int <- function(df) {
   if (is.null(df)) return(df)
   
@@ -41,6 +45,7 @@ format_table_int <- function(df) {
 
 ## constructor helpers ----
 
+# Reads the mapping select inputs and requires each one before standardising.
 req_fixrep_map <- function(input) {
   list(
     participant = req(input$map_participant),
@@ -55,6 +60,7 @@ req_fixrep_map <- function(input) {
   )
 }
 
+# Renames and coerces the uploaded fixation report into the app's standard columns.
 standardise_fixrep <- function(raw, map) {
   tibble(
     SUBJECT   = as.character(raw[[map$participant]]),
@@ -70,6 +76,7 @@ standardise_fixrep <- function(raw, map) {
   )
 }
 
+# Builds the column-mapping controls after a fixation report has been uploaded.
 make_fixrep_mapping_ui <- function(cols) {
   
   shiny::tagList(
@@ -144,6 +151,7 @@ make_fixrep_mapping_ui <- function(cols) {
 
 ## low-level helpers ----
 
+# Reads a fixation report from text or Excel and performs light column cleanup.
 read_fixrep <- function(path) {
   stopifnot(length(path) == 1, is.character(path), file.exists(path))
   
@@ -155,6 +163,7 @@ read_fixrep <- function(path) {
   
   ext <- tolower(tools::file_ext(path))
   
+  # Reads CSV/TSV-like files after guessing whether tabs or commas are dominant.
   read_as_text <- function(path) {
     first_line <- readLines(path, n = 1, warn = FALSE)
     
@@ -179,6 +188,7 @@ read_fixrep <- function(path) {
     list(data = raw, mode = sprintf("delimited text (%s)", if (delim == "\t") "tab" else "comma"))
   }
   
+  # Reads the first worksheet from Excel files while preserving columns as text.
   read_as_excel <- function(path) {
     raw <- readxl::read_excel(
       path = path,

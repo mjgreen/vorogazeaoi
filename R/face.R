@@ -1,7 +1,6 @@
-# ---- Image helpers ------------------------------------------------------
+# Image helpers ----
 
-# requirenamespace imagemagick
-
+# Finds the image file whose basename or stem matches the FACE value in the data.
 find_face_file <- function(face, files) {
   if (is.null(face) || length(face) == 0 || length(files) == 0) {
     return(NULL)
@@ -27,6 +26,7 @@ find_face_file <- function(face, files) {
 }
 
 
+# Reads an image, applies orientation metadata, and returns raster plus dimensions.
 read_face_image <- function(path) {
   img <- magick::image_read(path) |> magick::image_orient()
   if (length(img) > 1) img <- img[1]
@@ -45,6 +45,7 @@ read_face_image <- function(path) {
 }
 
 
+# Draws the selected face image in either top-left or centre-origin coordinates.
 plot_face_image <- function(
     face_image_path = NULL,
     image_origin = c("top_left", "center"),
@@ -130,4 +131,3 @@ plot_face_image <- function(
   
   invisible(NULL)
 }
-

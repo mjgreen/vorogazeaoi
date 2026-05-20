@@ -188,3 +188,38 @@ debug_params_list <- function(
     selected_face_file = input$selected_face_file
   )
 }
+
+# Formats developer debug values as aligned key/value lines.
+format_debug_param_value <- function(value) {
+  if (is.null(value)) {
+    return("<NULL>")
+  }
+  
+  if (length(value) == 0) {
+    return("<empty>")
+  }
+  
+  if (is.character(value)) {
+    return(paste(shQuote(value), collapse = ", "))
+  }
+  
+  paste(as.character(value), collapse = ", ")
+}
+
+debug_params_text <- function(params) {
+  names_width <- max(nchar(names(params)))
+  lines <- vapply(
+    names(params),
+    function(name) {
+      sprintf(
+        "%-*s : %s",
+        names_width,
+        name,
+        format_debug_param_value(params[[name]])
+      )
+    },
+    character(1)
+  )
+  
+  paste(lines, collapse = "\n")
+}

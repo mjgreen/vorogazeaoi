@@ -297,13 +297,13 @@ server <- function(input, output, session) {
   
   # Developer tab ----
   
-  output$debug_params <- renderPrint({
-    debug_params_list(
+  output$debug_params <- renderText({
+    debug_params_text(debug_params_list(
       input = input,
       fixrep_read_mode = fixrep_read_mode(),
       invalid_image_position_use_center = invalid_image_position_use_center(),
       invalid_image_position_dismissed = invalid_image_position_dismissed()
-    )
+    ))
   })
   
   output$developer_todo_preview <- renderUI({

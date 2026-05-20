@@ -60,16 +60,46 @@ server <- function(input, output, session) {
     make_fixrep_mapping_ui(cols)
   })
   
-  output$fixrep_raw_preview <- renderTable({
-    fixrep_raw() |>
-      head(5) |>
-      format_table_int()
+  output$fixrep_raw_preview <- DT::renderDT({
+    DT::datatable(
+      format_table_int(fixrep_raw()),
+      rownames = FALSE,
+      extensions = c("FixedColumns"),
+      options = list(
+        searching = FALSE,
+        paging = TRUE,
+        pageLength = 5,
+        lengthChange = FALSE,
+        scrollX = TRUE,
+        fixedColumns = list(leftColumns = 1),
+        autoWidth = TRUE,
+        columnDefs = list(
+          list(targets = "_all", className = "dt-nowrap")
+        )
+      ),
+      class = "compact stripe hover nowrap"
+    )
   })
   
-  output$fixrep_preview <- renderTable({
-    fixrep() |>
-      head(5) |>
-      format_table_int()
+  output$fixrep_preview <- DT::renderDT({
+    DT::datatable(
+      format_table_int(fixrep()),
+      rownames = FALSE,
+      extensions = c("FixedColumns"),
+      options = list(
+        searching = FALSE,
+        paging = TRUE,
+        pageLength = 5,
+        lengthChange = FALSE,
+        scrollX = TRUE,
+        fixedColumns = list(leftColumns = 1),
+        autoWidth = TRUE,
+        columnDefs = list(
+          list(targets = "_all", className = "dt-nowrap")
+        )
+      ),
+      class = "compact stripe hover nowrap"
+    )
   })
   
   # Face directory and image tab ----

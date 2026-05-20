@@ -60,14 +60,15 @@ fixations_input_card <- function() {
   )
 }
 
-# Creates one compact table card for either raw or processed fixation data.
+# Creates one compact DT card for either raw or processed fixation data.
 fixrep_preview_card <- function(title, output_id) {
   bslib::card(
+    full_screen = TRUE,
     bslib::card_header(title),
     bslib::card_body(
       shiny::div(
-        class = "compact-table-output",
-        shiny::tableOutput(output_id)
+        class = "dt-table-output",
+        DT::DTOutput(output_id)
       )
     )
   )
@@ -79,11 +80,13 @@ fixations_panel <- function() {
     "fixations",
     bslib::layout_columns(
       col_widths = c(4, 8),
+      height = "100%",
       fixations_input_card(),
       bslib::layout_columns(
         col_widths = 12,
-        fixrep_preview_card("raw", "fixrep_raw_preview"),
-        fixrep_preview_card("processed", "fixrep_preview")
+        height = "100%",
+        fixrep_preview_card("Raw view of the uploaded fixation report", "fixrep_raw_preview"),
+        fixrep_preview_card("Standardised version of the fixation report", "fixrep_preview")
       )
     )
   )

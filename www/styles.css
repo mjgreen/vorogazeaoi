@@ -37,15 +37,17 @@
 /* Tighten cards containing compact UI */
 .card:has(.fixrep-upload-box) .card-body,
 .card:has(.fixrep-mapping-ui) .card-body,
-.card:has(.compact-table-output) .card-body {
+.card:has(.compact-table-output) .card-body,
+.card:has(.dt-table-output) .card-body {
   padding: 0.35rem !important;
 }
 
 .card:has(.fixrep-upload-box) .card-header,
 .card:has(.fixrep-mapping-ui) .card-header,
-.card:has(.compact-table-output) .card-header {
+.card:has(.compact-table-output) .card-header,
+.card:has(.dt-table-output) .card-header {
   padding: 0.35rem 0.5rem !important;
-  font-size: 0.75rem !important;
+  font-size: 0.7rem !important;
 }
 
 /* Compact table previews */
@@ -54,6 +56,37 @@
   line-height: 1.1;
   max-height: 220px;
   overflow: auto;
+}
+
+.dt-table-output {
+  font-size: 0.68rem;
+}
+
+.dt-table-output table.dataTable {
+  font-size: 0.68rem;
+  margin-bottom: 0;
+}
+
+.dt-table-output table.dataTable thead th,
+.dt-table-output table.dataTable tbody td {
+  line-height: 1.05;
+  padding: 2px 4px !important;
+  white-space: nowrap;
+}
+
+.dt-table-output .dataTables_info,
+.dt-table-output .dataTables_paginate {
+  font-size: 0.68rem;
+  padding-top: 0.15rem !important;
+}
+
+.dt-table-output .dataTables_wrapper {
+  margin-bottom: 0;
+}
+
+.dt-table-output .dataTables_wrapper .dataTables_paginate .paginate_button {
+  margin-left: 0.1rem !important;
+  padding: 0.05rem 0.3rem !important;
 }
 
 .compact-table-output table {

@@ -1,0 +1,38 @@
+# R session/user state ---------------------------------------------------
+
+.Rhistory
+.RData
+.Ruserdata
+
+# RStudio / Positron project state --------------------------------------
+
+.Rproj.user/
+*.Rproj
+
+# renv ------------------------------------------------------------------
+# Keep renv.lock, .Rprofile, renv/activate.R, and renv/settings.json.
+# Do not commit installed package libraries or local caches.
+
+renv/library/
+renv/staging/
+renv/sandbox/
+renv/local/
+renv/cellar/
+renv/python/
+
+# Shiny / app runtime ----------------------------------------------------
+
+rsconnect/
+shinyapps/
+
+# Logs ------------------------------------------------------------------
+
+*.log
+
+# OS/editor noise --------------------------------------------------------
+
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~

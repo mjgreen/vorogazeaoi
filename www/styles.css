@@ -1,16 +1,63 @@
+:root {
+  --vz-ui-font-size: 0.76rem;
+  --vz-control-value-font-size: 0.7rem;
+  --vz-dt-font-size: 0.7rem;
+  --vz-dt-footer-font-size: var(--vz-dt-font-size);
+  --vz-ui-line-height: 1.16;
+  --vz-card-padding: 0.35rem;
+  --vz-control-padding-x: 0.3rem;
+  --vz-control-padding-y: 0.08rem;
+}
+
+body,
+.card,
+.card-header,
+.card-body,
+.shiny-input-container,
+.form-control,
+.form-select,
+.selectize-input,
+.selectize-dropdown,
+.btn,
+.control-label,
+label,
+.nav,
+.nav-link,
+.dropdown-item,
+.progress,
+.progress-bar,
+.dataTables_wrapper {
+  font-size: var(--vz-ui-font-size);
+  line-height: var(--vz-ui-line-height);
+}
+
+.form-control,
+.form-select,
+.selectize-input,
+.selectize-input input,
+.selectize-dropdown,
+.selectize-dropdown .option {
+  font-size: var(--vz-control-value-font-size) !important;
+  line-height: 1.15rem !important;
+}
+
+.selectize-input {
+  min-height: 1.5rem !important;
+  padding: var(--vz-control-padding-y) var(--vz-control-padding-x) !important;
+}
+
 /* Tight column-mapping controls */
 
 .fixrep-mapping-title {
-  font-size: 0.85rem;
+  font-size: var(--vz-ui-font-size);
   font-weight: 700;
   margin-bottom: 0.35rem;
 }
 
 .fixrep-mapping-ui,
-.fixrep-mapping-ui *,
-.fixrep-mapping-ui .selectize-dropdown,
-.fixrep-mapping-ui .selectize-dropdown * {
-  font-size: 0.84rem !important;
+.fixrep-mapping-ui label,
+.fixrep-mapping-title {
+  font-size: var(--vz-ui-font-size) !important;
 }
 
 .fixrep-mapping-ui .shiny-input-container,
@@ -26,12 +73,12 @@
 .fixrep-mapping-ui label,
 .fixrep-mapping-ui .selectize-input,
 .fixrep-mapping-ui .selectize-input > input {
-  line-height: 1.2rem !important;
+  line-height: 1.18rem !important;
 }
 
 .fixrep-mapping-ui .selectize-input {
-  min-height: 1.62rem !important;
-  padding: 0.06rem 0.3rem !important;
+  min-height: 1.5rem !important;
+  padding: var(--vz-control-padding-y) var(--vz-control-padding-x) !important;
 }
 
 /* Tighten cards containing compact UI */
@@ -39,7 +86,7 @@
 .card:has(.fixrep-mapping-ui) .card-body,
 .card:has(.compact-table-output) .card-body,
 .card:has(.dt-table-output) .card-body {
-  padding: 0.35rem !important;
+  padding: var(--vz-card-padding) !important;
 }
 
 .card:has(.fixrep-upload-box) .card-header,
@@ -47,36 +94,43 @@
 .card:has(.compact-table-output) .card-header,
 .card:has(.dt-table-output) .card-header {
   padding: 0.35rem 0.5rem !important;
-  font-size: 0.7rem !important;
+  font-size: var(--vz-ui-font-size) !important;
 }
 
 /* Compact table previews */
 .compact-table-output {
-  font-size: 0.75rem;
-  line-height: 1.1;
+  font-size: var(--vz-ui-font-size);
+  line-height: var(--vz-ui-line-height);
   max-height: 220px;
   overflow: auto;
 }
 
 .dt-table-output {
-  font-size: 0.68rem;
+  font-size: var(--vz-dt-font-size);
 }
 
 .dt-table-output table.dataTable {
-  font-size: 0.68rem;
+  font-size: var(--vz-dt-font-size);
   margin-bottom: 0;
 }
 
 .dt-table-output table.dataTable thead th,
 .dt-table-output table.dataTable tbody td {
-  line-height: 1.05;
+  line-height: var(--vz-ui-line-height);
   padding: 2px 4px !important;
   white-space: nowrap;
 }
 
 .dt-table-output .dataTables_info,
-.dt-table-output .dataTables_paginate {
-  font-size: 0.68rem;
+.dt-table-output .dataTables_paginate,
+.dt-table-output .dt-info,
+.dt-table-output .dt-paging,
+.dt-table-output .pagination,
+.dt-table-output .dataTables_paginate *,
+.dt-table-output .dt-paging *,
+.dt-table-output .pagination * {
+  font-size: var(--vz-dt-footer-font-size) !important;
+  line-height: var(--vz-ui-line-height) !important;
   padding-top: 0.15rem !important;
 }
 
@@ -84,9 +138,14 @@
   margin-bottom: 0;
 }
 
-.dt-table-output .dataTables_wrapper .dataTables_paginate .paginate_button {
+.dt-table-output .dataTables_wrapper .dataTables_paginate .paginate_button,
+.dt-table-output .dataTables_wrapper .dt-paging .dt-paging-button,
+.dt-table-output .paginate_button,
+.dt-table-output .dt-paging-button,
+.dt-table-output .page-link {
+  font-size: var(--vz-dt-footer-font-size) !important;
   margin-left: 0.1rem !important;
-  padding: 0.05rem 0.3rem !important;
+  padding: 0.03rem 0.25rem !important;
 }
 
 .compact-table-output table {
@@ -100,10 +159,10 @@
 }
 
 .dev-note {
-  font-size: 0.85rem;
+  font-size: var(--vz-ui-font-size);
   padding: 0.5rem 0.65rem;
   border: 1px solid #ddd;
   border-radius: 0.35rem;
   background: #f8f9fa;
-  line-height: 1.3;
+  line-height: var(--vz-ui-line-height);
 }

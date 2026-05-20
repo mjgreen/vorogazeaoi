@@ -18,6 +18,10 @@ server <- function(input, output, session) {
     read_fixrep(input$upload_fixrep$datapath)
   })
   
+  fixrep_for_standardisation <- reactive({
+    prepare_fixrep_for_standardisation(fixrep_raw())
+  })
+  
   fixrep_read_mode <- reactive({
     if (is.null(input$upload_fixrep)) {
       return(NULL)
@@ -35,7 +39,7 @@ server <- function(input, output, session) {
   
   fixrep <- reactive({
     standardise_fixrep(
-      raw = fixrep_raw(),
+      raw = fixrep_for_standardisation(),
       map = fixrep_map()
     )
   })
@@ -53,7 +57,7 @@ server <- function(input, output, session) {
   
   output$fixrep_mapping_ui <- renderUI({
     cols <- tryCatch(
-      names(fixrep_raw()),
+      names(fixrep_for_standardisation()),
       error = function(e) character(0)
     )
     

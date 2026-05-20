@@ -68,9 +68,11 @@ server <- function(input, output, session) {
     DT::datatable(
       format_table_int(fixrep_raw()),
       rownames = FALSE,
+      filter = "top",
       extensions = c("FixedColumns"),
       options = list(
-        searching = FALSE,
+        dom = "tip",
+        searching = TRUE,
         paging = TRUE,
         pageLength = 5,
         lengthChange = FALSE,
@@ -89,9 +91,11 @@ server <- function(input, output, session) {
     DT::datatable(
       format_table_int(fixrep()),
       rownames = FALSE,
+      filter = "top",
       extensions = c("FixedColumns"),
       options = list(
-        searching = FALSE,
+        dom = "tip",
+        searching = TRUE,
         paging = TRUE,
         pageLength = 5,
         lengthChange = FALSE,

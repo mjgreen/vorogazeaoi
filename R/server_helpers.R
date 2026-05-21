@@ -11,19 +11,6 @@ default_face_dir_path <- function() {
   if (dir.exists(path)) path else NULL
 }
 
-# Resolves the chosen shinyFiles directory, falling back to the bundled faces.
-selected_face_dir_path <- function(input, volumes, default_dir) {
-  if (!is.null(input$face_dir)) {
-    path <- shinyFiles::parseDirPath(volumes, input$face_dir)
-    
-    if (length(path) > 0) {
-      return(path)
-    }
-  }
-  
-  default_dir
-}
-
 # Lists image files supported by the face preview and sanity plots.
 list_face_image_files <- function(dir) {
   if (is.null(dir) || !dir.exists(dir)) {
@@ -36,6 +23,36 @@ list_face_image_files <- function(dir) {
     full.names = TRUE,
     ignore.case = TRUE
   )
+}
+
+# Returns uploaded local image files from the browser's directory picker.
+uploaded_face_image_files <- function(upload) {
+  if (is.null(upload) || nrow(upload) == 0) {
+    return(character(0))
+  }
+
+  keep <- grepl("\\.(png|jpg|jpeg)$", upload$name, ignore.case = TRUE)
+  files <- upload$datapath[keep]
+  names(files) <- upload$name[keep]
+  files
+}
+
+# Describes the active face-image source for display in the UI.
+face_source_label <- function(upload, default_dir) {
+  uploaded_files <- uploaded_face_image_files(upload)
+
+  if (length(uploaded_files) > 0) {
+    directory_names <- unique(dirname(names(uploaded_files)))
+    directory_names <- directory_names[!directory_names %in% c(".", "")]
+
+    if (length(directory_names) == 1) {
+      return(sprintf("%s (%d image%s uploaded)", directory_names, length(uploaded_files), if (length(uploaded_files) == 1) "" else "s"))
+    }
+
+    return(sprintf("%d image%s uploaded from local directory", length(uploaded_files), if (length(uploaded_files) == 1) "" else "s"))
+  }
+
+  default_dir %||% "None"
 }
 
 # Builds the face image selector, or a small note when the directory is empty.
@@ -52,7 +69,7 @@ make_face_file_ui <- function(files) {
   shiny::selectInput(
     "selected_face_file",
     "Face image",
-    choices = stats::setNames(files, basename(files)),
+    choices = stats::setNames(unname(files), basename(names(files) %||% files)),
     selected = files[1]
   )
 }

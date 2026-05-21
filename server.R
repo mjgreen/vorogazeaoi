@@ -1,16 +1,5 @@
 server <- function(input, output, session) {
 
-  # Directory browser setup ----
-
-  volumes <- shinyFiles::getVolumes()()
-
-  shinyFiles::shinyDirChoose(
-    input = input,
-    id = "face_dir",
-    roots = volumes,
-    session = session
-  )
-
   # Fixation report tab ----
 
   fixrep_raw <- reactive({
@@ -133,20 +122,20 @@ server <- function(input, output, session) {
 
   default_face_dir <- default_face_dir_path()
 
-  face_dir_path <- reactive({
-    selected_face_dir_path(
-      input = input,
-      volumes = volumes,
-      default_dir = default_face_dir
-    )
-  })
-
   output$face_dir_display <- renderText({
-    face_dir_path() %||% "None"
+    face_source_label(input$upload_face_dir, default_face_dir)
   })
 
   face_files <- reactive({
-    list_face_image_files(face_dir_path())
+    uploaded_files <- uploaded_face_image_files(input$upload_face_dir)
+
+    if (length(uploaded_files) > 0) {
+      return(uploaded_files)
+    }
+
+    default_files <- list_face_image_files(default_face_dir)
+    names(default_files) <- default_files
+    default_files
   })
 
   output$face_file_ui <- renderUI({

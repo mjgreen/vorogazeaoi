@@ -1,4 +1,5 @@
 library(markdown)
+library(magick)
 
 options(shiny.maxRequestSize = 100 * 1024^2)
 

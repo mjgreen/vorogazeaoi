@@ -1,7 +1,7 @@
 # Server helper functions ----
 
 # Returns the bundled face directory path if it exists, otherwise NULL.
-default_face_dir_path <- function() {
+bundled_face_dir_path <- function() {
   path <- normalizePath(
     file.path(getwd(), "faces", "faces_300x350"),
     winslash = "/",
@@ -9,6 +9,38 @@ default_face_dir_path <- function() {
   )
   
   if (dir.exists(path)) path else NULL
+}
+
+# Returns the bundled fixation report path if it exists, otherwise NULL.
+default_fixrep_path <- function() {
+  path <- normalizePath(
+    file.path(getwd(), "fixreps", "combined_alex1_done_by_matt_fixrep.csv"),
+    winslash = "/",
+    mustWork = FALSE
+  )
+
+  if (file.exists(path)) path else NULL
+}
+
+# Copies one bundled file into a Shiny download path.
+copy_bundled_file <- function(source_path, output_path) {
+  shiny::validate(shiny::need(!is.null(source_path), "Bundled file is not available."))
+  file.copy(source_path, output_path, overwrite = TRUE)
+}
+
+# Zips the bundled face folder into a Shiny download path.
+zip_bundled_face_dir <- function(source_dir, output_path) {
+  shiny::validate(shiny::need(!is.null(source_dir), "Bundled face folder is not available."))
+
+  old_wd <- getwd()
+  on.exit(setwd(old_wd), add = TRUE)
+
+  setwd(dirname(source_dir))
+  utils::zip(
+    zipfile = output_path,
+    files = basename(source_dir),
+    flags = "-r9Xq"
+  )
 }
 
 # Lists image files supported by the face preview and sanity plots.
@@ -37,8 +69,8 @@ uploaded_face_image_files <- function(upload) {
   files
 }
 
-# Describes the active face-image source for display in the UI.
-face_source_label <- function(upload, default_dir) {
+# Describes the active uploaded face-image source for display in the UI.
+face_source_label <- function(upload) {
   uploaded_files <- uploaded_face_image_files(upload)
 
   if (length(uploaded_files) > 0) {
@@ -52,7 +84,16 @@ face_source_label <- function(upload, default_dir) {
     return(sprintf("%d image%s uploaded from local directory", length(uploaded_files), if (length(uploaded_files) == 1) "" else "s"))
   }
 
-  default_dir %||% "None"
+  "None"
+}
+
+# Describes the active uploaded fixation report for display in the UI.
+fixrep_source_label <- function(upload) {
+  if (is.null(upload) || nrow(upload) == 0) {
+    return("None")
+  }
+
+  upload$name[[1]] %||% "None"
 }
 
 # Builds the face image selector, or a small note when the directory is empty.
@@ -74,21 +115,136 @@ make_face_file_ui <- function(files) {
   )
 }
 
-# Packages the four screen inputs into one named list for plotting helpers.
-screen_params_from_input <- function(input) {
+screen_dimension_size <- function(value) {
+  switch(
+    value,
+    "1600x900" = c(width = 1600, height = 900),
+    "1920x1280" = c(width = 1920, height = 1280),
+    NULL
+  )
+}
+
+screen_bounds_from_size <- function(width, height, origin) {
+  if (identical(origin, "center")) {
+    return(list(
+      left = -width / 2,
+      right = width / 2,
+      top = -height / 2,
+      bottom = height / 2
+    ))
+  }
+
+  list(
+    left = 0,
+    right = width,
+    top = 0,
+    bottom = height
+  )
+}
+
+screen_bounds_from_custom_inputs <- function(input, origin) {
   shiny::req(
     input$screen_left,
     input$screen_right,
     input$screen_top,
     input$screen_bottom
   )
-  
+
+  left <- input$screen_left
+  right <- input$screen_right
+  top <- input$screen_top
+  bottom <- input$screen_bottom
+
+  shiny::validate(
+    shiny::need(left < right, "Screen left must be less than screen right."),
+    shiny::need(top < bottom, "Screen top must be less than screen bottom.")
+  )
+
+  if (identical(origin, "center")) {
+    width <- right - left
+    height <- bottom - top
+    return(screen_bounds_from_size(width, height, origin))
+  }
+
   list(
-    left = input$screen_left,
-    right = input$screen_right,
-    top = input$screen_top,
-    bottom = input$screen_bottom,
-    origin = input$screen_origin
+    left = left,
+    right = right,
+    top = top,
+    bottom = bottom
+  )
+}
+
+# Computes screen bounds from the selected preset/custom dimensions and origin.
+# This assumes top-left/centre-style screen coordinates where y increases downward.
+# Bottom-left or other upward-y origins will need substantial rewiring.
+screen_params_from_input <- function(input) {
+  origin <- shiny::req(input$screen_origin)
+  dimensions <- input$screen_dimensions %||% "1600x900"
+
+  if (identical(origin, "other")) {
+    return(list(
+      left = NA_real_,
+      right = NA_real_,
+      top = NA_real_,
+      bottom = NA_real_,
+      origin = "other",
+      selected_origin = origin,
+      dimensions = dimensions
+    ))
+  }
+
+  size <- screen_dimension_size(dimensions)
+  bounds <- if (is.null(size)) {
+    screen_bounds_from_custom_inputs(input, origin)
+  } else {
+    screen_bounds_from_size(
+      width = size[["width"]],
+      height = size[["height"]],
+      origin = origin
+    )
+  }
+
+  c(
+    bounds,
+    list(
+      origin = "computed",
+      selected_origin = origin,
+      dimensions = dimensions
+    )
+  )
+}
+
+format_screen_bound <- function(x) {
+  if (!is.finite(x)) {
+    return("NA")
+  }
+
+  format(round(x, 2), trim = TRUE, scientific = FALSE)
+}
+
+screen_bounds_summary_ui <- function(screen) {
+  bounds <- c(
+    left = screen$left,
+    right = screen$right,
+    top = screen$top,
+    bottom = screen$bottom
+  )
+
+  if (!all(is.finite(bounds))) {
+    return(shiny::div(
+      class = "loaded-file-box",
+      shiny::span(class = "loaded-file-label", "Computed bounds:"),
+      shiny::span("Choose a supported screen origin.")
+    ))
+  }
+
+  shiny::div(
+    class = "loaded-file-box",
+    shiny::span(class = "loaded-file-label", "Computed bounds:"),
+    shiny::tags$code(paste(
+      paste0(names(bounds), " = ", vapply(bounds, format_screen_bound, character(1))),
+      collapse = " | "
+    ))
   )
 }
 
@@ -192,6 +348,7 @@ debug_params_list <- function(
     invalid_image_position_dismissed
 ) {
   list(
+    screen_dimensions = input$screen_dimensions,
     screen_left = input$screen_left,
     screen_right = input$screen_right,
     screen_top = input$screen_top,

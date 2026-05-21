@@ -46,10 +46,19 @@ fixations_input_card <- function() {
     bslib::card_body(
       shiny::div(
         class = "fixrep-upload-box",
+        shiny::downloadButton(
+          "download_bundled_fixrep",
+          "Download bundled fixation report"
+        ),
         shiny::fileInput(
           "upload_fixrep",
           "Upload fixation report",
           width = "100%"
+        ),
+        shiny::div(
+          class = "loaded-file-box",
+          shiny::span(class = "loaded-file-label", "Fixation report:"),
+          shiny::textOutput("fixrep_file_display", inline = TRUE)
         )
       ),
       shiny::div(
@@ -98,7 +107,7 @@ standardised_fixrep_tabs <- function() {
 # Assembles the fixation report upload and preview tab.
 fixations_panel <- function() {
   bslib::nav_panel(
-    "fixations",
+    "Fixations",
     bslib::layout_columns(
       col_widths = c(4, 8),
       height = "100%",
@@ -114,6 +123,7 @@ fixations_panel <- function() {
 }
 
 # Creates the four numeric screen boundary inputs.
+# These custom bounds currently assume y increases downward: top must be less than bottom.
 screen_boundary_inputs <- function() {
   shiny::tagList(
     shiny::numericInput("screen_left", "Screen left", value = 0, step = 1),
@@ -123,17 +133,36 @@ screen_boundary_inputs <- function() {
   )
 }
 
+# Creates the screen dimension preset selector.
+screen_dimension_input <- function() {
+  shiny::selectInput(
+    "screen_dimensions",
+    "Screen dimensions",
+    choices = c(
+      "1600 x 900" = "1600x900",
+      "1920 x 1280" = "1920x1280",
+      "Other" = "other"
+    ),
+    selected = "1600x900"
+  )
+}
+
 # Assembles the screen controls and coordinate preview plot.
 screen_panel <- function() {
   bslib::nav_panel(
-    "screen",
+    "Screen",
     bslib::layout_columns(
       col_widths = c(4, 8),
       bslib::card(
         bslib::card_header("input"),
         bslib::card_body(
           origin_radio_buttons("screen_origin", "Screen origin", selected = "top_left"),
-          screen_boundary_inputs()
+          screen_dimension_input(),
+          shiny::conditionalPanel(
+            condition = "input.screen_dimensions == 'other'",
+            screen_boundary_inputs()
+          ),
+          shiny::uiOutput("screen_bounds_display")
         )
       ),
       bslib::card(
@@ -160,15 +189,19 @@ origin_radio_buttons <- function(input_id, label, selected) {
   )
 }
 
-# Assembles the face image directory controls and image preview plot.
-images_panel <- function() {
+# Assembles the face controls and image preview plot.
+faces_panel <- function() {
   bslib::nav_panel(
-    "images",
+    "Faces",
     bslib::layout_columns(
       col_widths = c(4, 8),
       bslib::card(
         bslib::card_header("input"),
         bslib::card_body(
+          shiny::downloadButton(
+            "download_bundled_face_dir",
+            "Download bundled face folder"
+          ),
           shiny::fileInput(
             "upload_face_dir",
             "Browse face directory",
@@ -211,7 +244,7 @@ images_panel <- function() {
 # Assembles the sanity-check filters and combined image/fixation preview.
 sanity_panel <- function() {
   bslib::nav_panel(
-    "sanity",
+    "Sanity",
     bslib::layout_columns(
       col_widths = c(4, 8),
       bslib::card(
@@ -263,7 +296,7 @@ developer_markdown_card <- function(title, input_id, output_id, file_path, label
 # Assembles the developer-only debug and markdown editing controls.
 developer_panel <- function() {
   bslib::nav_panel(
-    "developer",
+    "Developer",
     bslib::layout_columns(
       col_widths = c(4, 4, 4),
       bslib::card(

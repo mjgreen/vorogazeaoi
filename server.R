@@ -2,6 +2,21 @@ server <- function(input, output, session) {
 
   # Fixation report tab ----
 
+  default_fixrep <- default_fixrep_path()
+
+  output$download_bundled_fixrep <- downloadHandler(
+    filename = function() {
+      basename(default_fixrep %||% "combined_alex1_done_by_matt_fixrep.csv")
+    },
+    content = function(file) {
+      copy_bundled_file(default_fixrep, file)
+    }
+  )
+
+  output$fixrep_file_display <- renderText({
+    fixrep_source_label(input$upload_fixrep)
+  })
+
   fixrep_raw <- reactive({
     req(input$upload_fixrep)
     read_fixrep(input$upload_fixrep$datapath)
@@ -31,9 +46,13 @@ server <- function(input, output, session) {
   })
 
   fixrep <- reactive({
+    raw <- fixrep_for_standardisation()
+    map <- fixrep_map()
+    req_fixrep_map_matches_cols(raw, map)
+
     standardise_fixrep(
-      raw = fixrep_for_standardisation(),
-      map = fixrep_map(),
+      raw = raw,
+      map = map,
       screen = screen_params()
     )
   })
@@ -123,24 +142,26 @@ server <- function(input, output, session) {
     )
   })
 
-  # Face directory and image tab ----
+  # Faces tab ----
 
-  default_face_dir <- default_face_dir_path()
+  bundled_face_dir <- bundled_face_dir_path()
+
+  output$download_bundled_face_dir <- downloadHandler(
+    filename = function() {
+      paste0(basename(bundled_face_dir %||% "faces_300x350"), ".zip")
+    },
+    content = function(file) {
+      zip_bundled_face_dir(bundled_face_dir, file)
+    },
+    contentType = "application/zip"
+  )
 
   output$face_dir_display <- renderText({
-    face_source_label(input$upload_face_dir, default_face_dir)
+    face_source_label(input$upload_face_dir)
   })
 
   face_files <- reactive({
-    uploaded_files <- uploaded_face_image_files(input$upload_face_dir)
-
-    if (length(uploaded_files) > 0) {
-      return(uploaded_files)
-    }
-
-    default_files <- list_face_image_files(default_face_dir)
-    names(default_files) <- default_files
-    default_files
+    uploaded_face_image_files(input$upload_face_dir)
   })
 
   output$face_file_ui <- renderUI({
@@ -181,6 +202,10 @@ server <- function(input, output, session) {
 
   # Screen tab ----
 
+  output$screen_bounds_display <- renderUI({
+    screen_bounds_summary_ui(screen_params())
+  })
+
   output$view_screen <- renderPlot({
     req(input$screen_origin)
 
@@ -192,15 +217,17 @@ server <- function(input, output, session) {
       return(invisible(NULL))
     }
 
+    screen <- screen_params()
+
     plot_screen(
       fixrep = screen_fixrep(),
       fix_x = "FIX_X",
       fix_y = "FIX_Y",
-      screen_left = input$screen_left,
-      screen_right = input$screen_right,
-      screen_top = input$screen_top,
-      screen_bottom = input$screen_bottom,
-      screen_origin = input$screen_origin,
+      screen_left = screen$left,
+      screen_right = screen$right,
+      screen_top = screen$top,
+      screen_bottom = screen$bottom,
+      screen_origin = "top_left",
       tick_by = 100,
       fixation_pad = 50
     )
@@ -333,7 +360,7 @@ server <- function(input, output, session) {
       screen_right = screen$right,
       screen_top = screen$top,
       screen_bottom = screen$bottom,
-      screen_origin = input$screen_origin,
+      screen_origin = "top_left",
       image_origin = input$image_origin
     )
   })

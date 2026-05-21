@@ -8,7 +8,7 @@ ui <- page_fillable(
   navset_card_pill(
     fixations_panel(),
     screen_panel(),
-    images_panel(),
+    faces_panel(),
     sanity_panel(),
     developer_panel()
   )

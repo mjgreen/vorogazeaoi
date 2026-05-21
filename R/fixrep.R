@@ -26,6 +26,8 @@ choose_col <- function(cols, candidates) {
   if (length(hit) > 0) hit[1] else cols[1]
 }
 
+screen_central_choice <- "<SCREEN CENTRAL>"
+
 ## format helpers ----
 
 # Formats all-whole numeric columns as integers for cleaner preview tables.
@@ -114,20 +116,101 @@ req_fixrep_map <- function(input) {
     fix_x       = req(input$map_fix_x),
     fix_y       = req(input$map_fix_y),
     fix_dur     = req(input$map_fix_dur),
-    img_x       = req(input$map_img_x),
-    img_y       = req(input$map_img_y)
+    image_position = req(input$map_image_position)
   )
 }
 
+parse_point_column <- function(x) {
+  x <- as.character(x)
+  x[is.na(x)] <- ""
+
+  stripped <- gsub("[()]", "", x)
+  parts <- strsplit(stripped, ",", fixed = TRUE)
+
+  parsed <- lapply(parts, function(part) {
+    if (length(part) < 2) {
+      return(c(x = NA_real_, y = NA_real_))
+    }
+
+    c(
+      x = suppressWarnings(as.numeric(trimws(part[[1]]))),
+      y = suppressWarnings(as.numeric(trimws(part[[2]])))
+    )
+  })
+
+  data.frame(
+    x = vapply(parsed, `[[`, numeric(1), "x"),
+    y = vapply(parsed, `[[`, numeric(1), "y")
+  )
+}
+
+screen_centre_from_params <- function(screen) {
+  if (is.null(screen)) {
+    return(c(x = NA_real_, y = NA_real_))
+  }
+
+  left <- to_num(screen$left)
+  right <- to_num(screen$right)
+  top <- to_num(screen$top)
+  bottom <- to_num(screen$bottom)
+
+  if (!all(is.finite(c(left, right, top, bottom)))) {
+    return(c(x = NA_real_, y = NA_real_))
+  }
+
+  if (identical(screen$origin, "other")) {
+    return(c(x = NA_real_, y = NA_real_))
+  }
+
+  if (identical(screen$origin, "center")) {
+    width <- right - left
+    height <- abs(bottom - top)
+    left <- -width / 2
+    right <- width / 2
+    top <- -height / 2
+    bottom <- height / 2
+  }
+
+  c(
+    x = mean(c(left, right)),
+    y = mean(c(bottom, top))
+  )
+}
+
+image_position_values_for_standardisation <- function(raw, image_position, screen) {
+  if (identical(image_position, screen_central_choice)) {
+    centre <- screen_centre_from_params(screen)
+    return(data.frame(
+      x = rep(centre[["x"]], nrow(raw)),
+      y = rep(centre[["y"]], nrow(raw))
+    ))
+  }
+
+  if (!image_position %in% names(raw)) {
+    return(data.frame(
+      x = rep(NA_real_, nrow(raw)),
+      y = rep(NA_real_, nrow(raw))
+    ))
+  }
+
+  parse_point_column(raw[[image_position]])
+}
+
 # Renames and coerces the uploaded fixation report into the app's standard columns.
-standardise_fixrep <- function(raw, map) {
+standardise_fixrep <- function(raw, map, screen = NULL) {
+  image_position <- image_position_values_for_standardisation(
+    raw = raw,
+    image_position = map$image_position,
+    screen = screen
+  )
+
   tibble(
     SUBJECT   = as.character(raw[[map$participant]]),
     FACE      = as.character(raw[[map$face]]),
     TRIAL_ID  = to_int_if_possible(raw[[map$trial]]),
     CONDITION = raw[[map$condition]],
-    IMG_X     = to_num(raw[[map$img_x]]),
-    IMG_Y     = to_num(raw[[map$img_y]]),
+    IMG_X     = image_position$x,
+    IMG_Y     = image_position$y,
     FIX_X     = to_num(raw[[map$fix_x]]),
     FIX_Y     = to_num(raw[[map$fix_y]]),
     FIX_DUR   = to_num(raw[[map$fix_dur]]),
@@ -147,14 +230,14 @@ make_fixrep_mapping_ui <- function(cols) {
       "map_participant",
       "PARTICIPANT",
       choices = cols,
-      selected = choose_col(cols, c("RECORDING_SESSION_LABEL"))
+      selected = choose_col(cols, c("unique_pp", "RECORDING_SESSION_LABEL"))
     ),
 
     shiny::selectInput(
       "map_face",
       "FACE",
       choices = cols,
-      selected = choose_col(cols, c("face", "file", "which_face", "file_b1", "FACE"))
+      selected = choose_col(cols, c("file_b1", "face", "file", "which_face", "FACE"))
     ),
 
     shiny::selectInput(
@@ -168,7 +251,7 @@ make_fixrep_mapping_ui <- function(cols) {
       "map_condition",
       "CONDITION",
       choices = cols,
-      selected = choose_col(cols, c("condition", "position"))
+      selected = choose_col(cols, c("position", "condition"))
     ),
 
     shiny::selectInput(
@@ -193,17 +276,13 @@ make_fixrep_mapping_ui <- function(cols) {
     ),
 
     shiny::selectInput(
-      "map_img_x",
-      "IMAGE X",
-      choices = cols,
-      selected = choose_col(cols, c("image_location_x", "image_x"))
-    ),
-
-    shiny::selectInput(
-      "map_img_y",
-      "IMAGE Y",
-      choices = cols,
-      selected = choose_col(cols, c("image_location_y", "image_y"))
+      "map_image_position",
+      "IMAGE POSITION",
+      choices = c(screen_central_choice, cols),
+      selected = choose_col(
+        c(screen_central_choice, cols),
+        c("location_b1", "face_location", screen_central_choice)
+      )
     )
   )
 }
@@ -212,22 +291,9 @@ make_fixrep_mapping_ui <- function(cols) {
 
 # Adds derived columns used for mapping without changing the imported raw data.
 prepare_fixrep_for_standardisation <- function(raw) {
-  requireNamespace("stringr", quietly = TRUE)
   requireNamespace("tibble", quietly = TRUE)
 
   out <- tibble::as_tibble(raw)
-  location_col <- intersect(c("location_b1", "face_location"), names(out))[1]
-
-  if (!is.na(location_col)) {
-    loc <- out[[location_col]] |>
-      as.character() |>
-      stringr::str_remove_all("[()]") |>
-      stringr::str_split_fixed(",", 2)
-
-    out$image_location_x <- suppressWarnings(as.numeric(stringr::str_trim(loc[, 1])))
-    out$image_location_y <- suppressWarnings(as.numeric(stringr::str_trim(loc[, 2])))
-  }
-
   attr(out, "read_mode") <- attr(raw, "read_mode", exact = TRUE)
   out
 }

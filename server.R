@@ -26,10 +26,15 @@ server <- function(input, output, session) {
     req_fixrep_map(input)
   })
 
+  screen_params <- reactive({
+    screen_params_from_input(input)
+  })
+
   fixrep <- reactive({
     standardise_fixrep(
       raw = fixrep_for_standardisation(),
-      map = fixrep_map()
+      map = fixrep_map(),
+      screen = screen_params()
     )
   })
 
@@ -175,10 +180,6 @@ server <- function(input, output, session) {
   })
 
   # Screen tab ----
-
-  screen_params <- reactive({
-    screen_params_from_input(input)
-  })
 
   output$view_screen <- renderPlot({
     req(input$screen_origin)

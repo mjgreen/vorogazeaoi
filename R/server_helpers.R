@@ -87,7 +87,8 @@ screen_params_from_input <- function(input) {
     left = input$screen_left,
     right = input$screen_right,
     top = input$screen_top,
-    bottom = input$screen_bottom
+    bottom = input$screen_bottom,
+    origin = input$screen_origin
   )
 }
 

@@ -120,6 +120,31 @@ req_fixrep_map <- function(input) {
   )
 }
 
+req_fixrep_map_matches_cols <- function(raw, map) {
+  required_cols <- c(
+    map$participant,
+    map$face,
+    map$trial,
+    map$condition,
+    map$fix_x,
+    map$fix_y,
+    map$fix_dur
+  )
+
+  if (!identical(map$image_position, screen_central_choice)) {
+    required_cols <- c(required_cols, map$image_position)
+  }
+
+  required_cols <- unique(stats::na.omit(required_cols))
+  shiny::req(all(required_cols %in% names(raw)))
+  invisible(TRUE)
+}
+
+mapped_fixrep_col <- function(raw, col) {
+  shiny::req(length(col) == 1, !is.na(col), nzchar(col), col %in% names(raw))
+  raw[[col]]
+}
+
 parse_point_column <- function(x) {
   x <- as.character(x)
   x[is.na(x)] <- ""
@@ -198,6 +223,8 @@ image_position_values_for_standardisation <- function(raw, image_position, scree
 
 # Renames and coerces the uploaded fixation report into the app's standard columns.
 standardise_fixrep <- function(raw, map, screen = NULL) {
+  req_fixrep_map_matches_cols(raw, map)
+
   image_position <- image_position_values_for_standardisation(
     raw = raw,
     image_position = map$image_position,
@@ -205,15 +232,15 @@ standardise_fixrep <- function(raw, map, screen = NULL) {
   )
 
   tibble(
-    SUBJECT   = as.character(raw[[map$participant]]),
-    FACE      = as.character(raw[[map$face]]),
-    TRIAL_ID  = to_int_if_possible(raw[[map$trial]]),
-    CONDITION = raw[[map$condition]],
+    SUBJECT   = as.character(mapped_fixrep_col(raw, map$participant)),
+    FACE      = as.character(mapped_fixrep_col(raw, map$face)),
+    TRIAL_ID  = to_int_if_possible(mapped_fixrep_col(raw, map$trial)),
+    CONDITION = mapped_fixrep_col(raw, map$condition),
     IMG_X     = image_position$x,
     IMG_Y     = image_position$y,
-    FIX_X     = to_num(raw[[map$fix_x]]),
-    FIX_Y     = to_num(raw[[map$fix_y]]),
-    FIX_DUR   = to_num(raw[[map$fix_dur]]),
+    FIX_X     = to_num(mapped_fixrep_col(raw, map$fix_x)),
+    FIX_Y     = to_num(mapped_fixrep_col(raw, map$fix_y)),
+    FIX_DUR   = to_num(mapped_fixrep_col(raw, map$fix_dur)),
     AOI       = "Not assigned"
   )
 }

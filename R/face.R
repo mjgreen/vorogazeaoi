@@ -8,12 +8,23 @@ find_face_file <- function(face, files) {
   
   face <- as.character(face)[1]
   
-  file_base <- basename(files)
+  file_labels <- names(files)
+  if (is.null(file_labels)) {
+    file_labels <- files
+  } else {
+    missing_labels <- is.na(file_labels) | file_labels == ""
+    file_labels[missing_labels] <- files[missing_labels]
+  }
+  
+  file_base <- basename(file_labels)
   file_stem <- tools::file_path_sans_ext(file_base)
+  file_label_stem <- tools::file_path_sans_ext(file_labels)
   face_stem <- tools::file_path_sans_ext(basename(face))
   
   match_idx <- which(
-    file_base == face |
+    file_labels == face |
+      file_label_stem == face |
+      file_base == face |
       file_stem == face |
       file_stem == face_stem
   )

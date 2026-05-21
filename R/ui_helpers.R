@@ -169,10 +169,27 @@ images_panel <- function() {
       bslib::card(
         bslib::card_header("input"),
         bslib::card_body(
-          shinyFiles::shinyDirButton(
-            id = "face_dir",
-            label = "Browse face directory",
-            title = "Choose the directory containing face images"
+          shiny::fileInput(
+            "upload_face_dir",
+            "Browse face directory",
+            multiple = TRUE,
+            accept = c(".png", ".jpg", ".jpeg"),
+            width = "100%",
+            buttonLabel = "Browse...",
+            placeholder = "No directory selected"
+          ),
+          shiny::tags$script(
+            shiny::HTML(
+              paste(
+                "document.addEventListener('DOMContentLoaded', function() {",
+                "  var input = document.getElementById('upload_face_dir');",
+                "  if (input) {",
+                "    input.setAttribute('webkitdirectory', '');",
+                "    input.setAttribute('directory', '');",
+                "  }",
+                "});"
+              )
+            )
           ),
           shiny::div(
             class = "loaded-file-box",

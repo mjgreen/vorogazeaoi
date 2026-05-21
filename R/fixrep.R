@@ -26,7 +26,7 @@ choose_col <- function(cols, candidates) {
   if (length(hit) > 0) hit[1] else cols[1]
 }
 
-screen_central_choice <- "<SCREEN CENTRAL>"
+screen_central_choice <- "<SCREEN CENTRAL, AUTO CALCULATE>"
 
 ## format helpers ----
 

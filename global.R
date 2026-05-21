@@ -1,5 +1,7 @@
 library(markdown)
 
+options(shiny.maxRequestSize = 100 * 1024^2)
+
 # Returns the fallback value when the first value is NULL.
 `%||%` <- function(x, y) {
   if (is.null(x)) y else x

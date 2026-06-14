@@ -22,6 +22,26 @@ default_fixrep_path <- function() {
   if (file.exists(path)) path else NULL
 }
 
+# Returns the current uploaded fixation report path, if one exists.
+uploaded_fixrep_path <- function(upload) {
+  if (is.null(upload) || nrow(upload) == 0) {
+    return(NULL)
+  }
+
+  upload$datapath[[1]] %||% NULL
+}
+
+# Uses an uploaded fixation report when available, otherwise the bundled demo.
+active_fixrep_path <- function(upload, bundled_path) {
+  uploaded_path <- uploaded_fixrep_path(upload)
+
+  if (!is.null(uploaded_path)) {
+    return(uploaded_path)
+  }
+
+  bundled_path
+}
+
 # Copies one bundled file into a Shiny download path.
 copy_bundled_file <- function(source_path, output_path) {
   shiny::validate(shiny::need(!is.null(source_path), "Bundled file is not available."))
@@ -70,7 +90,7 @@ uploaded_face_image_files <- function(upload) {
 }
 
 # Describes the active uploaded face-image source for display in the UI.
-face_source_label <- function(upload) {
+face_source_label <- function(upload, bundled_dir = NULL) {
   uploaded_files <- uploaded_face_image_files(upload)
 
   if (length(uploaded_files) > 0) {
@@ -84,16 +104,31 @@ face_source_label <- function(upload) {
     return(sprintf("%d image%s uploaded from local directory", length(uploaded_files), if (length(uploaded_files) == 1) "" else "s"))
   }
 
+  bundled_files <- list_face_image_files(bundled_dir)
+
+  if (length(bundled_files) > 0) {
+    return(sprintf(
+      "Bundled demo: %s (%d image%s)",
+      basename(bundled_dir),
+      length(bundled_files),
+      if (length(bundled_files) == 1) "" else "s"
+    ))
+  }
+
   "None"
 }
 
 # Describes the active uploaded fixation report for display in the UI.
-fixrep_source_label <- function(upload) {
-  if (is.null(upload) || nrow(upload) == 0) {
-    return("None")
+fixrep_source_label <- function(upload, bundled_path = NULL) {
+  if (!is.null(upload) && nrow(upload) > 0) {
+    return(upload$name[[1]] %||% "None")
   }
 
-  upload$name[[1]] %||% "None"
+  if (!is.null(bundled_path) && file.exists(bundled_path)) {
+    return(sprintf("Bundled demo: %s", basename(bundled_path)))
+  }
+
+  "None"
 }
 
 # Builds the face image selector, or a small note when the directory is empty.

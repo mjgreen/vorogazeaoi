@@ -4,6 +4,10 @@ server <- function(input, output, session) {
 
   default_fixrep <- default_fixrep_path()
 
+  current_fixrep_path <- reactive({
+    active_fixrep_path(input$upload_fixrep, default_fixrep)
+  })
+
   output$download_bundled_fixrep <- downloadHandler(
     filename = function() {
       basename(default_fixrep %||% "combined_alex1_done_by_matt_fixrep.csv")
@@ -14,12 +18,13 @@ server <- function(input, output, session) {
   )
 
   output$fixrep_file_display <- renderText({
-    fixrep_source_label(input$upload_fixrep)
+    fixrep_source_label(input$upload_fixrep, default_fixrep)
   })
 
   fixrep_raw <- reactive({
-    req(input$upload_fixrep)
-    read_fixrep(input$upload_fixrep$datapath)
+    path <- current_fixrep_path()
+    req(path)
+    read_fixrep(path)
   })
 
   fixrep_for_standardisation <- reactive({
@@ -27,7 +32,7 @@ server <- function(input, output, session) {
   })
 
   fixrep_read_mode <- reactive({
-    if (is.null(input$upload_fixrep)) {
+    if (is.null(current_fixrep_path())) {
       return(NULL)
     }
 
@@ -58,7 +63,7 @@ server <- function(input, output, session) {
   })
 
   screen_fixrep <- reactive({
-    if (is.null(input$upload_fixrep)) {
+    if (is.null(current_fixrep_path())) {
       return(NULL)
     }
 
@@ -157,11 +162,17 @@ server <- function(input, output, session) {
   )
 
   output$face_dir_display <- renderText({
-    face_source_label(input$upload_face_dir)
+    face_source_label(input$upload_face_dir, bundled_face_dir)
   })
 
   face_files <- reactive({
-    uploaded_face_image_files(input$upload_face_dir)
+    uploaded_files <- uploaded_face_image_files(input$upload_face_dir)
+
+    if (length(uploaded_files) > 0) {
+      return(uploaded_files)
+    }
+
+    list_face_image_files(bundled_face_dir)
   })
 
   output$face_file_ui <- renderUI({
@@ -169,7 +180,8 @@ server <- function(input, output, session) {
   })
 
   face_image_path <- reactive({
-    input$selected_face_file %||% NULL
+    files <- face_files()
+    input$selected_face_file %||% if (length(files) > 0) unname(files[[1]]) else NULL
   })
 
   sanity_face_image_path <- reactive({
@@ -245,7 +257,7 @@ server <- function(input, output, session) {
   })
 
   sanity_fixrep <- reactive({
-    if (is.null(input$upload_fixrep)) {
+    if (is.null(current_fixrep_path())) {
       return(NULL)
     }
 
@@ -284,7 +296,7 @@ server <- function(input, output, session) {
   })
 
   sanity_image_position_info <- reactive({
-    if (is.null(input$upload_fixrep)) {
+    if (is.null(current_fixrep_path())) {
       return(missing_image_position_info())
     }
 
@@ -317,7 +329,7 @@ server <- function(input, output, session) {
     }
 
     screen <- screen_params()
-    has_fixrep <- !is.null(input$upload_fixrep)
+    has_fixrep <- !is.null(current_fixrep_path())
 
     if (isTRUE(has_fixrep)) {
       req(input$sanity_face, input$sanity_condition)

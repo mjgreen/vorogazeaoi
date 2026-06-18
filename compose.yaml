@@ -1,0 +1,13 @@
+services:
+  vorogazeaoi3:
+    build:
+      context: .
+    image: vorogazeaoi3:local
+    container_name: vorogazeaoi3
+    restart: unless-stopped
+    init: true
+    environment:
+      SHINY_HOST: 0.0.0.0
+      SHINY_PORT: "3838"
+    ports:
+      - "3838:3838"

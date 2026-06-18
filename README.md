@@ -130,6 +130,28 @@ cheat sheet, including status checks and log-following commands.
 - `AOI` is currently initialised as `"Not assigned"` during standardisation;
   AOI assignment is future work.
 
+## Prior Deldir Implementation To Consult
+
+The most useful prior implementation found in the local repos and on GitHub is
+`mjgreen/vorogazeaoi/app3_human_refactored_by_codex`. It is a better reference
+than the earlier single-file prototypes because the AOI centre creation,
+validation, duplicate filtering, `deldir` input preparation, tessellation cache,
+plot overlay, and fixation-to-nearest-centre assignment are already separated
+into clearer pieces.
+
+When adding `deldir` tessellation to this repo, consult:
+
+- [app3_human_refactored_by_codex tree](https://github.com/mjgreen/vorogazeaoi/tree/1af9cd0fa24fc7df887bf2fc85b604547354f7e7/app3_human_refactored_by_codex)
+- [R/helpers_aoi.R](https://github.com/mjgreen/vorogazeaoi/blob/1af9cd0fa24fc7df887bf2fc85b604547354f7e7/app3_human_refactored_by_codex/R/helpers_aoi.R)
+  for AOI centre rows and `deldir`-ready point validation.
+- [server.R](https://github.com/mjgreen/vorogazeaoi/blob/1af9cd0fa24fc7df887bf2fc85b604547354f7e7/app3_human_refactored_by_codex/server.R)
+  for the guarded `deldir::deldir(...)` call, result caching, tessellation
+  segment overlay, and AOI assignment flow.
+
+That older implementation should be treated as a design reference rather than
+copied wholesale: adapt it to this repo's current standardised fixation columns,
+screen/image-origin handling, and Shiny module structure.
+
 ## Project Direction
 
 The planned analysis layer is to let researchers define meaningful face

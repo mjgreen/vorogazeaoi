@@ -15,8 +15,10 @@ geometry and data-checking workbench.
 
 ## Current Features
 
-- Shiny app with tabs for fixation data, screen geometry, face images, sanity
-  checks, and developer/debug notes.
+- Shiny app with tabs for an AOI demo, fixation data, screen geometry, face
+  images, sanity checks, and developer/debug notes.
+- One-face Lisa1 AOI demo with preloaded landmarks, live `deldir` Voronoi
+  tessellation, nearest-landmark fixation assignment, and compact metrics.
 - Bundled demo fixation report and face images, so the app opens with data
   already loaded.
 - Upload support for alternative fixation reports.
@@ -40,6 +42,15 @@ faces/faces_300x350/
 Uploaded fixation reports and uploaded face folders override the bundled data
 for the active session.
 
+The AOI demo uses a smaller self-contained Lisa1 fixture:
+
+```text
+demo/lisa1/fixrep_demo.csv
+demo/lisa1/faces/001_03.jpg
+```
+
+See `demo/lisa1/README.md` for fixture provenance and attribution.
+
 ## Repository Layout
 
 ```text
@@ -47,6 +58,7 @@ ui.R                  Shiny UI entrypoint
 server.R              Shiny server entrypoint
 global.R              Shared app setup
 R/                    App helper modules
+demo/                 Curated AOI demo fixture data
 fixreps/              Bundled fixation-report data
 faces/                Bundled face-image data
 ascs/                 Example/source eye-tracking exports
@@ -127,8 +139,10 @@ cheat sheet, including status checks and log-following commands.
   "Other" origins are visible in the UI but intentionally not implemented yet.
 - Fixation report imports preserve raw columns as text first, then standardise
   selected columns into the app's canonical fields.
-- `AOI` is currently initialised as `"Not assigned"` during standardisation;
-  AOI assignment is future work.
+- The AOI demo assigns fixations to nearest landmarks as the operational
+  equivalent of Voronoi-cell assignment for this prototype.
+- The general workbench still initialises imported fixation reports with
+  `AOI == "Not assigned"` until a wider AOI workflow is added there.
 
 ## Prior Deldir Implementation To Consult
 

@@ -181,3 +181,9 @@ label,
   background: #f8f9fa;
   line-height: var(--vz-ui-line-height);
 }
+
+.aoi-demo-button-row {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 0.5rem;
+}

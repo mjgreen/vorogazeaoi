@@ -6,6 +6,7 @@ ui <- page_fillable(
   theme = app_theme(),
   app_head(),
   navset_card_pill(
+    aoi_demo_panel(),
     fixations_panel(),
     screen_panel(),
     faces_panel(),

@@ -1,4 +1,5 @@
 server <- function(input, output, session) {
+  aoi_demo_server(input, output, session)
 
   # Fixation report tab ----
 

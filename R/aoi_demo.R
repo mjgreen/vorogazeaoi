@@ -289,9 +289,10 @@ aoi_demo_server <- function(input, output, session) {
   fixrep <- aoi_demo_read_fixrep()
   face_path <- aoi_demo_face_path()
   face_info <- read_face_image(face_path)
-  landmarks <- shiny::reactiveVal(aoi_demo_default_landmarks())
+  default_landmarks <- aoi_demo_default_landmarks()
+  landmarks <- shiny::reactiveVal(default_landmarks)
   assignments <- shiny::reactiveVal(
-    aoi_demo_assign_fixations(fixrep, landmarks(), face_info$width, face_info$height)
+    aoi_demo_assign_fixations(fixrep, default_landmarks, face_info$width, face_info$height)
   )
 
   recompute_assignments <- function() {

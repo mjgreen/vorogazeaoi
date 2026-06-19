@@ -15,8 +15,8 @@ aoi_demo_fixrep_path <- function() {
 aoi_demo_default_landmarks <- function() {
   data.frame(
     label = c("left_eye", "right_eye", "nose", "mouth", "chin"),
-    x = c(126, 220, 174, 174, 177),
-    y = c(202, 201, 258, 325, 388),
+    x = c(130, 230, 174, 174, 177),
+    y = c(224, 224, 258, 325, 388),
     stringsAsFactors = FALSE
   )
 }
@@ -238,7 +238,7 @@ aoi_demo_panel <- function() {
   bslib::nav_panel(
     "AOI Demo",
     bslib::layout_columns(
-      col_widths = c(3, 6, 3),
+      col_widths = c(2, 4, 6),
       height = "100%",
       bslib::card(
         bslib::card_header("landmarks"),
@@ -257,26 +257,33 @@ aoi_demo_panel <- function() {
         )
       ),
       bslib::card(
+        class = "aoi-demo-image-card",
+        fill = FALSE,
         full_screen = TRUE,
         bslib::card_header("image AOIs"),
         bslib::card_body(
-          shiny::plotOutput(
-            "aoi_demo_plot",
-            click = "aoi_demo_plot_click",
-            dblclick = shiny::dblclickOpts(id = "aoi_demo_plot_dblclick"),
-            height = "640px"
+          shiny::div(
+            class = "aoi-demo-plot-frame",
+            shiny::plotOutput(
+              "aoi_demo_plot",
+              click = "aoi_demo_plot_click",
+              dblclick = shiny::dblclickOpts(id = "aoi_demo_plot_dblclick"),
+              width = "100%",
+              height = "620px"
+            )
           )
         )
       ),
       bslib::card(
+        class = "aoi-demo-metrics-card",
         bslib::card_header("metrics"),
         bslib::card_body(
           shiny::div(
-            class = "compact-table-output",
+            class = "compact-table-output aoi-demo-metrics-output",
             shiny::tableOutput("aoi_demo_metrics")
           ),
           shiny::div(
-            class = "compact-table-output",
+            class = "compact-table-output aoi-demo-fixture-output",
             shiny::tableOutput("aoi_demo_fixture")
           )
         )

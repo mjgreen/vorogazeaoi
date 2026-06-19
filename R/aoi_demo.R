@@ -15,8 +15,8 @@ aoi_demo_fixrep_path <- function() {
 aoi_demo_default_landmarks <- function() {
   data.frame(
     label = c("left_eye", "right_eye", "nose", "mouth", "chin"),
-    x = c(130, 230, 174, 174, 177),
-    y = c(224, 224, 258, 325, 388),
+    x = c(130, 230, 170, 174, 177),
+    y = c(224, 224, 277, 325, 388),
     stringsAsFactors = FALSE
   )
 }

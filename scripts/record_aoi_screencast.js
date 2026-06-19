@@ -30,7 +30,7 @@ const targetFps = Number(readArg("fps", process.env.VOROGAZE_AOI_FPS || "12"));
 const landmarks = [
   { label: "left_eye", x: 130, y: 224 },
   { label: "right_eye", x: 230, y: 224 },
-  { label: "nose", x: 174, y: 258 },
+  { label: "nose", x: 170, y: 277 },
   { label: "mouth", x: 174, y: 325 },
   { label: "chin", x: 177, y: 388 },
 ];

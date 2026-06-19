@@ -51,6 +51,22 @@ demo/lisa1/faces/001_03.jpg
 
 See `demo/lisa1/README.md` for fixture provenance and attribution.
 
+## Poster Screencast
+
+The poster-friendly AOI demo screencast is served from:
+
+```text
+http://elite:3838/poster-aoi-demo.html
+```
+
+The page embeds `www/aoi-demo-screencast.mp4`, a silent 30-second recording of
+the Lisa1 AOI demo interaction. To regenerate it, start the app locally and run
+the recorder script on a machine with Node, Playwright, Chrome, and ffmpeg:
+
+```bash
+node scripts/record_aoi_screencast.js --url=http://127.0.0.1:3840/
+```
+
 ## Repository Layout
 
 ```text
@@ -59,6 +75,7 @@ server.R              Shiny server entrypoint
 global.R              Shared app setup
 R/                    App helper modules
 demo/                 Curated AOI demo fixture data
+www/                  App static assets and poster screencast page
 fixreps/              Bundled fixation-report data
 faces/                Bundled face-image data
 ascs/                 Example/source eye-tracking exports

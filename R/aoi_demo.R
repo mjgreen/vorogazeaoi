@@ -158,20 +158,29 @@ aoi_demo_assign_fixations <- function(fixrep, landmarks, width, height) {
   fixrep
 }
 
-aoi_demo_metrics <- function(assignments) {
+aoi_demo_metrics <- function(assignments, landmarks = NULL) {
   if (is.null(assignments) || nrow(assignments) == 0) {
     return(data.frame())
+  }
+
+  landmarks <- aoi_demo_prepare_landmarks(landmarks)
+  if (nrow(landmarks) == 0) {
+    aoi_levels <- sort(unique(assignments$AOI))
+  } else {
+    aoi_levels <- landmarks$label
   }
 
   n_fix <- stats::aggregate(FIX_DUR ~ AOI, assignments, length)
   total <- stats::aggregate(FIX_DUR ~ AOI, assignments, sum)
   mean_dur <- stats::aggregate(FIX_DUR ~ AOI, assignments, mean)
 
-  out <- merge(n_fix, total, by = "AOI", suffixes = c("_n", "_total"))
-  out <- merge(out, mean_dur, by = "AOI")
+  out <- data.frame(AOI = aoi_levels, stringsAsFactors = FALSE)
+  out <- merge(out, n_fix, by = "AOI", all.x = TRUE, sort = FALSE)
+  out <- merge(out, total, by = "AOI", all.x = TRUE, sort = FALSE, suffixes = c("_n", "_total"))
+  out <- merge(out, mean_dur, by = "AOI", all.x = TRUE, sort = FALSE)
   names(out) <- c("AOI", "N_FIX", "TOTAL_FIX_DUR", "MEAN_FIX_DUR")
   out$MEAN_FIX_DUR <- round(out$MEAN_FIX_DUR, 1)
-  out[order(out$AOI), , drop = FALSE]
+  out[match(aoi_levels, out$AOI), , drop = FALSE]
 }
 
 aoi_demo_plot <- function(face_path, fixrep, landmarks, assignments = NULL) {
@@ -359,7 +368,7 @@ aoi_demo_server <- function(input, output, session) {
   }, digits = 0)
 
   output$aoi_demo_metrics <- renderTable({
-    out <- aoi_demo_metrics(assignments())
+    out <- aoi_demo_metrics(assignments(), landmarks())
 
     if (nrow(out) == 0) {
       return(NULL)

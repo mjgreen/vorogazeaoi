@@ -179,6 +179,7 @@ aoi_demo_metrics <- function(assignments, landmarks = NULL) {
   out <- merge(out, total, by = "AOI", all.x = TRUE, sort = FALSE, suffixes = c("_n", "_total"))
   out <- merge(out, mean_dur, by = "AOI", all.x = TRUE, sort = FALSE)
   names(out) <- c("AOI", "N_FIX", "TOTAL_FIX_DUR", "MEAN_FIX_DUR")
+  out$N_FIX[is.na(out$N_FIX)] <- 0L
   out$MEAN_FIX_DUR <- round(out$MEAN_FIX_DUR, 1)
   out[match(aoi_levels, out$AOI), , drop = FALSE]
 }

@@ -1,9 +1,9 @@
 services:
-  vorogazeaoi3:
+  vorogazeaoi:
     build:
       context: .
-    image: vorogazeaoi3:local
-    container_name: vorogazeaoi3
+    image: vorogazeaoi:local
+    container_name: vorogazeaoi
     restart: unless-stopped
     init: true
     environment:
@@ -12,20 +12,20 @@ services:
     expose:
       - "3838"
 
-  auth-proxy:
+  vorogazeaoi-auth-proxy:
     build:
       context: ./auth-proxy
-    image: vorogazeaoi3-auth-proxy:local
-    container_name: vorogazeaoi3-auth-proxy
+    image: vorogazeaoi-auth-proxy:local
+    container_name: vorogazeaoi-auth-proxy
     restart: unless-stopped
     init: true
     depends_on:
-      - vorogazeaoi3
+      - vorogazeaoi
     env_file:
       - ./funnel-proxy/auth.env
     environment:
       VOROGAZE_AUTH_PROXY_LISTEN: ":8088"
-      VOROGAZE_UPSTREAM_URL: "http://vorogazeaoi3:3838"
+      VOROGAZE_UPSTREAM_URL: "http://vorogazeaoi:3838"
       VOROGAZE_COOKIE_SECURE: "true"
       VOROGAZE_SESSION_TTL_SECONDS: "43200"
     ports:

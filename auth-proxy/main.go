@@ -96,7 +96,7 @@ func main() {
 }
 
 func loadConfig() (config, error) {
-	rawUpstream := envDefault("VOROGAZE_UPSTREAM_URL", "http://vorogazeaoi3:3838")
+	rawUpstream := envDefault("VOROGAZE_UPSTREAM_URL", "http://vorogazeaoi:3838")
 	upstreamURL, err := url.Parse(rawUpstream)
 	if err != nil || upstreamURL.Scheme == "" || upstreamURL.Host == "" {
 		return config{}, fmt.Errorf("VOROGAZE_UPSTREAM_URL must be an absolute URL: %q", rawUpstream)

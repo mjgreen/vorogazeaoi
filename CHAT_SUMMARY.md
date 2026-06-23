@@ -4,7 +4,7 @@ Date: 2026-06-14
 
 ## Current App State
 
-- `vorogazeaoi3` is the current clean working repo.
+- `vorogazeaoi` is the current clean working repo.
 - The app now opens with bundled demo data preloaded:
   - fixation report: `fixreps/combined_alex1_done_by_matt_fixrep.csv`
   - faces: `faces/faces_300x350`
@@ -60,7 +60,7 @@ Reusable pieces found:
 
 Important dependency note:
 
-- `vorogazeaoi3` does not yet include `deldir` in `renv.lock`.
+- `vorogazeaoi` does not yet include `deldir` in `renv.lock`.
 - Older repos do include `deldir`.
 
 ## Revised 8-Week Shape

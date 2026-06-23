@@ -1,4 +1,4 @@
-module vorogazeaoi3-auth-proxy
+module vorogazeaoi-auth-proxy
 
 go 1.22.0
 

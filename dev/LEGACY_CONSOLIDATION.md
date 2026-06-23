@@ -1,8 +1,12 @@
 # Legacy VoroGaze Consolidation
 
 This repo is the canonical VoroGaze home. The older local/GitHub repos were
-reviewed so their useful concepts could be folded into `vorogazeaoi3` before
+reviewed so their useful concepts could be folded into `vorogazeaoi` before
 the old repos were archived and deleted.
+
+The legacy row named `vorogazeaoi` below refers to the deleted pre-consolidation
+repo. After that archive was verified, the canonical repo was renamed from
+`vorogazeaoi3` to `vorogazeaoi`.
 
 ## Legacy Inputs Reviewed
 
@@ -17,7 +21,7 @@ the old repos were archived and deleted.
 
 ## Carried Forward
 
-- `vorogazeaoi3` now contains the runnable AOI Workbench for landmark editing,
+- `vorogazeaoi` now contains the runnable AOI Workbench for landmark editing,
   live Voronoi display, fixation assignment, committed session tables, metrics,
   and CSV downloads.
 - Mapping validation now flags duplicate column mappings, missing fixation/image

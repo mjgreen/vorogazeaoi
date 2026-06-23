@@ -140,7 +140,7 @@ http://localhost:3838/
 Check status and recent logs:
 
 ```bash
-docker compose ps && docker logs --tail=80 vorogazeaoi3
+docker compose ps && docker logs --tail=80 vorogazeaoi
 ```
 
 Stop the local container:
@@ -165,7 +165,7 @@ browser login testing.
 After committing and pushing changes to GitHub, update Elite with:
 
 ```bash
-ssh elite 'cd /srv/nvme_apps/stacks/vorogazeaoi3 && git pull --ff-only && { docker rm -f vorogazeaoi3-funnel-proxy 2>/dev/null || true; } && docker compose up -d --build'
+ssh elite 'cd /srv/nvme_apps/stacks/vorogazeaoi && git pull --ff-only && { docker rm -f vorogazeaoi-funnel-proxy 2>/dev/null || true; } && docker compose up -d --build'
 ```
 
 See [ELITE_DEPLOYMENT.md](ELITE_DEPLOYMENT.md) for the full Elite deployment

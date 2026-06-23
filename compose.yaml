@@ -9,5 +9,24 @@ services:
     environment:
       SHINY_HOST: 0.0.0.0
       SHINY_PORT: "3838"
+    expose:
+      - "3838"
+
+  auth-proxy:
+    build:
+      context: ./auth-proxy
+    image: vorogazeaoi3-auth-proxy:local
+    container_name: vorogazeaoi3-auth-proxy
+    restart: unless-stopped
+    init: true
+    depends_on:
+      - vorogazeaoi3
+    env_file:
+      - ./funnel-proxy/auth.env
+    environment:
+      VOROGAZE_AUTH_PROXY_LISTEN: ":8088"
+      VOROGAZE_UPSTREAM_URL: "http://vorogazeaoi3:3838"
+      VOROGAZE_COOKIE_SECURE: "true"
+      VOROGAZE_SESSION_TTL_SECONDS: "43200"
     ports:
-      - "3838:3838"
+      - "127.0.0.1:8088:8088"

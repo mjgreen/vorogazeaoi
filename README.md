@@ -147,13 +147,17 @@ docker compose down
 Elite serves the app on the LAN at:
 
 ```text
-http://elite:3838/
+http://elite:8088/
 ```
+
+External conference/testing access is fronted by a small auth proxy that shows
+a normal login page and then sets a signed session cookie before forwarding to
+the Shiny app.
 
 After committing and pushing changes to GitHub, update Elite with:
 
 ```bash
-ssh elite 'cd /srv/nvme_apps/stacks/vorogazeaoi3 && git pull --ff-only && docker compose up -d --build'
+ssh elite 'cd /srv/nvme_apps/stacks/vorogazeaoi3 && git pull --ff-only && { docker rm -f vorogazeaoi3-funnel-proxy 2>/dev/null || true; } && docker compose up -d --build'
 ```
 
 See [ELITE_DEPLOYMENT.md](ELITE_DEPLOYMENT.md) for the full Elite deployment

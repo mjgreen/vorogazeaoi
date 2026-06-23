@@ -25,6 +25,11 @@ renv/python/
 rsconnect/
 shinyapps/
 
+# Deployment-local auth secrets -----------------------------------------
+
+funnel-proxy/auth.env
+funnel-proxy/*credentials*.txt
+
 # Logs ------------------------------------------------------------------
 
 *.log

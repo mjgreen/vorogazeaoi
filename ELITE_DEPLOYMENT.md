@@ -1,20 +1,21 @@
 # Elite Deployment
 
-Elite serves this Shiny app on the LAN at:
-
-```text
-http://elite:8088/
-```
-
-Temporary external access uses Tailscale Funnel at:
+The authenticated tester URL is:
 
 ```text
 https://elite.tail2f3b09.ts.net/
 ```
 
-Funnel forwards to the `auth-proxy` container on `127.0.0.1:8088`. The auth
-proxy serves a real `/login` page, sets a signed `HttpOnly` session cookie, and
-then proxies authenticated users to the private Shiny container.
+Tailscale Funnel forwards that public HTTPS URL to the auth proxy on Elite:
+
+```text
+127.0.0.1:8088
+```
+
+The auth proxy serves a real `/login` page, sets a signed `HttpOnly` session
+cookie, and then proxies authenticated users to the private Shiny container.
+Cookies are marked `Secure`, so browser login testing should use the HTTPS
+Funnel URL rather than plain `http://elite:8088`.
 
 The live checkout on Elite is:
 
@@ -52,16 +53,18 @@ seconds. Re-run the check after a short pause.
 
 ## Check The HTTP Endpoint
 
-Use this from a LAN machine to confirm the Shiny endpoint is responding.
+Use this from Elite or a LAN machine to confirm unauthenticated requests reach
+the auth proxy.
 
 ```bash
 curl -I http://elite:8088/
 ```
 
-Unauthenticated requests should redirect to `/login`:
+Unauthenticated requests should redirect to `/login`. Browser login should be
+tested through HTTPS:
 
 ```bash
-curl -I http://elite:8088/poster-aoi-demo.html
+curl -I https://elite.tail2f3b09.ts.net/poster-aoi-demo.html
 ```
 
 ## Show The Deployed Commit

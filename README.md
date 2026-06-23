@@ -144,15 +144,16 @@ docker compose down
 
 ## Deploy To Elite
 
-Elite serves the app on the LAN at:
+The authenticated external/testing URL is:
 
 ```text
-http://elite:8088/
+https://elite.tail2f3b09.ts.net/
 ```
 
 External conference/testing access is fronted by a small auth proxy that shows
 a normal login page and then sets a signed session cookie before forwarding to
-the Shiny app.
+the Shiny app. The cookie is marked `Secure`, so use the HTTPS Funnel URL for
+browser login testing.
 
 After committing and pushing changes to GitHub, update Elite with:
 

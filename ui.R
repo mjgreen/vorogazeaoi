@@ -11,6 +11,7 @@ ui <- page_fillable(
     screen_panel(),
     faces_panel(),
     sanity_panel(),
+    aoi_workbench_panel(),
     developer_panel()
   )
 )

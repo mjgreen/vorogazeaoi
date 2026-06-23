@@ -245,6 +245,84 @@ standardise_fixrep <- function(raw, map, screen = NULL) {
   )
 }
 
+fixrep_numeric_coercion_failures <- function(raw, cols) {
+  cols <- unique(stats::na.omit(cols))
+  cols <- cols[cols %in% names(raw)]
+
+  vapply(
+    cols,
+    function(col) {
+      original <- raw[[col]]
+      numeric <- suppressWarnings(as.numeric(original))
+      sum(!is.na(original) & trimws(as.character(original)) != "" & is.na(numeric))
+    },
+    integer(1)
+  )
+}
+
+fixrep_range_label <- function(x) {
+  x <- suppressWarnings(as.numeric(x))
+  x <- x[is.finite(x)]
+
+  if (length(x) == 0) {
+    return("not available")
+  }
+
+  sprintf("%s to %s", round(min(x), 1), round(max(x), 1))
+}
+
+fixrep_validation_summary_ui <- function(raw, map, standardised) {
+  map_values <- unlist(map, use.names = TRUE)
+  map_values <- map_values[map_values != screen_central_choice]
+  duplicate_mappings <- unique(map_values[duplicated(map_values)])
+
+  numeric_failures <- fixrep_numeric_coercion_failures(
+    raw,
+    c(map$fix_x, map$fix_y, map$fix_dur)
+  )
+
+  issues <- character()
+  if (length(duplicate_mappings) > 0) {
+    issues <- c(issues, paste("Duplicate source mappings:", paste(duplicate_mappings, collapse = ", ")))
+  }
+
+  missing_fix <- sum(is.na(standardised$FIX_X) | is.na(standardised$FIX_Y))
+  if (missing_fix > 0) {
+    issues <- c(issues, sprintf("Rows missing fixation coordinates: %d", missing_fix))
+  }
+
+  missing_img <- sum(is.na(standardised$IMG_X) | is.na(standardised$IMG_Y))
+  if (missing_img > 0) {
+    issues <- c(issues, sprintf("Rows missing image coordinates: %d", missing_img))
+  }
+
+  if (sum(numeric_failures) > 0) {
+    issues <- c(issues, sprintf("Numeric coercion failures: %d", sum(numeric_failures)))
+  }
+
+  shiny::div(
+    class = paste("app-summary", if (length(issues) > 0) "app-summary-warning" else "app-summary-ok"),
+    shiny::tags$strong("Mapping validation"),
+    shiny::tags$ul(
+      shiny::tags$li(sprintf("Rows: %d", nrow(standardised))),
+      shiny::tags$li(sprintf("Faces: %d", dplyr::n_distinct(standardised$FACE, na.rm = TRUE))),
+      shiny::tags$li(sprintf("Conditions: %d", dplyr::n_distinct(standardised$CONDITION, na.rm = TRUE))),
+      shiny::tags$li(sprintf("Fixation X: %s", fixrep_range_label(standardised$FIX_X))),
+      shiny::tags$li(sprintf("Fixation Y: %s", fixrep_range_label(standardised$FIX_Y))),
+      shiny::tags$li(sprintf("Image X: %s", fixrep_range_label(standardised$IMG_X))),
+      shiny::tags$li(sprintf("Image Y: %s", fixrep_range_label(standardised$IMG_Y)))
+    ),
+    if (length(issues) > 0) {
+      shiny::tagList(
+        shiny::tags$strong("Issues to review"),
+        shiny::tags$ul(lapply(issues, shiny::tags$li))
+      )
+    } else {
+      shiny::tags$p("No mapping issues detected.")
+    }
+  )
+}
+
 # Builds the column-mapping controls after a fixation report has been uploaded.
 make_fixrep_mapping_ui <- function(cols) {
 

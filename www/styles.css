@@ -182,6 +182,40 @@ label,
   line-height: var(--vz-ui-line-height);
 }
 
+.app-summary {
+  margin-top: 0.45rem;
+  padding: 0.45rem 0.55rem;
+  border: 1px solid #d7dde3;
+  border-radius: 0.35rem;
+  background: #f8f9fa;
+}
+
+.app-summary ul,
+.aoi-workbench-status ul {
+  margin: 0.25rem 0 0;
+  padding-left: 1rem;
+}
+
+.app-summary p {
+  margin: 0.25rem 0 0;
+}
+
+.app-summary-ok {
+  border-color: #9ec5a8;
+  background: #f3faf5;
+}
+
+.app-summary-warning {
+  border-color: #e1be72;
+  background: #fff8e8;
+}
+
+.aoi-workbench-button-row {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 0.5rem;
+}
+
 .aoi-demo-button-row {
   display: grid;
   gap: 0.35rem;

@@ -148,6 +148,14 @@ server <- function(input, output, session) {
     )
   })
 
+  output$fixrep_validation_summary <- renderUI({
+    fixrep_validation_summary_ui(
+      raw = fixrep_for_standardisation(),
+      map = fixrep_map(),
+      standardised = fixrep()
+    )
+  })
+
   # Faces tab ----
 
   bundled_face_dir <- bundled_face_dir_path()
@@ -212,6 +220,15 @@ server <- function(input, output, session) {
       image_origin = input$image_origin
     )
   })
+
+  aoi_workbench_server(
+    input = input,
+    output = output,
+    session = session,
+    fixrep = fixrep,
+    face_files = face_files,
+    screen_params = screen_params
+  )
 
   # Screen tab ----
 

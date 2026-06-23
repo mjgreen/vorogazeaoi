@@ -64,7 +64,8 @@ fixations_input_card <- function() {
       shiny::div(
         class = "fixrep-mapping-ui",
         shiny::uiOutput("fixrep_mapping_ui")
-      )
+      ),
+      shiny::uiOutput("fixrep_validation_summary")
     )
   )
 }

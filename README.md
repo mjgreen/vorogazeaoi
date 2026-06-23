@@ -56,19 +56,19 @@ See `demo/lisa1/README.md` for fixture provenance and attribution.
 The poster-friendly AOI demo screencast is served from:
 
 ```text
-http://elite:3838/poster-aoi-demo.html
+https://elite.tail2f3b09.ts.net/poster-aoi-demo.html
 ```
 
 A rough QR-test poster mockup is served from:
 
 ```text
-http://elite:3838/poster-qr-mockup.html
+https://elite.tail2f3b09.ts.net/poster-qr-mockup.html
 ```
 
-The mockup QR currently encodes the Elite LAN URL:
+The mockup QR currently encodes the Funnel URL:
 
 ```text
-http://192.168.8.209:3838/poster-aoi-demo.html
+https://elite.tail2f3b09.ts.net/poster-aoi-demo.html
 ```
 
 The page embeds `www/aoi-demo-screencast.mp4`, a silent 30-second recording of

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"crypto/hmac"
 	"crypto/rand"
@@ -11,6 +12,7 @@ import (
 	"errors"
 	"fmt"
 	"html/template"
+	"io"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -25,6 +27,7 @@ import (
 
 type config struct {
 	Listen       string
+	BasePath     string
 	UpstreamURL  *url.URL
 	Username     string
 	PasswordHash []byte
@@ -60,17 +63,24 @@ func main() {
 	originalDirector := proxy.Director
 	proxy.Director = func(req *http.Request) {
 		originalHost := req.Host
+		stripBasePath(req.URL, cfg.BasePath)
 		originalDirector(req)
 		req.Host = cfg.UpstreamURL.Host
 		req.Header.Set("X-Forwarded-Host", originalHost)
 		req.Header.Set("X-Forwarded-Proto", forwardedProto(req))
+		if cfg.BasePath != "" {
+			req.Header.Set("X-Forwarded-Prefix", cfg.BasePath)
+		}
 		if user, ok := req.Context().Value(userContextKey).(string); ok && user != "" {
 			req.Header.Set("X-Authenticated-User", user)
 		}
 	}
+	proxy.ModifyResponse = func(resp *http.Response) error {
+		return addHTMLBase(resp, cfg.BasePath)
+	}
 	proxy.ErrorHandler = func(w http.ResponseWriter, r *http.Request, err error) {
 		log.Printf("proxy error for %s: %v", r.URL.Path, err)
-		http.Error(w, "The VoroGaze app is temporarily unavailable.", http.StatusBadGateway)
+		http.Error(w, "The VoroGaze AOI app is temporarily unavailable.", http.StatusBadGateway)
 	}
 
 	srv := &server{
@@ -80,10 +90,7 @@ func main() {
 	}
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/healthz", srv.healthz)
-	mux.HandleFunc("/login", srv.login)
-	mux.HandleFunc("/logout", srv.logout)
-	mux.HandleFunc("/", srv.protectedProxy)
+	srv.registerRoutes(mux)
 
 	httpSrv := &http.Server{
 		Addr:              cfg.Listen,
@@ -91,7 +98,7 @@ func main() {
 		ReadHeaderTimeout: 10 * time.Second,
 	}
 
-	log.Printf("listening on %s and proxying to %s", cfg.Listen, cfg.UpstreamURL.Redacted())
+	log.Printf("listening on %s at base path %q and proxying to %s", cfg.Listen, cfg.BasePath, cfg.UpstreamURL.Redacted())
 	log.Fatal(httpSrv.ListenAndServe())
 }
 
@@ -122,8 +129,14 @@ func loadConfig() (config, error) {
 		return config{}, errors.New("VOROGAZE_SESSION_TTL_SECONDS must be a positive integer")
 	}
 
+	basePath, err := normalizeBasePath(os.Getenv("VOROGAZE_BASE_PATH"))
+	if err != nil {
+		return config{}, err
+	}
+
 	return config{
 		Listen:       envDefault("VOROGAZE_AUTH_PROXY_LISTEN", ":8088"),
+		BasePath:     basePath,
 		UpstreamURL:  upstreamURL,
 		Username:     username,
 		PasswordHash: []byte(passwordHash),
@@ -132,6 +145,18 @@ func loadConfig() (config, error) {
 		CookieSecure: envBool("VOROGAZE_COOKIE_SECURE", true),
 		SessionTTL:   time.Duration(ttlSeconds) * time.Second,
 	}, nil
+}
+
+func (s *server) registerRoutes(mux *http.ServeMux) {
+	mux.HandleFunc(s.route("/healthz"), s.healthz)
+	mux.HandleFunc(s.route("/login"), s.login)
+	mux.HandleFunc(s.route("/logout"), s.logout)
+	if s.cfg.BasePath == "" {
+		mux.HandleFunc("/", s.protectedProxy)
+		return
+	}
+	mux.HandleFunc(s.cfg.BasePath, s.protectedProxy)
+	mux.HandleFunc(s.cfg.BasePath+"/", s.protectedProxy)
 }
 
 func (s *server) healthz(w http.ResponseWriter, r *http.Request) {
@@ -144,7 +169,7 @@ func (s *server) login(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		if _, ok := s.validSessionUser(r); ok {
-			http.Redirect(w, r, sanitizeNext(r.URL.Query().Get("next")), http.StatusSeeOther)
+			http.Redirect(w, r, s.sanitizeNext(r.URL.Query().Get("next")), http.StatusSeeOther)
 			return
 		}
 		s.renderLogin(w, r, "", http.StatusOK)
@@ -172,13 +197,13 @@ func (s *server) login(w http.ResponseWriter, r *http.Request) {
 		http.SetCookie(w, &http.Cookie{
 			Name:     s.cfg.CookieName,
 			Value:    token,
-			Path:     "/",
+			Path:     s.cookiePath(),
 			MaxAge:   int(s.cfg.SessionTTL.Seconds()),
 			HttpOnly: true,
 			Secure:   s.cfg.CookieSecure,
 			SameSite: http.SameSiteLaxMode,
 		})
-		http.Redirect(w, r, sanitizeNext(r.PostForm.Get("next")), http.StatusSeeOther)
+		http.Redirect(w, r, s.sanitizeNext(r.PostForm.Get("next")), http.StatusSeeOther)
 	default:
 		w.Header().Set("Allow", "GET, POST")
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -189,33 +214,80 @@ func (s *server) logout(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     s.cfg.CookieName,
 		Value:    "",
-		Path:     "/",
+		Path:     s.cookiePath(),
 		MaxAge:   -1,
 		HttpOnly: true,
 		Secure:   s.cfg.CookieSecure,
 		SameSite: http.SameSiteLaxMode,
 	})
-	http.Redirect(w, r, "/login", http.StatusSeeOther)
+	http.Redirect(w, r, s.loginPath(), http.StatusSeeOther)
 }
 
 func (s *server) protectedProxy(w http.ResponseWriter, r *http.Request) {
+	if !s.inBasePath(r.URL.Path) {
+		http.NotFound(w, r)
+		return
+	}
 	user, ok := s.validSessionUser(r)
 	if !ok {
-		http.Redirect(w, r, "/login?next="+url.QueryEscape(currentPath(r)), http.StatusSeeOther)
+		http.Redirect(w, r, s.loginPath()+"?next="+url.QueryEscape(currentPath(r)), http.StatusSeeOther)
 		return
 	}
 	s.proxy.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), userContextKey, user)))
 }
 
 func (s *server) renderLogin(w http.ResponseWriter, r *http.Request, message string, status int) {
-	next := sanitizeNext(firstNonEmpty(r.FormValue("next"), r.URL.Query().Get("next"), "/"))
+	next := s.sanitizeNext(firstNonEmpty(r.FormValue("next"), r.URL.Query().Get("next"), s.defaultNext()))
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Header().Set("Cache-Control", "no-store")
 	w.WriteHeader(status)
 	_ = s.loginTpl.Execute(w, map[string]string{
-		"Message": message,
-		"Next":    next,
+		"LoginPath": s.loginPath(),
+		"Message":   message,
+		"Next":      next,
 	})
+}
+
+func (s *server) route(path string) string {
+	if s.cfg.BasePath == "" {
+		return path
+	}
+	if path == "/" {
+		return s.cfg.BasePath
+	}
+	return s.cfg.BasePath + path
+}
+
+func (s *server) defaultNext() string {
+	return s.route("/")
+}
+
+func (s *server) loginPath() string {
+	return s.route("/login")
+}
+
+func (s *server) cookiePath() string {
+	if s.cfg.BasePath == "" {
+		return "/"
+	}
+	return s.cfg.BasePath
+}
+
+func (s *server) inBasePath(path string) bool {
+	if s.cfg.BasePath == "" {
+		return true
+	}
+	return path == s.cfg.BasePath || strings.HasPrefix(path, s.cfg.BasePath+"/")
+}
+
+func (s *server) sanitizeNext(next string) string {
+	if next == "" || !strings.HasPrefix(next, "/") || strings.HasPrefix(next, "//") {
+		return s.defaultNext()
+	}
+	if s.cfg.BasePath != "" && next != s.cfg.BasePath && !strings.HasPrefix(next, s.cfg.BasePath+"/") {
+		return s.defaultNext()
+	}
+	return next
 }
 
 func (s *server) validCredentials(username, password string) bool {
@@ -290,6 +362,61 @@ func currentPath(r *http.Request) string {
 	return path
 }
 
+func normalizeBasePath(value string) (string, error) {
+	value = strings.TrimSpace(value)
+	if value == "" || value == "/" {
+		return "", nil
+	}
+	if !strings.HasPrefix(value, "/") || strings.HasPrefix(value, "//") {
+		return "", fmt.Errorf("VOROGAZE_BASE_PATH must be empty or an absolute path such as /vorogazeaoi: %q", value)
+	}
+	value = strings.TrimRight(value, "/")
+	if value == "" {
+		return "", nil
+	}
+	return value, nil
+}
+
+func stripBasePath(u *url.URL, basePath string) {
+	if basePath == "" {
+		return
+	}
+	switch {
+	case u.Path == basePath:
+		u.Path = "/"
+	case strings.HasPrefix(u.Path, basePath+"/"):
+		u.Path = strings.TrimPrefix(u.Path, basePath)
+	}
+	if u.Path == "" {
+		u.Path = "/"
+	}
+	u.RawPath = ""
+}
+
+func addHTMLBase(resp *http.Response, basePath string) error {
+	if basePath == "" {
+		return nil
+	}
+	if resp.Header.Get("Content-Encoding") != "" || !strings.Contains(resp.Header.Get("Content-Type"), "text/html") {
+		return nil
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+	if err := resp.Body.Close(); err != nil {
+		return err
+	}
+
+	baseTag := []byte(`<head><base href="` + basePath + `/">`)
+	body = bytes.Replace(body, []byte("<head>"), baseTag, 1)
+	resp.Body = io.NopCloser(bytes.NewReader(body))
+	resp.ContentLength = int64(len(body))
+	resp.Header.Set("Content-Length", strconv.Itoa(len(body)))
+	return nil
+}
+
 func sanitizeNext(next string) string {
 	if next == "" || !strings.HasPrefix(next, "/") || strings.HasPrefix(next, "//") {
 		return "/"
@@ -357,7 +484,7 @@ const loginPageHTML = `<!doctype html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>VoroGaze sign in</title>
+  <title>VoroGaze AOI sign in</title>
   <style>
     :root {
       color-scheme: light dark;
@@ -451,9 +578,9 @@ const loginPageHTML = `<!doctype html>
 </head>
 <body>
   <main>
-    <h1>VoroGaze</h1>
+    <h1>VoroGaze AOI</h1>
     <p>Sign in to continue.</p>
-    <form method="post" action="/login" autocomplete="on">
+    <form method="post" action="{{.LoginPath}}" autocomplete="on">
       <input type="hidden" name="next" value="{{.Next}}">
       <label for="username">Username</label>
       <input id="username" name="username" type="text" autocomplete="username" required autofocus>

@@ -1,0 +1,11 @@
+{
+  "name": "vorogazeaoi",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:pages": "node scripts/build-pages-site.mjs",
+    "test:pages": "node scripts/test-pages-site.mjs"
+  }
+}
+

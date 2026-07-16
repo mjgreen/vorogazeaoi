@@ -30,6 +30,11 @@ shinyapps/
 funnel-proxy/auth.env
 funnel-proxy/*credentials*.txt
 
+# Static Pages output ----------------------------------------------------
+
+pages-dist/
+.wrangler/
+
 # Logs ------------------------------------------------------------------
 
 *.log

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="VoroGaze conference demonstration: defensible areas of interest for eye-tracking data.">
+    <title>VoroGaze | Eye-tracking AOI demonstration</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/">VoroGaze</a>
+      <a href="mailto:matt@mjgreen.uk">matt@mjgreen.uk</a>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Conference demonstration</p>
+          <h1>Areas of interest you can see—and defend.</h1>
+        </div>
+        <p class="lede">
+          VoroGaze explores landmark-based regions for face-focused
+          eye-tracking research. The prototype makes coordinate assumptions,
+          fixation assignment and the resulting metrics visible before they
+          become analysis decisions.
+        </p>
+      </section>
+
+      <section class="film" aria-labelledby="film-title">
+        <div class="film-heading">
+          <div>
+            <p class="eyebrow">30-second walkthrough</p>
+            <h2 id="film-title">From landmarks to fixation metrics</h2>
+          </div>
+          <p>The clip is silent and uses the bundled Lisa1 conference fixture.</p>
+        </div>
+        <video controls playsinline preload="metadata" aria-label="Silent VoroGaze AOI demonstration">
+          <source src="/aoi-demo-screencast.mp4" type="video/mp4">
+          Your browser does not support embedded MP4 video.
+        </video>
+      </section>
+
+      <section class="steps" aria-labelledby="steps-title">
+        <p class="eyebrow">What the prototype shows</p>
+        <h2 id="steps-title">A visible analysis chain</h2>
+        <div class="step-grid">
+          <article><span>01</span><h3>Place landmarks</h3><p>Define meaningful centres directly against the face image.</p></article>
+          <article><span>02</span><h3>Partition space</h3><p>Generate bounded Voronoi-style regions from those centres.</p></article>
+          <article><span>03</span><h3>Assign fixations</h3><p>Inspect unaggregated assignments before summarising metrics.</p></article>
+        </div>
+      </section>
+
+      <section class="boundary" aria-labelledby="boundary-title">
+        <div>
+          <p class="eyebrow">Public-demo boundary</p>
+          <h2 id="boundary-title">Bundled data only</h2>
+        </div>
+        <div class="boundary-copy">
+          <p>
+            This public conference page contains only the curated Lisa1
+            fixture and its prerecorded demonstration. It has no upload
+            control and does not expose the separate research workbench.
+          </p>
+          <p class="attribution">
+            Face image: DeBruine, L., &amp; Jones, B. (2017),
+            <a href="https://doi.org/10.6084/m9.figshare.5047666">Face Research Lab London Set</a>,
+            CC BY 4.0.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>VoroGaze AOI</span>
+      <span>A research prototype by Matt Green</span>
+    </footer>
+  </body>
+</html>
+

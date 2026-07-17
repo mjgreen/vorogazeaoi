@@ -1,0 +1,16 @@
+body {
+  background: #f6f2e7;
+}
+
+.aoi-demo-button-row {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.aoi-demo-plot-frame {
+  min-height: 620px;
+}
+
+.compact-table-output table {
+  width: 100%;
+}

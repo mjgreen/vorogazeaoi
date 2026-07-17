@@ -9,6 +9,8 @@ LABEL org.opencontainers.image.source="https://github.com/mjgreen/vorogazeaoi"
 RUN apt-get update \
     && apt-get install -y --no-install-recommends libmagick++-dev \
     && install2.r --error --skipinstalled bslib deldir magick png \
+    && rm -rf /srv/shiny-server/* \
+    && test -z "$(find /srv/shiny-server -mindepth 1 -print -quit)" \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

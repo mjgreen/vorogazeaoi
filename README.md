@@ -34,7 +34,7 @@ geometry and data-checking workbench.
 - Face-folder browser upload for `.png`, `.jpg`, and `.jpeg` images.
 - Screen-coordinate preview with common screen-size presets and custom bounds.
 - Combined sanity-check plot showing screen, face image, and fixations together.
-- Docker Compose deployment for the Elite host.
+- Docker Compose deployment for the Beelink LAN service.
 
 ## Bundled Demo Data
 
@@ -149,27 +149,29 @@ Stop the local container:
 docker compose down
 ```
 
-## Deploy To Elite
+## Deployment
 
-The authenticated external/testing URL is:
+The canonical Beelink checkout is:
 
 ```text
-https://elite.tail2f3b09.ts.net/
+/home/matt/service-repos/vorogazeaoi
 ```
 
-External conference/testing access is fronted by a small auth proxy that shows
-a normal login page and then sets a signed session cookie before forwarding to
-the Shiny app. The cookie is marked `Secure`, so use the HTTPS Funnel URL for
-browser login testing.
+Its authenticated LAN route is:
 
-After committing and pushing changes to GitHub, update Elite with:
-
-```bash
-ssh elite 'cd /srv/nvme_apps/stacks/vorogazeaoi && git pull --ff-only && { docker rm -f vorogazeaoi-funnel-proxy 2>/dev/null || true; } && docker compose up -d --build'
+```text
+http://192.168.8.205/vorogazeaoi
 ```
 
-See [ELITE_DEPLOYMENT.md](ELITE_DEPLOYMENT.md) for the full Elite deployment
-cheat sheet, including status checks and log-following commands.
+The deployment uses the private credential file
+`/home/matt/.config/vorogazeaoi-beelink/auth.env`, which must remain outside
+Git and readable only by Matt. Rebuild the LAN project from this repository
+with `docker compose up -d --build`.
+
+Z440 remains authoritative for the public dynamic demo at
+`https://vorogaze-demo.mjgreen.uk/`. The separate static public site at
+`https://vorogaze.mjgreen.uk/` also remains unchanged by Beelink LAN work.
+`ELITE_DEPLOYMENT.md` is retained as historical deployment evidence only.
 
 ## Development Notes
 

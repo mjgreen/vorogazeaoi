@@ -154,7 +154,7 @@ docker compose down
 The canonical Beelink checkout is:
 
 ```text
-/home/matt/service-repos/vorogazeaoi
+/home/matt/CodexWork/repos/vorogazeaoi
 ```
 
 Its authenticated LAN route is:
@@ -164,7 +164,8 @@ http://192.168.8.205/vorogazeaoi
 ```
 
 The deployment uses the private credential file
-`/home/matt/.config/vorogazeaoi-beelink/auth.env`, which must remain outside
+selected by `VOROGAZEAOI_AUTH_ENV_FILE`. On Beelink it defaults to
+`/home/matt/CodexWork/private/vorogazeaoi/auth.env`, which must remain outside
 Git and readable only by Matt. Rebuild the LAN project from this repository
 with `docker compose up -d --build`.
 

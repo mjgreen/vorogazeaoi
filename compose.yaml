@@ -22,7 +22,7 @@ services:
     depends_on:
       - vorogazeaoi
     env_file:
-      - /home/matt/.config/vorogazeaoi-beelink/auth.env
+      - ${VOROGAZEAOI_AUTH_ENV_FILE:-/home/matt/CodexWork/private/vorogazeaoi/auth.env}
     environment:
       VOROGAZE_AUTH_PROXY_LISTEN: ":8088"
       VOROGAZE_BASE_PATH: "/vorogazeaoi"

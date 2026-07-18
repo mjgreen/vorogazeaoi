@@ -6,7 +6,7 @@ conference prototype.
 Canonical local fixture:
 
 ```text
-/home/matt/service-repos/vorogazeaoi/demo/lisa1
+/home/matt/CodexWork/repos/vorogazeaoi/demo/lisa1
 ```
 
 Included files:

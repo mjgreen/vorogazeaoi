@@ -3,10 +3,10 @@
 This folder contains the small one-face fixture used by the first AOI/Voronoi
 conference prototype.
 
-Source on Matt's machine:
+Canonical local fixture:
 
 ```text
-/home/matt/gits/vorogaze/inputs/lisa1
+/home/matt/service-repos/vorogazeaoi/demo/lisa1
 ```
 
 Included files:

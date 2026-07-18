@@ -43,11 +43,8 @@ The university server should be treated as a bonus, not the plan, because the av
 
 ## Older Repos Worth Mining
 
-Useful prior work exists in:
-
-- `/home/matt/gits/vorogaze`
-- `/home/matt/gits/vorogazeaoi`
-- especially `vorogazeaoi/app1_human` and `vorogazeaoi/app3_human_refactored_by_codex`
+Useful prior implementation evidence was consolidated into this repository.
+The retired local checkout paths no longer exist.
 
 Reusable pieces found:
 

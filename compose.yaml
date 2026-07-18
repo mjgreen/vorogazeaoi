@@ -22,7 +22,7 @@ services:
     depends_on:
       - vorogazeaoi
     env_file:
-      - ./funnel-proxy/auth.env
+      - /home/matt/.config/vorogazeaoi-beelink/auth.env
     environment:
       VOROGAZE_AUTH_PROXY_LISTEN: ":8088"
       VOROGAZE_BASE_PATH: "/vorogazeaoi"

@@ -1,7 +1,7 @@
-# Lisa1 AOI Demo Fixture
+# Bundled DeBruine et al Face Fixture
 
-This folder contains the small one-face fixture used by the first AOI/Voronoi
-conference prototype.
+This folder contains the small one-face fixture used by the interactive worked
+example and conference materials.
 
 Canonical local fixture:
 
@@ -17,8 +17,8 @@ fixrep_demo.csv
 ```
 
 `fixrep_demo.csv` was generated from `fixrep_lisa.csv` by filtering to
-`FACE == "001_03"` and rewriting the fixation report to the app's canonical
-demo columns:
+`FACE == "001_03"` and rewriting the fixation report to the fixture's canonical
+columns:
 
 ```text
 SUBJECT, TRIAL_ID, FACE, FIX_INDEX, CONDITION, IMG_X, IMG_Y, FIX_X, FIX_Y, FIX_DUR
@@ -45,5 +45,5 @@ Licence: CC BY 4.0
 
 The dataset record states that individuals gave signed consent for use in
 lab-based and web-based studies and to illustrate research, including
-presentations. Keep this attribution with any public demo or conference
-materials using the fixture.
+presentations. Keep this attribution with any public worked example or
+conference materials using the fixture.

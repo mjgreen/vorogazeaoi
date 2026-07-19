@@ -48,11 +48,16 @@ fixations_input_card <- function() {
         class = "fixrep-upload-box",
         shiny::downloadButton(
           "download_bundled_fixrep",
-          "Download bundled fixation report"
+          if (vorogaze_public_mode()) {
+            "Download bundled DeBruine et al fixation report"
+          } else {
+            "Download bundled fixation report"
+          }
         ),
         shiny::fileInput(
           "upload_fixrep",
           "Upload fixation report",
+          accept = c(".csv", ".tsv", ".txt", ".xls", ".xlsx"),
           width = "100%"
         ),
         shiny::div(
@@ -201,7 +206,11 @@ faces_panel <- function() {
         bslib::card_body(
           shiny::downloadButton(
             "download_bundled_face_dir",
-            "Download bundled face folder"
+            if (vorogaze_public_mode()) {
+              "Download bundled DeBruine et al face"
+            } else {
+              "Download bundled face folder"
+            }
           ),
           shiny::fileInput(
             "upload_face_dir",
@@ -276,47 +285,17 @@ sanity_panel <- function() {
   )
 }
 
-# Builds one markdown editor/preview card for the developer tab.
-developer_markdown_card <- function(title, input_id, output_id, file_path, label) {
-  bslib::card(
-    bslib::card_header(title),
-    bslib::card_body(
-      shiny::textAreaInput(
-        input_id,
-        label,
-        value = paste(readLines(file_path, warn = FALSE), collapse = "\n"),
-        width = "100%",
-        height = "220px"
-      ),
-      shiny::tags$hr(),
-      shiny::uiOutput(output_id)
-    )
-  )
-}
-
-# Assembles the developer-only debug and markdown editing controls.
-developer_panel <- function() {
-  bslib::nav_panel(
-    "Developer",
-    bslib::layout_columns(
-      col_widths = c(4, 4, 4),
-      bslib::card(
-        bslib::card_header("debug params"),
-        bslib::card_body(shiny::verbatimTextOutput("debug_params"))
-      ),
-      developer_markdown_card(
-        "TODO",
-        "developer_todo_md",
-        "developer_todo_preview",
-        "dev/TODO.md",
-        "Developer notes"
-      ),
-      developer_markdown_card(
-        "DOCUMENTATION",
-        "developer_docs_md",
-        "developer_docs_preview",
-        "dev/DOCUMENTATION.md",
-        "Draft user-facing documentation"
+# Shows the upload boundary and privacy guidance in the public workbench.
+public_workbench_notice <- function() {
+  shiny::div(
+    class = "public-workbench-notice",
+    shiny::tags$strong("Temporary uploads"),
+    shiny::span(
+      paste(
+        "Files are processed only for this browser session and are removed when it ends.",
+        "Do not upload identifiable or sensitive participant data.",
+        "Limits: one fixation report up to 25 MiB; up to 25 PNG/JPEG faces,",
+        "5 MiB each and 50 MiB total, with a maximum size of 4096 x 4096 pixels."
       )
     )
   )

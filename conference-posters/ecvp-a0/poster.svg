@@ -173,7 +173,8 @@
   <text x="316" y="263" class="sans eyebrow teal">WORKED DEMONSTRATION</text>
   <text x="316" y="294" class="sans section ink">Landmarks → Voronoi AOIs</text>
   <text x="316" y="319" class="sans body muted">
-    <tspan x="316" dy="0">The bundled Lisa1 fixture keeps every step visible.</tspan>
+    <tspan x="316" dy="0">The bundled DeBruine et al face keeps</tspan>
+    <tspan x="316" dy="11.5">every step visible.</tspan>
   </text>
 
   <g transform="translate(323,342) scale(0.56)" clip-path="url(#faceClip)">
@@ -231,7 +232,7 @@
   <text x="489" y="626.4" class="sans small ink">boundary</text>
 
   <rect x="316" y="647" width="210" height="42" rx="6" fill="#eef8f5"/>
-  <text x="421" y="663" text-anchor="middle" class="sans small-strong teal">BUNDLED FIXTURE</text>
+  <text x="421" y="663" text-anchor="middle" class="sans small-strong teal">DEBRUINE ET AL FACE</text>
   <text x="421" y="681" text-anchor="middle" class="sans body-strong ink">20 fixations · 2 sessions · 1 face · 5 landmarks</text>
 
   <text x="316" y="722" class="sans eyebrow coral">DESCRIPTIVE OUTPUT</text>
@@ -314,19 +315,31 @@
   <rect x="584" y="797" width="209" height="12" rx="6" fill="#fff3ef"/>
   <text x="688.5" y="805.5" text-anchor="middle" class="sans micro coral">PROTOTYPE – METHODS WORKFLOW, NOT EMPIRICAL VALIDATION</text>
 
-  <!-- Right 3: QR -->
-  <image x="579" y="858" width="134" height="134"
-         xlink:href="assets/vorogaze-demo-qr.svg"
-         href="assets/vorogaze-demo-qr.svg"
-         preserveAspectRatio="xMidYMid meet"/>
-  <text x="718" y="874" class="sans eyebrow teal">TRY IT</text>
-  <text x="718" y="897" class="sans lead ink">Interactive</text>
-  <text x="718" y="910" class="sans lead ink">public demo</text>
-  <text x="718" y="935" class="sans small muted">Bundled data only.</text>
-  <text x="718" y="947" class="sans small muted">No upload control.</text>
-  <text x="718" y="970" class="sans micro ink">QR DESTINATION</text>
-  <text x="718" y="981" class="sans micro teal">vorogaze-demo.mjgreen.uk</text>
-  <text x="718" y="1000" class="sans micro muted">Project: vorogaze.mjgreen.uk</text>
+  <!-- Right 3: online routes -->
+  <g id="online-routes">
+    <a href="https://vorogaze.mjgreen.uk/" xlink:href="https://vorogaze.mjgreen.uk/" target="_blank">
+      <image x="578" y="856" width="112" height="112"
+             xlink:href="assets/vorogaze-landing-qr.svg"
+             href="assets/vorogaze-landing-qr.svg"
+             preserveAspectRatio="xMidYMid meet"/>
+    </a>
+    <text x="703" y="870" class="sans eyebrow teal">TRY VOROGAZE</text>
+    <text x="703" y="895" class="sans lead ink">Choose your</text>
+    <text x="703" y="908" class="sans lead ink">route online</text>
+    <text x="703" y="931" class="sans small muted">QR opens the guide:</text>
+    <text x="703" y="944" class="sans small muted">screencast · worked example</text>
+    <text x="703" y="956" class="sans small muted">Research Workbench</text>
+
+    <a href="https://vorogaze-workbench.mjgreen.uk/" xlink:href="https://vorogaze-workbench.mjgreen.uk/" target="_blank">
+      <text x="579" y="982" class="sans micro teal">Workbench: vorogaze-workbench.mjgreen.uk</text>
+    </a>
+    <a href="https://vorogaze-example.mjgreen.uk/" xlink:href="https://vorogaze-example.mjgreen.uk/" target="_blank">
+      <text x="579" y="993" class="sans micro teal">Worked example: vorogaze-example.mjgreen.uk</text>
+    </a>
+    <a href="https://vorogaze.mjgreen.uk/#screencast" xlink:href="https://vorogaze.mjgreen.uk/#screencast" target="_blank">
+      <text x="579" y="1004" class="sans micro teal">Guide + screencast: vorogaze.mjgreen.uk</text>
+    </a>
+  </g>
 
   <!-- Take-home -->
   <rect x="28" y="1040" width="785" height="79" rx="8" fill="url(#takehome)" stroke="#a9d6d1" stroke-width="0.9"/>
@@ -337,12 +350,17 @@
 
   <!-- Footer -->
   <line x1="28" y1="1140" x2="813" y2="1140" class="rule"/>
-  <text x="28" y="1158" class="sans micro muted">
-    Face: DeBruine, L. &amp; Jones, B. (2017), Face Research Lab London Set, CC BY 4.0 · doi.org/10.6084/m9.figshare.5047666
-  </text>
-  <text x="28" y="1172" class="sans micro muted">
-    Prototype: github.com/mjgreen/vorogazeaoi · Public method demonstration uses the bundled Lisa1 fixture only.
-  </text>
+  <g id="poster-attribution-links">
+    <text x="28" y="1158" class="sans micro muted">Face: DeBruine, L. &amp; Jones, B. (2017), Face Research Lab London Set, CC BY 4.0 · </text>
+    <a href="https://doi.org/10.6084/m9.figshare.5047666" xlink:href="https://doi.org/10.6084/m9.figshare.5047666" target="_blank">
+      <text x="237" y="1158" class="sans micro teal">doi.org/10.6084/m9.figshare.5047666</text>
+    </a>
+    <text x="28" y="1172" class="sans micro muted">Repository: </text>
+    <a href="https://github.com/mjgreen/vorogazeaoi" xlink:href="https://github.com/mjgreen/vorogazeaoi" target="_blank">
+      <text x="59" y="1172" class="sans micro teal">github.com/mjgreen/vorogazeaoi</text>
+    </a>
+    <text x="165" y="1172" class="sans micro muted"> · Worked example uses the bundled DeBruine et al face only.</text>
+  </g>
   <text x="813" y="1165" text-anchor="end" class="sans small-strong ink">VoroGaze AOI</text>
   <text x="813" y="1177" text-anchor="end" class="sans micro muted">Areas of interest you can see – and defend.</text>
 </svg>

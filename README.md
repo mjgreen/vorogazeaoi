@@ -1,30 +1,32 @@
 # VoroGaze AOI
 
-VoroGaze AOI is a Shiny prototype for inspecting eye-tracking fixation reports
-against face images and screen geometry.
+VoroGaze AOI is a browser-based Shiny research workbench for inspecting
+eye-tracking fixation reports against face images and screen geometry.
 
-The current app focuses on making the spatial assumptions visible before they
-become analysis numbers: which columns are being used, where fixations sit on
-the screen, how face images are placed, and whether the selected trial/condition
-combination has a coherent image position.
+The current Research Workbench focuses on making the spatial assumptions
+visible before they become analysis numbers: which columns are being used,
+where fixations sit on the screen, how face images are placed, and whether the
+selected trial/condition combination has a coherent image position.
 
-The longer-term project direction is landmark-based AOI analysis, including
-Voronoi-style AOI regions derived from defensible face landmarks. That AOI layer
-is still roadmap work; this repo currently contains the deployment-ready
-geometry and data-checking workbench.
+The current implementation includes landmark-based AOI analysis: researchers
+can define defensible centres, inspect bounded Voronoi-style regions, assign
+fixations, and export unaggregated and aggregated metrics. Longer-term work is
+empirical validation, broader landmark conventions, and refinement with
+research users.
 
 ## Current Features
 
-- Shiny app with tabs for an AOI demo, fixation data, screen geometry, face
-  images, sanity checks, and developer/debug notes.
-- One-face Lisa1 AOI demo with preloaded landmarks, live `deldir` Voronoi
-  tessellation, nearest-landmark fixation assignment, and compact metrics.
+- Shiny Research Workbench with tabs for an AOI worked example, fixation data,
+  screen geometry, face images, sanity checks, and AOI construction.
+- One-face DeBruine et al worked example with preloaded landmarks, live `deldir`
+  Voronoi tessellation, nearest-landmark fixation assignment, and compact
+  metrics.
 - AOI Workbench for uploaded or bundled faces: click to add AOI centres,
   double-click to delete the nearest centre, assign fixations, commit
   face/condition sessions, export AOIs, and export unaggregated and aggregated
   metrics.
-- Bundled demo fixation report and face images, so the app opens with data
-  already loaded.
+- Bundled fixation report and face images, so the Research Workbench opens with
+  data already loaded.
 - Upload support for alternative fixation reports.
 - Column mapping for participant, face, trial, condition, fixation position,
   fixation duration, and image position.
@@ -36,9 +38,9 @@ geometry and data-checking workbench.
 - Combined sanity-check plot showing screen, face image, and fixations together.
 - Docker Compose deployment for the Beelink LAN service.
 
-## Bundled Demo Data
+## Bundled Data
 
-The app defaults to the bundled demo assets:
+The Research Workbench defaults to these bundled assets:
 
 ```text
 fixreps/combined_alex1_done_by_matt_fixrep.csv
@@ -48,7 +50,8 @@ faces/faces_300x350/
 Uploaded fixation reports and uploaded face folders override the bundled data
 for the active session.
 
-The AOI demo uses a smaller self-contained Lisa1 fixture:
+The interactive worked example uses a smaller self-contained DeBruine et al
+face fixture:
 
 ```text
 demo/lisa1/fixrep_demo.csv
@@ -59,30 +62,27 @@ See `demo/lisa1/README.md` for fixture provenance and attribution.
 
 ## Poster Screencast
 
-The poster-friendly AOI demo screencast is served from:
+The poster-friendly 30-second screencast is served from:
 
 ```text
-https://elite.tail2f3b09.ts.net/poster-aoi-demo.html
+https://vorogaze.mjgreen.uk/#screencast
 ```
 
-A rough QR-test poster mockup is served from:
+The complete public Research Workbench and bundled-data interactive worked
+example are:
 
 ```text
-https://elite.tail2f3b09.ts.net/poster-qr-mockup.html
+https://vorogaze-workbench.mjgreen.uk/
+https://vorogaze-example.mjgreen.uk/
 ```
 
-The mockup QR currently encodes the Funnel URL:
-
-```text
-https://elite.tail2f3b09.ts.net/poster-aoi-demo.html
-```
-
-The page embeds `www/aoi-demo-screencast.mp4`, a silent 30-second recording of
-the Lisa1 AOI demo interaction. To regenerate it, start the app locally and run
-the recorder script on a machine with Node, Playwright, Chrome, and ffmpeg:
+The landing page embeds `www/aoi-demo-screencast.mp4`, a silent 30-second
+recording of the bundled DeBruine et al face workflow. To regenerate it, start
+the Research Workbench locally and run the recorder script on a machine with
+Node, Playwright, Chrome, and ffmpeg:
 
 ```bash
-node scripts/record_aoi_screencast.js --url=http://127.0.0.1:3840/
+node scripts/record_aoi_screencast.js --url=http://127.0.0.1:3838/
 ```
 
 ## Repository Layout
@@ -90,10 +90,10 @@ node scripts/record_aoi_screencast.js --url=http://127.0.0.1:3840/
 ```text
 ui.R                  Shiny UI entrypoint
 server.R              Shiny server entrypoint
-global.R              Shared app setup
-R/                    App helper modules
-demo/                 Curated AOI demo fixture data
-www/                  App static assets and poster screencast page
+global.R              Shared Shiny setup
+R/                    Research Workbench helper modules
+demo/                 Curated worked-example fixture data
+www/                  Static assets and poster screencast
 fixreps/              Bundled fixation-report data
 faces/                Bundled face-image data
 ascs/                 Example/source eye-tracking exports
@@ -108,7 +108,7 @@ renv.lock             Reproducible R package lockfile
 
 ## Run Locally With R
 
-From the repo root, restore packages and start the Shiny app:
+From the repo root, restore packages and start the Research Workbench:
 
 ```bash
 Rscript -e "if (!requireNamespace('renv', quietly = TRUE)) install.packages('renv'); renv::restore(); shiny::runApp()"
@@ -120,8 +120,8 @@ Then open the URL printed by Shiny, usually:
 http://127.0.0.1:3838/
 ```
 
-For day-to-day RStudio use, opening the project directory and pressing **Run
-App** is also fine once `renv::restore()` has completed.
+For day-to-day RStudio use, opening the project directory and pressing
+RStudio’s **Run App** control is also fine once `renv::restore()` has completed.
 
 ## Run Locally With Docker
 
@@ -169,9 +169,10 @@ selected by `VOROGAZEAOI_AUTH_ENV_FILE`. On Beelink it defaults to
 Git and readable only by Matt. Rebuild the LAN project from this repository
 with `docker compose up -d --build`.
 
-Z440 remains authoritative for the public dynamic demo at
-`https://vorogaze-demo.mjgreen.uk/`. The separate static public site at
-`https://vorogaze.mjgreen.uk/` also remains unchanged by Beelink LAN work.
+Z440 is authoritative for the public interactive worked example at
+`https://vorogaze-example.mjgreen.uk/` and the complete Research Workbench at
+`https://vorogaze-workbench.mjgreen.uk/`. The static chooser and screencast at
+`https://vorogaze.mjgreen.uk/` remain separate from Beelink LAN work.
 `ELITE_DEPLOYMENT.md` is retained as historical deployment evidence only.
 
 ## Development Notes
@@ -179,11 +180,12 @@ Z440 remains authoritative for the public dynamic demo at
 - The project uses `renv`; keep `renv.lock` updated when package dependencies
   change.
 - The Docker image restores packages from `renv.lock` at build time.
-- The app currently supports top-left and centre-style coordinate origins.
+- The Research Workbench currently supports top-left and centre-style
+  coordinate origins.
   "Other" origins are visible in the UI but intentionally not implemented yet.
 - Fixation report imports preserve raw columns as text first, then standardise
-  selected columns into the app's canonical fields.
-- The AOI demo assigns fixations to nearest landmarks as the operational
+  selected columns into the Research Workbench’s canonical fields.
+- The AOI worked example assigns fixations to nearest landmarks as the operational
   equivalent of Voronoi-cell assignment for this prototype.
 - The AOI Workbench commits one face/condition at a time into a session table.
   Empty AOIs are retained in the metrics with zero counts.
@@ -201,8 +203,8 @@ nearest-centre fixation assignment, session tables, metrics, and downloads.
 
 ## Project Direction
 
-The planned analysis layer is to let researchers define meaningful face
-landmarks, derive reproducible AOI regions from those landmarks, assign
-fixations to AOIs, and export defensible metrics. The present workbench is the
-foundation for that: it validates data import, coordinate systems, image
-placement, and fixation geometry before AOI metrics are computed.
+The implemented analysis layer lets researchers define meaningful face
+landmarks, derive reproducible AOI regions, assign fixations to AOIs, and export
+inspectable metrics. The next phase is to evaluate those choices empirically,
+document defensible landmark conventions, and refine the workflow with a wider
+range of eye-tracking study designs.

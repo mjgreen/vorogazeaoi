@@ -3,47 +3,104 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="VoroGaze conference demonstration: defensible areas of interest for eye-tracking data.">
-    <title>VoroGaze | Eye-tracking AOI demonstration</title>
+    <meta name="description" content="Choose the VoroGaze Research Workbench, interactive worked example or 30-second screencast for defensible eye-tracking areas of interest.">
+    <title>VoroGaze | Choose your route</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="/styles.css">
   </head>
   <body>
     <header class="site-header">
       <a class="brand" href="/">VoroGaze</a>
-      <a href="mailto:matt@mjgreen.uk">matt@mjgreen.uk</a>
+      <nav aria-label="Primary navigation">
+        <a href="#choose">Choose a route</a>
+        <a href="#screencast">Screencast</a>
+      </nav>
     </header>
 
     <main>
       <section class="hero">
         <div>
-          <p class="eyebrow">Conference demonstration</p>
+          <p class="eyebrow">Research methods prototype</p>
           <h1>Areas of interest you can see – and defend.</h1>
         </div>
         <p class="lede">
-          VoroGaze explores landmark-based regions for face-focused
-          eye-tracking research. The prototype makes coordinate assumptions,
+          VoroGaze makes coordinate assumptions, landmark-based regions,
           fixation assignment and the resulting metrics visible before they
           become analysis decisions.
         </p>
       </section>
 
-      <section class="film" aria-labelledby="film-title">
+      <section class="routes" id="choose" aria-labelledby="routes-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Choose your route</p>
+            <h2 id="routes-title">Explore at the level that suits you.</h2>
+          </div>
+          <p>
+            Each route is browser-based. Nothing needs to be installed on your
+            computer or phone.
+          </p>
+        </div>
+
+        <div class="route-grid">
+          <a class="route-card route-card-primary" href="https://vorogaze-workbench.mjgreen.uk/">
+            <span class="route-badge">Interactive – temporary uploads</span>
+            <span class="route-number" aria-hidden="true">01</span>
+            <h3>VoroGaze Research Workbench</h3>
+            <p>
+              Use the complete research workflow with your own supported
+              fixation reports and face images. Uploads are session-only.
+            </p>
+            <span class="route-action">Open the Research Workbench <span aria-hidden="true">↗</span></span>
+            <span class="route-url">vorogaze-workbench.mjgreen.uk</span>
+          </a>
+
+          <a class="route-card" href="https://vorogaze-example.mjgreen.uk/">
+            <span class="route-badge">Interactive – bundled data</span>
+            <span class="route-number" aria-hidden="true">02</span>
+            <h3>Interactive worked example</h3>
+            <p>
+              Explore the workflow immediately using the bundled DeBruine et
+              al face and its prepared fixation data. Uploads are unavailable.
+            </p>
+            <span class="route-action">Open the worked example <span aria-hidden="true">↗</span></span>
+            <span class="route-url">vorogaze-example.mjgreen.uk</span>
+          </a>
+
+          <a class="route-card" href="#screencast">
+            <span class="route-badge">Video – 30 seconds</span>
+            <span class="route-number" aria-hidden="true">03</span>
+            <h3>30-second screencast</h3>
+            <p>
+              Watch the visible analysis chain from landmarks to bounded
+              regions and fixation metrics. The clip is silent.
+            </p>
+            <span class="route-action">Watch the screencast <span aria-hidden="true">↓</span></span>
+            <span class="route-url">vorogaze.mjgreen.uk/#screencast</span>
+          </a>
+        </div>
+      </section>
+
+      <section class="film" id="screencast" aria-labelledby="film-title">
         <div class="film-heading">
           <div>
-            <p class="eyebrow">30-second walkthrough</p>
+            <p class="eyebrow">30-second screencast</p>
             <h2 id="film-title">From landmarks to fixation metrics</h2>
           </div>
-          <p>The clip is silent and uses the bundled Lisa1 conference fixture.</p>
+          <p>The clip is silent and uses the bundled DeBruine et al face.</p>
         </div>
-        <video controls playsinline preload="metadata" aria-label="Silent VoroGaze AOI demonstration">
+        <video controls playsinline preload="metadata" aria-label="Silent 30-second VoroGaze AOI screencast">
           <source src="/aoi-demo-screencast.mp4" type="video/mp4">
           Your browser does not support embedded MP4 video.
         </video>
+        <div class="film-actions" aria-label="Interactive routes">
+          <a href="https://vorogaze-example.mjgreen.uk/">Open the interactive worked example</a>
+          <a href="https://vorogaze-workbench.mjgreen.uk/">Open the Research Workbench</a>
+        </div>
       </section>
 
       <section class="steps" aria-labelledby="steps-title">
-        <p class="eyebrow">What the prototype shows</p>
+          <p class="eyebrow">What VoroGaze makes visible</p>
         <h2 id="steps-title">A visible analysis chain</h2>
         <div class="step-grid">
           <article><span>01</span><h3>Place landmarks</h3><p>Define meaningful centres directly against the face image.</p></article>
@@ -54,14 +111,15 @@
 
       <section class="boundary" aria-labelledby="boundary-title">
         <div>
-          <p class="eyebrow">Public-demo boundary</p>
-          <h2 id="boundary-title">Bundled data only</h2>
+          <p class="eyebrow">Choose deliberately</p>
+          <h2 id="boundary-title">Bundled data or temporary uploads</h2>
         </div>
         <div class="boundary-copy">
           <p>
-            This public conference page contains only the curated Lisa1
-            fixture and its prerecorded demonstration. It has no upload
-            control and does not expose the separate research workbench.
+            The interactive worked example contains only the bundled DeBruine
+            et al face and prepared fixation data. The Research Workbench
+            accepts temporary uploads for the current browser session only.
+            Do not upload identifiable or sensitive participant data.
           </p>
           <p class="attribution">
             Face image: DeBruine, L., &amp; Jones, B. (2017),
@@ -74,7 +132,7 @@
 
     <footer>
       <span>VoroGaze AOI</span>
-      <span>A research prototype by Matt Green</span>
+      <span><a href="https://github.com/mjgreen/vorogazeaoi">Source repository</a> · A research prototype by Matt Green</span>
     </footer>
   </body>
 </html>

@@ -1,7 +1,18 @@
 # AOI demo helpers and UI ----
 
 aoi_demo_fixture_dir <- function() {
-  file.path(getwd(), "demo", "lisa1")
+  configured <- Sys.getenv("VOROGAZE_EXAMPLE_FIXTURE_DIR", unset = "")
+  path <- if (nzchar(configured)) {
+    configured
+  } else {
+    file.path(getwd(), "demo", "lisa1")
+  }
+
+  normalizePath(
+    path,
+    winslash = "/",
+    mustWork = FALSE
+  )
 }
 
 aoi_demo_face_path <- function() {
@@ -113,7 +124,7 @@ aoi_demo_fixations_image_space <- function(fixrep, width, height) {
   img_y <- unique(stats::na.omit(fixrep$IMG_Y))
 
   if (length(img_x) != 1 || length(img_y) != 1) {
-    stop("AOI demo fixture must have one image centre.")
+    stop("The bundled AOI fixture must have one image centre.")
   }
 
   image_left <- img_x[[1]] - width / 2
@@ -246,7 +257,7 @@ aoi_demo_plot <- function(face_path, fixrep, landmarks, assignments = NULL) {
 
 aoi_demo_panel <- function() {
   bslib::nav_panel(
-    "AOI Demo",
+    "Worked Example",
     bslib::layout_columns(
       col_widths = c(2, 4, 6),
       height = "100%",
@@ -382,7 +393,7 @@ aoi_demo_server <- function(input, output, session) {
     data.frame(
       item = c("face", "fixations", "subjects", "image_size"),
       value = c(
-        unique(fixrep$FACE),
+        "DeBruine et al face",
         nrow(fixrep),
         length(unique(fixrep$SUBJECT)),
         sprintf("%s x %s", face_info$width, face_info$height)

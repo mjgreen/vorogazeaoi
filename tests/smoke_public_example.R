@@ -1,6 +1,8 @@
 library(shiny)
 library(bslib)
 
+Sys.setenv(VOROGAZE_EXAMPLE_FIXTURE_DIR = file.path(getwd(), "demo", "lisa1"))
+
 `%||%` <- function(x, y) {
   if (is.null(x)) y else x
 }
@@ -24,7 +26,9 @@ stopifnot(
   nrow(fixrep) > 0,
   nrow(assignments) > 0,
   nrow(metrics) == nrow(landmarks),
-  inherits(panel, "shiny.tag")
+  inherits(panel, "shiny.tag"),
+  grepl("Worked Example", as.character(panel), fixed = TRUE),
+  !grepl("Lisa1", as.character(panel), fixed = TRUE)
 )
 
-cat("Bundled public AOI demo smoke test passed\n")
+cat("Interactive worked-example smoke test passed\n")

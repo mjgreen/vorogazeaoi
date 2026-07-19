@@ -455,14 +455,7 @@ read_fixrep <- function(path) {
   res <- NULL
 
   if (ext %in% c("xls", "xlsx")) {
-    res <- tryCatch(
-      read_as_excel(path),
-      error = function(e) {
-        tmp <- read_as_text(path)
-        tmp$mode <- paste0(tmp$mode, " (fallback from .", ext, ")")
-        tmp
-      }
-    )
+    res <- read_as_excel(path)
   } else {
     res <- read_as_text(path)
   }

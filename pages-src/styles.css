@@ -2,20 +2,26 @@
   color-scheme: light;
   --ink: #14243c;
   --paper: #f7f3e8;
+  --white: #fffefa;
   --sea: #97d6cc;
   --orange: #f0aa65;
+  --coral: #e96750;
   --line: rgba(20, 36, 60, 0.2);
 }
 
 * { box-sizing: border-box; }
-body { margin: 0; color: var(--ink); background: var(--paper); font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+html { scroll-behavior: smooth; }
+body { margin: 0; overflow-x: hidden; color: var(--ink); background: var(--paper); font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
 a { color: inherit; text-underline-offset: 4px; }
 .site-header,
 main,
 footer { width: min(1180px, calc(100% - 40px)); margin-inline: auto; }
 .site-header { display: flex; justify-content: space-between; gap: 24px; padding: 28px 0; border-bottom: 1px solid var(--line); font-size: 0.9rem; font-weight: 700; }
 .brand { text-decoration: none; font-size: 1.05rem; }
-.hero { min-height: 68vh; display: grid; grid-template-columns: 1.4fr 0.6fr; gap: clamp(36px, 8vw, 110px); align-items: end; padding: clamp(80px, 12vw, 150px) 0 80px; }
+.site-header nav { display: flex; align-items: center; gap: 8px; }
+.site-header nav a { display: inline-flex; min-height: 44px; align-items: center; padding: 0 12px; border-radius: 999px; }
+.site-header nav a:hover { background: rgba(20, 36, 60, 0.07); }
+.hero { min-height: 64vh; display: grid; grid-template-columns: 1.4fr 0.6fr; gap: clamp(36px, 8vw, 110px); align-items: end; padding: clamp(80px, 12vw, 150px) 0 80px; }
 .eyebrow { margin: 0 0 16px; font-size: 0.75rem; font-weight: 850; letter-spacing: 0.16em; text-transform: uppercase; }
 h1,
 h2,
@@ -24,10 +30,27 @@ h1 { max-width: 900px; font-size: clamp(3.7rem, 9vw, 7.7rem); }
 h2 { font-size: clamp(2.2rem, 5vw, 4.2rem); }
 h3 { font-size: 1.45rem; }
 .lede { margin: 0; font-size: clamp(1.15rem, 2vw, 1.5rem); line-height: 1.5; }
+.routes { padding: clamp(54px, 8vw, 92px); background: var(--white); border: 1px solid var(--line); border-radius: 34px; }
+.section-heading { display: grid; grid-template-columns: 1fr minmax(240px, 360px); gap: 40px; align-items: end; margin-bottom: 48px; }
+.section-heading > p { margin: 0; color: rgba(20, 36, 60, 0.72); font-size: 1.05rem; line-height: 1.55; }
+.route-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.route-card { position: relative; display: flex; min-width: 0; min-height: 410px; flex-direction: column; padding: 26px; overflow: hidden; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 24px; text-decoration: none; transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease; }
+.route-card:hover { transform: translateY(-4px); border-color: rgba(20, 36, 60, 0.42); box-shadow: 0 20px 40px rgba(20, 36, 60, 0.12); }
+.route-card-primary { color: var(--paper); background: var(--ink); }
+.route-badge { align-self: flex-start; min-height: 32px; padding: 7px 10px; border: 1px solid currentColor; border-radius: 999px; font-size: 0.72rem; font-weight: 850; line-height: 1rem; }
+.route-number { margin: 46px 0 20px; font-size: 0.75rem; font-weight: 850; opacity: 0.7; }
+.route-card h3 { max-width: 12ch; font-size: clamp(1.8rem, 3vw, 2.6rem); overflow-wrap: anywhere; }
+.route-card p { margin: 22px 0 30px; line-height: 1.55; opacity: 0.8; }
+.route-action { display: inline-flex; min-height: 44px; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; padding-top: 12px; border-top: 1px solid currentColor; font-weight: 800; }
+.route-url { margin-top: 12px; font-size: 0.72rem; overflow-wrap: anywhere; opacity: 0.68; }
 .film { padding: clamp(44px, 7vw, 86px); color: var(--paper); background: var(--ink); border-radius: 34px; }
+.routes + .film { margin-top: 22px; }
 .film-heading { display: grid; grid-template-columns: 1fr minmax(220px, 360px); gap: 40px; align-items: end; margin-bottom: 44px; }
 .film-heading p:last-child { margin: 0; line-height: 1.5; color: rgba(247, 243, 232, 0.72); }
 video { display: block; width: 100%; border-radius: 18px; background: #070c15; box-shadow: 0 28px 70px rgba(0, 0, 0, 0.28); }
+.film-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+.film-actions a { display: inline-flex; min-height: 44px; align-items: center; padding: 10px 16px; border: 1px solid rgba(247, 243, 232, 0.45); border-radius: 999px; font-weight: 800; text-decoration: none; }
+.film-actions a:hover { background: rgba(247, 243, 232, 0.12); border-color: var(--paper); }
 .steps { padding: 120px 0; }
 .steps > h2 { max-width: 650px; margin-bottom: 58px; }
 .step-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); }
@@ -42,14 +65,28 @@ video { display: block; width: 100%; border-radius: 18px; background: #070c15; b
 .attribution { padding-top: 24px; border-top: 1px solid rgba(20, 36, 60, 0.26); font-size: 0.9rem; }
 footer { display: flex; justify-content: space-between; gap: 24px; margin-top: 110px; padding: 30px 0 44px; border-top: 1px solid var(--line); font-size: 0.86rem; font-weight: 700; }
 
+@media (max-width: 900px) {
+  .route-grid { grid-template-columns: 1fr; }
+  .route-card { min-height: 0; }
+  .route-number { margin-top: 34px; }
+}
+
 @media (max-width: 760px) {
   .site-header,
   main,
   footer { width: min(100% - 28px, 1180px); }
   .hero,
+  .section-heading,
   .film-heading,
   .boundary { grid-template-columns: 1fr; }
-  .hero { min-height: auto; padding-top: 90px; }
+  .site-header { align-items: flex-start; }
+  .site-header nav { flex-direction: column; align-items: flex-end; }
+  .hero { min-height: auto; padding: 80px 0 64px; }
+  h1 { font-size: clamp(3.1rem, 16vw, 5.2rem); overflow-wrap: anywhere; }
+  .routes,
+  .film,
+  .boundary { padding: 34px 22px; border-radius: 24px; }
+  .section-heading { margin-bottom: 30px; }
   .step-grid { grid-template-columns: 1fr; }
   .step-grid article,
   .step-grid article + article { padding: 28px 0; border-right: 0; border-bottom: 1px solid var(--line); }
@@ -57,3 +94,10 @@ footer { display: flex; justify-content: space-between; gap: 24px; margin-top: 1
   footer { flex-direction: column; }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .route-card { transition: none; }
+}
+
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 4px; }
+.film :focus-visible { outline-color: var(--orange); }

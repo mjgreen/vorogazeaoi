@@ -6,6 +6,8 @@
   "scripts": {
     "build:pages": "node scripts/build-pages-site.mjs",
     "test:pages": "node scripts/test-pages-site.mjs",
-    "test:public-demo": "Rscript --vanilla tests/smoke_public_demo.R"
+    "test:public-example": "Rscript tests/smoke_public_example.R",
+    "test:public-workbench": "Rscript tests/smoke_public_workbench.R",
+    "test:public-images": "Rscript tests/smoke_public_image_contract.R"
   }
 }

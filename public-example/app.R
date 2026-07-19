@@ -9,7 +9,7 @@ source("R/face.R", local = TRUE)
 source("R/aoi_demo.R", local = TRUE)
 
 ui <- page_fillable(
-  title = "VoroGaze – bundled AOI demo",
+  title = "VoroGaze – interactive worked example",
   theme = bs_theme(version = 5, primary = "#007c91"),
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")

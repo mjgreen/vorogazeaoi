@@ -1,0 +1,59 @@
+name: Publish public VoroGaze images
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "public-container/**"
+      - "public-example/**"
+      - "public-workbench/**"
+      - "R/**"
+      - "global.R"
+      - "server.R"
+      - "www/styles.css"
+      - "demo/lisa1/**"
+      - ".github/workflows/publish-public-images.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: worked-example
+            image: ghcr.io/mjgreen/vorogaze-example
+            dockerfile: public-example/Dockerfile
+          - name: research-workbench
+            image: ghcr.io/mjgreen/vorogaze-workbench
+            dockerfile: public-workbench/Dockerfile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        id: build
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
+          push: true
+          tags: ${{ matrix.image }}:${{ github.sha }}
+          build-args: |
+            RELEASE_COMMIT=${{ github.sha }}
+          labels: |
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+          provenance: mode=max
+          sbom: true
+      - name: Record immutable image identity
+        run: |
+          echo "### ${{ matrix.name }}" >> "$GITHUB_STEP_SUMMARY"
+          echo '${{ matrix.image }}:${{ github.sha }}@${{ steps.build.outputs.digest }}' >> "$GITHUB_STEP_SUMMARY"

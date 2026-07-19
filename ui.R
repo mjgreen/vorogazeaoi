@@ -1,17 +1,22 @@
 library(shiny)
 library(bslib)
 
+research_panels <- list(
+  aoi_demo_panel(),
+  fixations_panel(),
+  screen_panel(),
+  faces_panel(),
+  sanity_panel(),
+  aoi_workbench_panel()
+)
+
+if (vorogaze_developer_enabled()) {
+  research_panels <- c(research_panels, list(developer_panel()))
+}
+
 ui <- page_fillable(
-  title = "Vorogaze",
+  title = "VoroGaze",
   theme = app_theme(),
   app_head(),
-  navset_card_pill(
-    aoi_demo_panel(),
-    fixations_panel(),
-    screen_panel(),
-    faces_panel(),
-    sanity_panel(),
-    aoi_workbench_panel(),
-    developer_panel()
-  )
+  do.call(navset_card_pill, research_panels)
 )

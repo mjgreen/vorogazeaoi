@@ -1,11 +1,21 @@
 server <- function(input, output, session) {
   aoi_demo_server(input, output, session)
+  public_upload_store <- if (vorogaze_public_mode()) {
+    new_public_session_upload_store(session)
+  } else {
+    NULL
+  }
 
   # Fixation report tab ----
 
   default_fixrep <- default_fixrep_path()
 
   current_fixrep_path <- reactive({
+    if (vorogaze_public_mode()) {
+      uploaded_path <- stage_public_fixrep_upload(input$upload_fixrep, public_upload_store)
+      return(uploaded_path %||% default_fixrep)
+    }
+
     active_fixrep_path(input$upload_fixrep, default_fixrep)
   })
 
@@ -175,6 +185,16 @@ server <- function(input, output, session) {
   })
 
   face_files <- reactive({
+    if (vorogaze_public_mode()) {
+      uploaded_files <- stage_public_face_uploads(input$upload_face_dir, public_upload_store)
+
+      if (length(uploaded_files) > 0) {
+        return(uploaded_files)
+      }
+
+      return(list_face_image_files(bundled_face_dir))
+    }
+
     uploaded_files <- uploaded_face_image_files(input$upload_face_dir)
 
     if (length(uploaded_files) > 0) {
@@ -399,22 +419,13 @@ server <- function(input, output, session) {
     hover_coordinate_label(input$view_sanity_hover)
   })
 
-  # Developer tab ----
-
-  output$debug_params <- renderText({
-    debug_params_text(debug_params_list(
+  if (vorogaze_developer_enabled()) {
+    developer_server(
       input = input,
-      fixrep_read_mode = fixrep_read_mode(),
-      invalid_image_position_use_center = invalid_image_position_use_center(),
-      invalid_image_position_dismissed = invalid_image_position_dismissed()
-    ))
-  })
-
-  output$developer_todo_preview <- renderUI({
-    markdown_preview_html(input$developer_todo_md)
-  })
-
-  output$developer_docs_preview <- renderUI({
-    markdown_preview_html(input$developer_docs_md)
-  })
+      output = output,
+      fixrep_read_mode = fixrep_read_mode,
+      invalid_image_position_use_center = invalid_image_position_use_center,
+      invalid_image_position_dismissed = invalid_image_position_dismissed
+    )
+  }
 }

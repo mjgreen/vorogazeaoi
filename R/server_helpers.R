@@ -1,11 +1,18 @@
 # Server helper functions ----
 
+# Resolves an optional configured path relative to the app root.
+configured_app_path <- function(environment_name, fallback) {
+  configured <- Sys.getenv(environment_name, unset = "")
+  path <- if (nzchar(configured)) configured else fallback
+
+  normalizePath(path, winslash = "/", mustWork = FALSE)
+}
+
 # Returns the bundled face directory path if it exists, otherwise NULL.
 bundled_face_dir_path <- function() {
-  path <- normalizePath(
-    file.path(getwd(), "faces", "faces_300x350"),
-    winslash = "/",
-    mustWork = FALSE
+  path <- configured_app_path(
+    "VOROGAZE_BUNDLED_FACE_DIR",
+    file.path(getwd(), "faces", "faces_300x350")
   )
   
   if (dir.exists(path)) path else NULL
@@ -13,13 +20,183 @@ bundled_face_dir_path <- function() {
 
 # Returns the bundled fixation report path if it exists, otherwise NULL.
 default_fixrep_path <- function() {
-  path <- normalizePath(
-    file.path(getwd(), "fixreps", "combined_alex1_done_by_matt_fixrep.csv"),
-    winslash = "/",
-    mustWork = FALSE
+  path <- configured_app_path(
+    "VOROGAZE_DEFAULT_FIXREP",
+    file.path(getwd(), "fixreps", "combined_alex1_done_by_matt_fixrep.csv")
   )
 
   if (file.exists(path)) path else NULL
+}
+
+# Public upload limits are kept in one place for UI, server and smoke tests.
+public_upload_limits <- function() {
+  list(
+    fixation_bytes = 25 * 1024^2,
+    face_count = 25L,
+    face_bytes = 5 * 1024^2,
+    faces_total_bytes = 50 * 1024^2,
+    face_dimension = 4096L
+  )
+}
+
+# Returns validation messages for a public fixation-report upload.
+public_fixrep_upload_errors <- function(upload, limits = public_upload_limits()) {
+  if (is.null(upload) || nrow(upload) == 0) {
+    return(character(0))
+  }
+
+  if (!all(c("name", "size", "datapath") %in% names(upload))) {
+    return("The fixation-report upload metadata is incomplete.")
+  }
+
+  errors <- character(0)
+  extensions <- tolower(tools::file_ext(upload$name))
+  sizes <- suppressWarnings(as.numeric(upload$size))
+  paths <- as.character(upload$datapath)
+
+  if (nrow(upload) != 1) {
+    errors <- c(errors, "Upload one fixation report at a time.")
+  }
+
+  if (any(!extensions %in% c("csv", "tsv", "txt", "xls", "xlsx"))) {
+    errors <- c(errors, "Fixation reports must be CSV, TSV, TXT, XLS, or XLSX files.")
+  }
+
+  if (any(!is.finite(sizes)) || any(sizes > limits$fixation_bytes, na.rm = TRUE)) {
+    errors <- c(errors, "The fixation report must be no larger than 25 MiB.")
+  }
+
+  if (any(!file.exists(paths))) {
+    errors <- c(errors, "The uploaded fixation report is no longer available.")
+  }
+
+  unique(errors)
+}
+
+# Returns validation messages for a public batch of face images.
+public_face_upload_errors <- function(upload, limits = public_upload_limits()) {
+  if (is.null(upload) || nrow(upload) == 0) {
+    return(character(0))
+  }
+
+  if (!all(c("name", "size", "datapath") %in% names(upload))) {
+    return("The face-image upload metadata is incomplete.")
+  }
+
+  errors <- character(0)
+  extensions <- tolower(tools::file_ext(upload$name))
+  sizes <- suppressWarnings(as.numeric(upload$size))
+  paths <- as.character(upload$datapath)
+
+  if (nrow(upload) > limits$face_count) {
+    errors <- c(errors, "Upload no more than 25 face images at a time.")
+  }
+
+  if (any(!extensions %in% c("png", "jpg", "jpeg"))) {
+    errors <- c(errors, "Face images must be PNG or JPEG files.")
+  }
+
+  if (any(!is.finite(sizes)) || any(sizes > limits$face_bytes, na.rm = TRUE)) {
+    errors <- c(errors, "Each face image must be no larger than 5 MiB.")
+  }
+
+  if (sum(sizes, na.rm = TRUE) > limits$faces_total_bytes) {
+    errors <- c(errors, "The face-image batch must be no larger than 50 MiB in total.")
+  }
+
+  if (any(!file.exists(paths))) {
+    errors <- c(errors, "One or more uploaded face images are no longer available.")
+  }
+
+  if (length(errors) > 0) {
+    return(unique(errors))
+  }
+
+  image_errors <- lapply(seq_len(nrow(upload)), function(index) {
+    info <- tryCatch(
+      magick::image_info(magick::image_read(paths[[index]])),
+      error = function(error) NULL
+    )
+
+    if (is.null(info) || nrow(info) != 1) {
+      return(sprintf("%s is not a valid single-frame PNG or JPEG image.", basename(upload$name[[index]])))
+    }
+
+    if (!toupper(info$format[[1]]) %in% c("PNG", "JPEG", "JPG")) {
+      return(sprintf("%s is not a PNG or JPEG image.", basename(upload$name[[index]])))
+    }
+
+    if (
+      info$width[[1]] > limits$face_dimension ||
+      info$height[[1]] > limits$face_dimension
+    ) {
+      return(sprintf("%s exceeds the 4096 x 4096 pixel limit.", basename(upload$name[[index]])))
+    }
+
+    NULL
+  })
+
+  unique(unlist(image_errors, use.names = FALSE))
+}
+
+# Creates one private upload directory and removes it when the Shiny session ends.
+new_public_session_upload_store <- function(session) {
+  root <- tempfile("vorogaze-session-")
+  dir.create(root, mode = "0700", recursive = TRUE)
+
+  if (!is.null(session)) {
+    session$onSessionEnded(function() {
+      unlink(root, recursive = TRUE, force = TRUE)
+    })
+  }
+
+  list(root = root)
+}
+
+# Copies a validated fixation report into the current session's private directory.
+stage_public_fixrep_upload <- function(upload, store) {
+  if (is.null(upload) || nrow(upload) == 0) {
+    return(NULL)
+  }
+
+  errors <- public_fixrep_upload_errors(upload)
+  shiny::validate(shiny::need(length(errors) == 0, paste(errors, collapse = " ")))
+
+  target_dir <- file.path(store$root, "fixation-report")
+  unlink(target_dir, recursive = TRUE, force = TRUE)
+  dir.create(target_dir, mode = "0700", recursive = TRUE)
+
+  extension <- tolower(tools::file_ext(upload$name[[1]]))
+  target <- file.path(target_dir, paste0("fixation-report.", extension))
+  copied <- file.copy(upload$datapath[[1]], target, overwrite = TRUE)
+  shiny::validate(shiny::need(copied, "The fixation report could not be staged for this session."))
+  Sys.chmod(target, mode = "0600")
+  target
+}
+
+# Copies validated face images into the current session's private directory.
+stage_public_face_uploads <- function(upload, store) {
+  if (is.null(upload) || nrow(upload) == 0) {
+    return(character(0))
+  }
+
+  errors <- public_face_upload_errors(upload)
+  shiny::validate(shiny::need(length(errors) == 0, paste(errors, collapse = " ")))
+
+  target_dir <- file.path(store$root, "face-images")
+  unlink(target_dir, recursive = TRUE, force = TRUE)
+  dir.create(target_dir, mode = "0700", recursive = TRUE)
+
+  extensions <- tolower(tools::file_ext(upload$name))
+  targets <- file.path(
+    target_dir,
+    sprintf("%03d.%s", seq_len(nrow(upload)), extensions)
+  )
+  copied <- file.copy(upload$datapath, targets, overwrite = TRUE)
+  shiny::validate(shiny::need(all(copied), "The face images could not be staged for this session."))
+  Sys.chmod(targets, mode = "0600")
+  names(targets) <- upload$name
+  targets
 }
 
 # Returns the current uploaded fixation report path, if one exists.
@@ -31,7 +208,7 @@ uploaded_fixrep_path <- function(upload) {
   upload$datapath[[1]] %||% NULL
 }
 
-# Uses an uploaded fixation report when available, otherwise the bundled demo.
+# Uses an uploaded fixation report when available, otherwise the bundled data.
 active_fixrep_path <- function(upload, bundled_path) {
   uploaded_path <- uploaded_fixrep_path(upload)
 
@@ -107,8 +284,16 @@ face_source_label <- function(upload, bundled_dir = NULL) {
   bundled_files <- list_face_image_files(bundled_dir)
 
   if (length(bundled_files) > 0) {
+    if (vorogaze_public_mode()) {
+      return(sprintf(
+        "Bundled DeBruine et al face (%d image%s)",
+        length(bundled_files),
+        if (length(bundled_files) == 1) "" else "s"
+      ))
+    }
+
     return(sprintf(
-      "Bundled demo: %s (%d image%s)",
+      "Bundled data: %s (%d image%s)",
       basename(bundled_dir),
       length(bundled_files),
       if (length(bundled_files) == 1) "" else "s"
@@ -125,7 +310,11 @@ fixrep_source_label <- function(upload, bundled_path = NULL) {
   }
 
   if (!is.null(bundled_path) && file.exists(bundled_path)) {
-    return(sprintf("Bundled demo: %s", basename(bundled_path)))
+    if (vorogaze_public_mode()) {
+      return("Bundled DeBruine et al fixation report")
+    }
+
+    return(sprintf("Bundled data: %s", basename(bundled_path)))
   }
 
   "None"
@@ -365,71 +554,4 @@ show_invalid_image_position_modal <- function() {
     ),
     easyClose = TRUE
   ))
-}
-
-# Converts markdown text to HTML for the developer previews.
-markdown_preview_html <- function(text) {
-  shiny::HTML(markdown::markdownToHTML(
-    text = text %||% "",
-    fragment.only = TRUE
-  ))
-}
-
-# Collects the values shown in the developer debug pane.
-debug_params_list <- function(
-    input,
-    fixrep_read_mode,
-    invalid_image_position_use_center,
-    invalid_image_position_dismissed
-) {
-  list(
-    screen_dimensions = input$screen_dimensions,
-    screen_left = input$screen_left,
-    screen_right = input$screen_right,
-    screen_top = input$screen_top,
-    screen_bottom = input$screen_bottom,
-    screen_origin = input$screen_origin,
-    image_origin = input$image_origin,
-    fixrep_read_mode = fixrep_read_mode,
-    sanity_face = input$sanity_face,
-    sanity_condition = input$sanity_condition,
-    invalid_image_position_use_center = invalid_image_position_use_center,
-    invalid_image_position_dismissed = invalid_image_position_dismissed,
-    selected_face_file = input$selected_face_file
-  )
-}
-
-# Formats developer debug values as aligned key/value lines.
-format_debug_param_value <- function(value) {
-  if (is.null(value)) {
-    return("<NULL>")
-  }
-  
-  if (length(value) == 0) {
-    return("<empty>")
-  }
-  
-  if (is.character(value)) {
-    return(paste(shQuote(value), collapse = ", "))
-  }
-  
-  paste(as.character(value), collapse = ", ")
-}
-
-debug_params_text <- function(params) {
-  names_width <- max(nchar(names(params)))
-  lines <- vapply(
-    names(params),
-    function(name) {
-      sprintf(
-        "%-*s : %s",
-        names_width,
-        name,
-        format_debug_param_value(params[[name]])
-      )
-    },
-    character(1)
-  )
-  
-  paste(lines, collapse = "\n")
 }

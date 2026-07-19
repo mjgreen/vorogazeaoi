@@ -7,7 +7,7 @@ cd "${here}"
 mkdir -p assets output
 qr_url=$(tr -d '\r\n' < qr-destination.txt)
 
-qrencode -t SVG -l H -m 4 -s 12 -o assets/vorogaze-demo-qr.svg "${qr_url}"
+qrencode -t SVG -l H -m 4 -s 12 -o assets/vorogaze-landing-qr.svg "${qr_url}"
 inkscape poster.svg \
   --export-area-page \
   --export-filename=output/vorogaze-aoi-ecvp-a0.pdf

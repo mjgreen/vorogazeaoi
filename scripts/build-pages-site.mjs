@@ -1,19 +1,32 @@
-import { cp, mkdir, rm, stat, writeFile } from "node:fs/promises";
+import { cp, mkdir, readFile, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const output = path.join(root, "pages-dist");
+const defaultWorkedExample = "https://vorogaze-example.mjgreen.uk/";
+const defaultResearchWorkbench = "https://vorogaze-workbench.mjgreen.uk/";
 const revision = process.env.VOROGAZE_STATIC_REVISION || "development";
-const dynamicDemo =
-  process.env.VOROGAZE_DEMO_URL || "https://vorogaze-demo.mjgreen.uk/";
-const dynamicDemoImage =
-  process.env.VOROGAZE_DEMO_IMAGE_VERSION || "unversioned";
+const workedExample =
+  process.env.VOROGAZE_WORKED_EXAMPLE_URL ||
+  defaultWorkedExample;
+const workedExampleImage =
+  process.env.VOROGAZE_WORKED_EXAMPLE_IMAGE_VERSION || "unversioned";
+const researchWorkbench =
+  process.env.VOROGAZE_RESEARCH_WORKBENCH_URL ||
+  defaultResearchWorkbench;
+const researchWorkbenchImage =
+  process.env.VOROGAZE_RESEARCH_WORKBENCH_IMAGE_VERSION || "unversioned";
 
 if (!/^[A-Za-z0-9._/-]+$/.test(revision)) {
   throw new Error("VOROGAZE_STATIC_REVISION contains unsupported characters");
 }
-for (const [name, value] of Object.entries({ dynamicDemo, dynamicDemoImage })) {
+for (const [name, value] of Object.entries({
+  workedExample,
+  workedExampleImage,
+  researchWorkbench,
+  researchWorkbenchImage,
+})) {
   if (
     !value ||
     value.length > 240 ||
@@ -22,8 +35,13 @@ for (const [name, value] of Object.entries({ dynamicDemo, dynamicDemoImage })) {
     throw new Error(`${name} must be a short printable value`);
   }
 }
-if (!/^https:\/\/[A-Za-z0-9.-]+\/$/.test(dynamicDemo)) {
-  throw new Error("VOROGAZE_DEMO_URL must be an HTTPS origin ending in /");
+for (const [name, value] of Object.entries({
+  VOROGAZE_WORKED_EXAMPLE_URL: workedExample,
+  VOROGAZE_RESEARCH_WORKBENCH_URL: researchWorkbench,
+})) {
+  if (!/^https:\/\/[A-Za-z0-9.-]+\/$/.test(value)) {
+    throw new Error(`${name} must be an HTTPS origin ending in /`);
+  }
 }
 
 const video = path.join(root, "www/aoi-demo-screencast.mp4");
@@ -34,16 +52,24 @@ await mkdir(output, { recursive: true });
 await cp(path.join(root, "pages-src"), output, { recursive: true });
 await cp(video, path.join(output, "aoi-demo-screencast.mp4"));
 
+const indexPath = path.join(output, "index.html");
+const index = (await readFile(indexPath, "utf8"))
+  .replaceAll(defaultWorkedExample, workedExample)
+  .replaceAll(defaultResearchWorkbench, researchWorkbench);
+await writeFile(indexPath, index);
+
 await writeFile(
   path.join(output, "release-manifest.json"),
   `${JSON.stringify(
     {
-      schemaVersion: 1,
+      schemaVersion: 2,
       product: "vorogaze",
       staticRevision: revision,
-      publicBoundary: "bundled-conference-data-only",
-      dynamicDemo,
-      dynamicDemoImage,
+      publicBoundary: "landing-screencast-and-external-interactive-routes",
+      workedExample,
+      workedExampleImage,
+      researchWorkbench,
+      researchWorkbenchImage,
     },
     null,
     2,

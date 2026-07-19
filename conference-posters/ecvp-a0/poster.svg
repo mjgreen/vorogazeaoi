@@ -7,7 +7,7 @@
   viewBox="0 0 841 1189"
   version="1.1">
   <title>VoroGaze AOI: From facial landmarks to defensible areas of interest</title>
-  <desc>A0 portrait research-methods poster by Matthew J. Green, Department of Psychology, Bournemouth University.</desc>
+  <desc>A0 portrait research-methods poster by Matthew J. Green, Psychology, Bournemouth University.</desc>
 
   <defs>
     <style>
@@ -72,7 +72,7 @@
   <text x="28" y="90" class="sans title white">VoroGaze AOI</text>
   <text x="30" y="124.5" class="sans subtitle white">From facial landmarks to defensible areas of interest</text>
   <text x="30" y="162" class="sans byline white">Matthew J. Green</text>
-  <text x="30" y="179.2" class="sans affiliation white">Department of Psychology · Bournemouth University · mgreen@bournemouth.ac.uk</text>
+  <text x="30" y="179.2" class="sans affiliation white">Psychology · Bournemouth University · mgreen@bournemouth.ac.uk</text>
 
   <rect x="578" y="123" width="235" height="61" rx="7" fill="#ffffff" opacity="0.10"/>
   <rect x="578" y="123" width="5" height="61" rx="2.5" fill="#f0bc4c"/>

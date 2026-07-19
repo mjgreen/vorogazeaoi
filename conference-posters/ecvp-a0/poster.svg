@@ -156,8 +156,11 @@
 
   <!-- Left 3: Early review -->
   <text x="48" y="868" class="sans eyebrow gold">EARLY USABILITY CHECK · N = 2</text>
-  <text x="48" y="899" class="sans section ink">Useful – with signposting to refine</text>
-  <text x="48" y="926" class="sans body muted">
+  <text x="48" y="895" class="sans section ink">
+    <tspan x="48" dy="0">Useful – with signposting</tspan>
+    <tspan x="48" dy="17">to refine</tspan>
+  </text>
+  <text x="48" y="939" class="sans body muted">
     <tspan x="48" dy="0">One eye-tracking expert and one non-specialist</tspan>
     <tspan x="48" dy="11.5">completed core upload/download tasks. The expert</tspan>
     <tspan x="48" dy="11.5">described the tool as useful and self-explanatory.</tspan>
@@ -291,7 +294,10 @@
 
   <!-- Right 2: transparency and scope -->
   <text x="584" y="630" class="sans eyebrow coral">WHAT BECOMES INSPECTABLE</text>
-  <text x="584" y="661" class="sans section ink">Deterministic after the choices</text>
+  <text x="584" y="657" class="sans section ink">
+    <tspan x="584" dy="0">Deterministic after</tspan>
+    <tspan x="584" dy="17">the choices</tspan>
+  </text>
 
   <path d="M588,684 h8 l3,5 l7,-12" fill="none" stroke="#087f89" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
   <text x="616" y="688" class="sans body ink">Saved centres + image bounds reproduce</text>

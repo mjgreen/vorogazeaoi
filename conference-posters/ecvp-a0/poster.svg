@@ -299,15 +299,15 @@
     <tspan x="584" dy="17">the choices</tspan>
   </text>
 
-  <path d="M588,684 h8 l3,5 l7,-12" fill="none" stroke="#087f89" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M589,687 l6,6 l11,-15" fill="none" stroke="#087f89" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
   <text x="616" y="688" class="sans body ink">Saved centres + image bounds reproduce</text>
   <text x="616" y="700" class="sans body ink">the same bounded partition.</text>
 
-  <path d="M588,725 h8 l3,5 l7,-12" fill="none" stroke="#087f89" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M589,728 l6,6 l11,-15" fill="none" stroke="#087f89" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
   <text x="616" y="729" class="sans body ink">Every fixation retains its source row and</text>
   <text x="616" y="741" class="sans body ink">assigned AOI before aggregation.</text>
 
-  <path d="M588,766 h8 l3,5 l7,-12" fill="none" stroke="#e96750" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M589,769 l6,6 l11,-15" fill="none" stroke="#e96750" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
   <text x="616" y="770" class="sans body ink">Validity still depends on defensible landmark</text>
   <text x="616" y="782" class="sans body ink">choices, preprocessing and study design.</text>
 

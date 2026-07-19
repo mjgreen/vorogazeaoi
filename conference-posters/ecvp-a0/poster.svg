@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="841mm"
+  height="1189mm"
+  viewBox="0 0 841 1189"
+  version="1.1">
+  <title>VoroGaze AOI: From facial landmarks to defensible areas of interest</title>
+  <desc>A0 portrait research-methods poster by Matthew J. Green, Department of Psychology, Bournemouth University.</desc>
+
+  <defs>
+    <style>
+      .sans { font-family: "DejaVu Sans", "Liberation Sans", sans-serif; }
+      .mono { font-family: "DejaVu Sans Mono", monospace; }
+      .eyebrow { font-size: 6.2px; font-weight: 700; letter-spacing: 1.1px; }
+      .title { font-size: 38px; font-weight: 800; letter-spacing: -1.6px; }
+      .subtitle { font-size: 15.2px; font-weight: 500; }
+      .byline { font-size: 8.4px; font-weight: 700; }
+      .affiliation { font-size: 7.1px; font-weight: 400; }
+      .section { font-size: 14px; font-weight: 800; letter-spacing: -0.25px; }
+      .lead { font-size: 9.7px; font-weight: 650; }
+      .body { font-size: 8.1px; font-weight: 400; }
+      .body-strong { font-size: 8.1px; font-weight: 700; }
+      .small { font-size: 6.7px; font-weight: 400; }
+      .small-strong { font-size: 6.7px; font-weight: 700; }
+      .micro { font-size: 5.2px; font-weight: 400; }
+      .number { font-size: 13px; font-weight: 800; }
+      .metric { font-size: 17px; font-weight: 800; }
+      .white { fill: #ffffff; }
+      .ink { fill: #122a37; }
+      .muted { fill: #536d78; }
+      .teal { fill: #087f89; }
+      .coral { fill: #e96750; }
+      .gold { fill: #e5a92c; }
+      .rule { stroke: #c9d9dc; stroke-width: 0.8; }
+      .card { fill: #ffffff; stroke: #d6e2e4; stroke-width: 0.8; }
+      .shadow { fill: #b9c9cc; opacity: 0.22; }
+    </style>
+
+    <clipPath id="faceClip">
+      <rect x="0" y="0" width="350" height="466" rx="8"/>
+    </clipPath>
+
+    <linearGradient id="headerGlow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b2536"/>
+      <stop offset="0.65" stop-color="#0d3343"/>
+      <stop offset="1" stop-color="#075f6b"/>
+    </linearGradient>
+
+    <linearGradient id="takehome" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#dff4f1"/>
+      <stop offset="1" stop-color="#eef8f5"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Page -->
+  <rect x="0" y="0" width="841" height="1189" fill="#f4f7f5"/>
+
+  <!-- Header -->
+  <rect x="0" y="0" width="841" height="207" fill="url(#headerGlow)"/>
+  <path d="M 641,-16 C 725,26 692,91 759,111 C 809,126 822,161 864,181"
+        fill="none" stroke="#21a5a8" stroke-width="27" opacity="0.22"/>
+  <path d="M 676,-25 C 744,27 723,75 788,98 C 826,112 845,133 870,153"
+        fill="none" stroke="#f0bc4c" stroke-width="5" opacity="0.76"/>
+  <circle cx="771" cy="57" r="33" fill="none" stroke="#ffffff" stroke-width="2.2" opacity="0.22"/>
+  <circle cx="771" cy="57" r="11" fill="#e96750" opacity="0.95"/>
+
+  <rect x="28" y="26" width="177" height="22" rx="11" fill="#ffffff" opacity="0.12"/>
+  <text x="41" y="40.7" class="sans eyebrow white">RESEARCH METHODS PROTOTYPE</text>
+
+  <text x="28" y="90" class="sans title white">VoroGaze AOI</text>
+  <text x="30" y="124.5" class="sans subtitle white">From facial landmarks to defensible areas of interest</text>
+  <text x="30" y="162" class="sans byline white">Matthew J. Green</text>
+  <text x="30" y="179.2" class="sans affiliation white">Department of Psychology · Bournemouth University · mgreen@bournemouth.ac.uk</text>
+
+  <rect x="578" y="123" width="235" height="61" rx="7" fill="#ffffff" opacity="0.10"/>
+  <rect x="578" y="123" width="5" height="61" rx="2.5" fill="#f0bc4c"/>
+  <text x="597" y="146" class="sans lead white">Make the geometry visible</text>
+  <text x="597" y="160" class="sans lead white">before it becomes a number.</text>
+  <text x="597" y="175.5" class="sans small white" opacity="0.78">Inspectable inputs · deterministic boundaries · traceable outputs</text>
+
+  <!-- Column backgrounds -->
+  <rect x="28" y="230" width="250" height="299" rx="8" class="shadow"/>
+  <rect x="28" y="227" width="250" height="299" rx="8" class="card"/>
+  <rect x="28" y="550" width="250" height="264" rx="8" class="shadow"/>
+  <rect x="28" y="547" width="250" height="264" rx="8" class="card"/>
+  <rect x="28" y="835" width="250" height="184" rx="8" class="shadow"/>
+  <rect x="28" y="832" width="250" height="184" rx="8" class="card"/>
+
+  <rect x="296" y="230" width="250" height="789" rx="8" class="shadow"/>
+  <rect x="296" y="227" width="250" height="789" rx="8" class="card"/>
+
+  <rect x="564" y="230" width="249" height="346" rx="8" class="shadow"/>
+  <rect x="564" y="227" width="249" height="346" rx="8" class="card"/>
+  <rect x="564" y="597" width="249" height="229" rx="8" class="shadow"/>
+  <rect x="564" y="594" width="249" height="229" rx="8" class="card"/>
+  <rect x="564" y="847" width="249" height="172" rx="8" class="shadow"/>
+  <rect x="564" y="844" width="249" height="172" rx="8" class="card"/>
+
+  <!-- Left 1: Motivation -->
+  <text x="48" y="263" class="sans eyebrow coral">THE PROBLEM</text>
+  <text x="48" y="294" class="sans section ink">AOI metrics inherit every</text>
+  <text x="48" y="311" class="sans section ink">spatial decision upstream</text>
+  <text x="48" y="338" class="sans body muted">
+    <tspan x="48" dy="0">A neat summary can conceal a broken mapping.</tspan>
+    <tspan x="48" dy="11.5">Before counting fixations, researchers must know</tspan>
+    <tspan x="48" dy="11.5">that screen, stimulus and gaze occupy one coherent</tspan>
+    <tspan x="48" dy="11.5">coordinate system.</tspan>
+  </text>
+
+  <rect x="48" y="397" width="210" height="31" rx="5" fill="#eef8f5"/>
+  <circle cx="66" cy="412.5" r="7" fill="#087f89"/>
+  <text x="66" y="415.2" text-anchor="middle" class="sans small-strong white">1</text>
+  <text x="82" y="415.2" class="sans body-strong ink">Which coordinate origin?</text>
+
+  <rect x="48" y="436" width="210" height="31" rx="5" fill="#fff3ef"/>
+  <circle cx="66" cy="451.5" r="7" fill="#e96750"/>
+  <text x="66" y="454.2" text-anchor="middle" class="sans small-strong white">2</text>
+  <text x="82" y="454.2" class="sans body-strong ink">Where was the face placed?</text>
+
+  <rect x="48" y="475" width="210" height="31" rx="5" fill="#fff8e8"/>
+  <circle cx="66" cy="490.5" r="7" fill="#e5a92c"/>
+  <text x="66" y="493.2" text-anchor="middle" class="sans small-strong white">3</text>
+  <text x="82" y="493.2" class="sans body-strong ink">Which boundary assigned this point?</text>
+
+  <!-- Left 2: Geometry -->
+  <text x="48" y="583" class="sans eyebrow teal">VALIDITY FIRST</text>
+  <text x="48" y="614" class="sans section ink">Geometry before statistics</text>
+  <text x="48" y="638" class="sans body muted">
+    <tspan x="48" dy="0">VoroGaze makes the screen, face placement and</tspan>
+    <tspan x="48" dy="11.5">fixations visible together – so mismatches can be</tspan>
+    <tspan x="48" dy="11.5">caught before AOI metrics are computed.</tspan>
+  </text>
+
+  <rect x="49" y="682" width="208" height="102" rx="7" fill="#0b2536"/>
+  <text x="61" y="700" class="sans micro white" opacity="0.75">SCREEN SPACE</text>
+  <line x1="64" y1="714" x2="64" y2="765" stroke="#90b7be" stroke-width="1"/>
+  <line x1="64" y1="765" x2="241" y2="765" stroke="#90b7be" stroke-width="1"/>
+  <path d="M 60,718 l4,-6 l4,6" fill="none" stroke="#90b7be" stroke-width="1"/>
+  <path d="M 237,761 l6,4 l-6,4" fill="none" stroke="#90b7be" stroke-width="1"/>
+  <rect x="112" y="710" width="82" height="51" rx="3" fill="#dff4f1" stroke="#21a5a8" stroke-width="1.4"/>
+  <ellipse cx="153" cy="735.5" rx="16" ry="21" fill="#f4d4c4"/>
+  <circle cx="146" cy="732" r="1.7" fill="#122a37"/>
+  <circle cx="160" cy="732" r="1.7" fill="#122a37"/>
+  <path d="M147,747 Q153,751 160,747" fill="none" stroke="#9c5f58" stroke-width="1.2"/>
+  <g fill="#f0bc4c" stroke="#4a2a00" stroke-width="0.8">
+    <circle cx="126" cy="728" r="3.2"/>
+    <circle cx="145" cy="740" r="3.2"/>
+    <circle cx="174" cy="722" r="3.2"/>
+    <circle cx="188" cy="748" r="3.2"/>
+    <circle cx="101" cy="753" r="3.2"/>
+  </g>
+  <text x="70" y="779" class="sans micro white" opacity="0.72">origin</text>
+  <text x="199" y="725" class="sans micro white" opacity="0.72">image bounds</text>
+
+  <!-- Left 3: Early review -->
+  <text x="48" y="868" class="sans eyebrow gold">EARLY USABILITY CHECK · N = 2</text>
+  <text x="48" y="899" class="sans section ink">Useful – with signposting to refine</text>
+  <text x="48" y="926" class="sans body muted">
+    <tspan x="48" dy="0">One eye-tracking expert and one non-specialist</tspan>
+    <tspan x="48" dy="11.5">completed core upload/download tasks. The expert</tspan>
+    <tspan x="48" dy="11.5">described the tool as useful and self-explanatory.</tspan>
+    <tspan x="48" dy="15">The non-specialist found AOI assignment after</tspan>
+    <tspan x="48" dy="11.5">exploration; navigation and output signposting</tspan>
+    <tspan x="48" dy="11.5">remain explicit design priorities.</tspan>
+  </text>
+
+  <!-- Centre: worked demo -->
+  <text x="316" y="263" class="sans eyebrow teal">WORKED DEMONSTRATION</text>
+  <text x="316" y="294" class="sans section ink">Landmarks → Voronoi AOIs</text>
+  <text x="316" y="319" class="sans body muted">
+    <tspan x="316" dy="0">The bundled Lisa1 fixture keeps every step visible.</tspan>
+  </text>
+
+  <g transform="translate(323,342) scale(0.56)" clip-path="url(#faceClip)">
+    <image x="0" y="0" width="350" height="466"
+           xlink:href="../../demo/lisa1/faces/001_03.jpg"
+           href="../../demo/lisa1/faces/001_03.jpg"
+           preserveAspectRatio="none"/>
+    <rect x="0" y="0" width="350" height="466" fill="#073846" opacity="0.05"/>
+
+    <!-- Exact bounded deldir segments from the current five default landmarks -->
+    <g fill="none" stroke="#00b5c7" stroke-width="5" stroke-linecap="round">
+      <line x1="180" y1="227.8585" x2="180" y2="0"/>
+      <line x1="336.09984" y1="348.8524" x2="350" y2="353.3445"/>
+      <line x1="72.05152" y1="309.3290" x2="180" y2="227.8585"/>
+      <line x1="180" y1="227.8585" x2="239.63001" y2="295.3642"/>
+      <line x1="0" y1="340.7178" x2="72.05152" y2="309.3290"/>
+      <line x1="239.63001" y1="295.3642" x2="336.09984" y2="348.8524"/>
+      <line x1="336.09984" y1="348.8524" x2="0" y2="364.8571"/>
+      <line x1="72.05152" y1="309.3290" x2="239.63001" y2="295.3642"/>
+    </g>
+
+    <!-- Exact image-space fixture fixation coordinates -->
+    <g fill="#f5c44e" stroke="#4a2a00" stroke-width="2.4" opacity="0.94">
+      <circle cx="196" cy="253" r="5.4"/><circle cx="146" cy="268" r="5.4"/>
+      <circle cx="126" cy="288" r="5.4"/><circle cx="198" cy="254" r="5.4"/>
+      <circle cx="190" cy="225" r="5.4"/><circle cx="176" cy="274" r="5.4"/>
+      <circle cx="159" cy="262" r="5.4"/><circle cx="155" cy="281" r="5.4"/>
+      <circle cx="134" cy="370" r="5.4"/><circle cx="215" cy="231" r="5.4"/>
+      <circle cx="184" cy="325" r="5.4"/><circle cx="161" cy="398" r="5.4"/>
+      <circle cx="168" cy="247" r="5.4"/><circle cx="221" cy="241" r="5.4"/>
+      <circle cx="195" cy="390" r="5.4"/><circle cx="212" cy="407" r="5.4"/>
+      <circle cx="143" cy="379" r="5.4"/><circle cx="216" cy="338" r="5.4"/>
+      <circle cx="139" cy="264" r="5.4"/><circle cx="206" cy="277" r="5.4"/>
+    </g>
+
+    <!-- Exact default landmark centres -->
+    <g fill="#ffffff" stroke="#087f89" stroke-width="5">
+      <circle cx="130" cy="224" r="8"/><circle cx="230" cy="224" r="8"/>
+      <circle cx="170" cy="277" r="8"/><circle cx="174" cy="325" r="8"/>
+      <circle cx="177" cy="388" r="8"/>
+    </g>
+    <g fill="#087f89">
+      <circle cx="130" cy="224" r="3"/><circle cx="230" cy="224" r="3"/>
+      <circle cx="170" cy="277" r="3"/><circle cx="174" cy="325" r="3"/>
+      <circle cx="177" cy="388" r="3"/>
+    </g>
+  </g>
+
+  <rect x="323" y="342" width="196" height="261" rx="5" fill="none" stroke="#0b2536" stroke-width="1.3"/>
+  <circle cx="326" cy="624" r="3.2" fill="#ffffff" stroke="#087f89" stroke-width="1.5"/>
+  <text x="334" y="626.4" class="sans small ink">landmark centre</text>
+  <circle cx="405" cy="624" r="3.2" fill="#f5c44e" stroke="#4a2a00" stroke-width="1"/>
+  <text x="413" y="626.4" class="sans small ink">fixation</text>
+  <line x1="470" y1="624" x2="483" y2="624" stroke="#00aabd" stroke-width="2"/>
+  <text x="489" y="626.4" class="sans small ink">boundary</text>
+
+  <rect x="316" y="647" width="210" height="42" rx="6" fill="#eef8f5"/>
+  <text x="421" y="663" text-anchor="middle" class="sans small-strong teal">BUNDLED FIXTURE</text>
+  <text x="421" y="681" text-anchor="middle" class="sans body-strong ink">20 fixations · 2 sessions · 1 face · 5 landmarks</text>
+
+  <text x="316" y="722" class="sans eyebrow coral">DESCRIPTIVE OUTPUT</text>
+  <text x="316" y="750" class="sans lead ink">The full audit trail precedes the summary</text>
+
+  <rect x="316" y="769" width="210" height="33" rx="4" fill="#0b2536"/>
+  <text x="326" y="789.5" class="sans small-strong white">AOI</text>
+  <text x="421" y="789.5" text-anchor="end" class="sans small-strong white">N fix</text>
+  <text x="474" y="785" text-anchor="end" class="sans micro white">total</text>
+  <text x="474" y="793" text-anchor="end" class="sans micro white">duration</text>
+  <text x="518" y="785" text-anchor="end" class="sans micro white">mean</text>
+  <text x="518" y="793" text-anchor="end" class="sans micro white">duration</text>
+
+  <g class="sans small ink">
+    <rect x="316" y="802" width="210" height="28" fill="#ffffff"/>
+    <text x="326" y="820">left eye</text><text x="421" y="820" text-anchor="end">0</text><text x="474" y="820" text-anchor="end">—</text><text x="518" y="820" text-anchor="end">—</text>
+    <rect x="316" y="830" width="210" height="28" fill="#eef8f5"/>
+    <text x="326" y="848">right eye</text><text x="421" y="848" text-anchor="end">3</text><text x="474" y="848" text-anchor="end">499 ms</text><text x="518" y="848" text-anchor="end">166.3</text>
+    <rect x="316" y="858" width="210" height="28" fill="#ffffff"/>
+    <text x="326" y="876">nose</text><text x="421" y="876" text-anchor="end">10</text><text x="474" y="876" text-anchor="end">1817 ms</text><text x="518" y="876" text-anchor="end">181.7</text>
+    <rect x="316" y="886" width="210" height="28" fill="#eef8f5"/>
+    <text x="326" y="904">mouth</text><text x="421" y="904" text-anchor="end">2</text><text x="474" y="904" text-anchor="end">486 ms</text><text x="518" y="904" text-anchor="end">243.0</text>
+    <rect x="316" y="914" width="210" height="28" fill="#ffffff"/>
+    <text x="326" y="932">chin</text><text x="421" y="932" text-anchor="end">5</text><text x="474" y="932" text-anchor="end">1235 ms</text><text x="518" y="932" text-anchor="end">247.0</text>
+    <rect x="316" y="942" width="210" height="30" fill="#dff4f1"/>
+    <text x="326" y="961.5" class="sans small-strong ink">total</text><text x="421" y="961.5" text-anchor="end" class="sans small-strong ink">20</text><text x="474" y="961.5" text-anchor="end" class="sans small-strong ink">4037 ms</text><text x="518" y="961.5" text-anchor="end">—</text>
+  </g>
+  <text x="316" y="994" class="sans micro muted">Worked fixture output – illustrative, not an empirical finding.</text>
+
+  <!-- Right 1: workflow -->
+  <text x="584" y="263" class="sans eyebrow teal">A VISIBLE ANALYSIS CHAIN</text>
+  <text x="584" y="294" class="sans section ink">Inspect → define</text>
+  <text x="584" y="311" class="sans section ink">assign → export</text>
+
+  <circle cx="604" cy="344" r="14" fill="#087f89"/>
+  <text x="604" y="348.5" text-anchor="middle" class="sans number white">1</text>
+  <text x="628" y="341" class="sans body-strong ink">Inspect the inputs</text>
+  <text x="628" y="353" class="sans small muted">Map columns; view screen, face and fixations.</text>
+  <line x1="604" y1="359" x2="604" y2="384" stroke="#c9d9dc" stroke-width="1.5"/>
+
+  <circle cx="604" cy="400" r="14" fill="#0b2536"/>
+  <text x="604" y="404.5" text-anchor="middle" class="sans number white">2</text>
+  <text x="628" y="397" class="sans body-strong ink">Define meaningful centres</text>
+  <text x="628" y="409" class="sans small muted">Click, label and edit landmarks on the face.</text>
+  <line x1="604" y1="415" x2="604" y2="440" stroke="#c9d9dc" stroke-width="1.5"/>
+
+  <circle cx="604" cy="456" r="14" fill="#e96750"/>
+  <text x="604" y="460.5" text-anchor="middle" class="sans number white">3</text>
+  <text x="628" y="453" class="sans body-strong ink">Assign transparently</text>
+  <text x="628" y="465" class="sans small muted">Nearest centre = the point’s Voronoi cell.</text>
+  <line x1="604" y1="471" x2="604" y2="496" stroke="#c9d9dc" stroke-width="1.5"/>
+
+  <circle cx="604" cy="512" r="14" fill="#e5a92c"/>
+  <text x="604" y="516.5" text-anchor="middle" class="sans number white">4</text>
+  <text x="628" y="509" class="sans body-strong ink">Export the audit trail</text>
+  <text x="628" y="521" class="sans small muted">Retain row-level assignments, then summarise.</text>
+
+  <rect x="584" y="538" width="209" height="20" rx="10" fill="#eef8f5"/>
+  <text x="688.5" y="551.5" text-anchor="middle" class="sans small-strong teal">Geometry first · metrics second</text>
+
+  <!-- Right 2: transparency and scope -->
+  <text x="584" y="630" class="sans eyebrow coral">WHAT BECOMES INSPECTABLE</text>
+  <text x="584" y="661" class="sans section ink">Deterministic after the choices</text>
+
+  <path d="M588,684 h8 l3,5 l7,-12" fill="none" stroke="#087f89" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="616" y="688" class="sans body ink">Saved centres + image bounds reproduce</text>
+  <text x="616" y="700" class="sans body ink">the same bounded partition.</text>
+
+  <path d="M588,725 h8 l3,5 l7,-12" fill="none" stroke="#087f89" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="616" y="729" class="sans body ink">Every fixation retains its source row and</text>
+  <text x="616" y="741" class="sans body ink">assigned AOI before aggregation.</text>
+
+  <path d="M588,766 h8 l3,5 l7,-12" fill="none" stroke="#e96750" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="616" y="770" class="sans body ink">Validity still depends on defensible landmark</text>
+  <text x="616" y="782" class="sans body ink">choices, preprocessing and study design.</text>
+
+  <rect x="584" y="797" width="209" height="12" rx="6" fill="#fff3ef"/>
+  <text x="688.5" y="805.5" text-anchor="middle" class="sans micro coral">PROTOTYPE – METHODS WORKFLOW, NOT EMPIRICAL VALIDATION</text>
+
+  <!-- Right 3: QR -->
+  <image x="579" y="858" width="134" height="134"
+         xlink:href="assets/vorogaze-demo-qr.svg"
+         href="assets/vorogaze-demo-qr.svg"
+         preserveAspectRatio="xMidYMid meet"/>
+  <text x="718" y="874" class="sans eyebrow teal">TRY IT</text>
+  <text x="718" y="897" class="sans lead ink">Interactive</text>
+  <text x="718" y="910" class="sans lead ink">public demo</text>
+  <text x="718" y="935" class="sans small muted">Bundled data only.</text>
+  <text x="718" y="947" class="sans small muted">No upload control.</text>
+  <text x="718" y="970" class="sans micro ink">QR DESTINATION</text>
+  <text x="718" y="981" class="sans micro teal">vorogaze-demo.mjgreen.uk</text>
+  <text x="718" y="1000" class="sans micro muted">Project: vorogaze.mjgreen.uk</text>
+
+  <!-- Take-home -->
+  <rect x="28" y="1040" width="785" height="79" rx="8" fill="url(#takehome)" stroke="#a9d6d1" stroke-width="0.9"/>
+  <rect x="28" y="1040" width="8" height="79" rx="4" fill="#087f89"/>
+  <text x="53" y="1066" class="sans eyebrow teal">TAKE-HOME MESSAGE</text>
+  <text x="53" y="1093" class="sans section ink">VoroGaze turns AOI construction into an inspectable analysis chain –</text>
+  <text x="53" y="1111" class="sans section ink">make the geometry visible, make the boundaries reproducible, then compute the metrics.</text>
+
+  <!-- Footer -->
+  <line x1="28" y1="1140" x2="813" y2="1140" class="rule"/>
+  <text x="28" y="1158" class="sans micro muted">
+    Face: DeBruine, L. &amp; Jones, B. (2017), Face Research Lab London Set, CC BY 4.0 · doi.org/10.6084/m9.figshare.5047666
+  </text>
+  <text x="28" y="1172" class="sans micro muted">
+    Prototype: github.com/mjgreen/vorogazeaoi · Public method demonstration uses the bundled Lisa1 fixture only.
+  </text>
+  <text x="813" y="1165" text-anchor="end" class="sans small-strong ink">VoroGaze AOI</text>
+  <text x="813" y="1177" text-anchor="end" class="sans micro muted">Areas of interest you can see – and defend.</text>
+</svg>
